@@ -1,0 +1,346 @@
+/* MacCafe Custom Styles */
+
+:root {
+    --maccafe-primary: #ffc107;
+    --maccafe-secondary: #6c757d;
+    --maccafe-accent: #ffc107;
+    --maccafe-dark: #343a40;
+    --maccafe-light: #f8f9fa;
+    --primary: #ffc107;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+}
+
+/* Navbar Styles */
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link {
+    margin: 0 15px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.navbar-nav .nav-link:hover {
+    color: var(--maccafe-accent) !important;
+    transform: translateY(-2px);
+}
+
+.navbar-nav .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: var(--maccafe-accent);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.navbar-nav .nav-link:hover::after {
+    width: 100%;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, var(--maccafe-primary), var(--maccafe-dark));
+    color: white;
+    padding: 80px 0;
+    margin-bottom: 50px;
+}
+
+.hero-section h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.hero-section p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+/* Product Cards */
+.product-card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.product-card img {
+    height: 200px;
+    object-fit: cover;
+}
+
+.product-card .card-body {
+    padding: 20px;
+}
+
+.product-price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--maccafe-primary);
+}
+
+.popular-item {
+    background-color: transparent !important;
+    border: 2px solid rgba(248, 184, 8, 0.884) !important;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.popular-item img {
+    height: 200px !important;
+    width: 100% !important;
+    object-fit: cover;
+}
+
+.popular-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    border-color: var(--maccafe-accent) !important;
+}
+
+/* Category Cards */
+.category-card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.menu-category-card {
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-category-card .btn {
+    padding: 3px 16px;
+    font-size: 0.875rem;
+    align-self: center;
+}
+
+.menu-category-card .card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.category-card .card-img-top {
+    height: 200px !important;
+    width: 100% !important;
+    object-fit: cover;
+}
+
+.menu-category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    border: 2px solid var(--maccafe-accent);
+}
+
+.category-card img {
+    height: 200px !important;
+    width: 100% !important;
+    object-fit: cover;
+}
+
+.col-lg-2-4 {
+    flex: 0 0 auto;
+    width: 20%;
+    max-width: 20%;
+}
+
+/* Cart Badge */
+#cart-count {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+}
+
+/* Button Styles */
+.btn-success {
+    background-color: var(--maccafe-primary);
+    border-color: var(--maccafe-primary);
+}
+
+.btn-primary {
+    background-color: var(--maccafe-primary) !important;
+    border-color: var(--maccafe-primary) !important;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+/* Category Filter Button Hover Effects */
+.btn-outline-success {
+    color: var(--maccafe-primary);
+    border-color: var(--maccafe-primary);
+    transition: all 0.3s ease;
+}
+
+.btn-outline-success:hover {
+    background-color: var(--maccafe-primary);
+    border-color: var(--maccafe-primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+.btn-outline-success.active {
+    background-color: var(--maccafe-primary);
+    border-color: var(--maccafe-primary);
+    color: white;
+}
+
+.btn-maccafe-accent {
+    background-color: var(--maccafe-accent);
+    border-color: var(--maccafe-accent);
+    color: #fab011;
+}
+
+.btn-maccafe-accent:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+    color: #212529;
+}
+
+.text-primary {
+    color: #ffc107 !important;
+}
+
+h1, h2, h3 {
+    color: var(--maccafe-primary) !important;
+}
+
+/* Form Styles */
+.form-control:focus {
+    border-color: var(--maccafe-primary);
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+/* Alert Styles */
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+/* Footer Styles */
+footer {
+    margin-top: auto;
+}
+
+footer a:hover {
+    color: var(--maccafe-accent) !important;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Cart Sidebar */
+.cart-sidebar {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: white;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    transition: right 0.3s ease;
+    z-index: 1050;
+    overflow-y: auto;
+}
+
+.cart-sidebar.show {
+    right: 0;
+}
+
+.cart-sidebar-header {
+    background: var(--maccafe-primary);
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-sidebar-body {
+    padding: 20px;
+}
+
+.cart-sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid #dee2e6;
+}
+
+/* Order Status Badges */
+.status-pending { background-color: #ffc107; }
+.status-confirmed { background-color: #17a2b8; }
+.status-preparing { background-color: #6f42c1; }
+.status-ready { background-color: #28a745; }
+.status-completed { background-color: #6c757d; }
+.status-cancelled { background-color: #dc3545; }
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-section {
+        padding: 60px 0;
+    }
+    
+    .cart-sidebar {
+        width: 100%;
+        right: -100%;
+    }
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in-right {
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
