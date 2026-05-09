@@ -40,8 +40,6 @@ $router->post('/cart/clear', 'CartController@clear');
 // Checkout routes (auth required)
 $router->get('/checkout', 'CheckoutController@index');
 $router->post('/checkout/process', 'CheckoutController@process');
-$router->get('/checkout/payment/{id}', 'CheckoutController@payment');
-$router->post('/checkout/upload-payment-proof', 'CheckoutController@uploadPaymentProof');
 
 // Order routes (auth required)
 $router->get('/orders', 'OrderController@index', [AuthMiddleware::class]);

@@ -1,5 +1,4 @@
-<?php 
-require_once __DIR__ . '/../../models/Order.php';
+<?php
 ob_start(); 
 ?>
 
@@ -35,46 +34,103 @@ ob_start();
                         <p class="text-muted">
                             Showing <span class="fw-bold"><?= count($orders) ?></span> of 
                             <span class="fw-bold"><?= $totalOrders ?></span> orders
+                            <?php if (isset($_GET['filter']) && $_GET['filter'] !== 'all'): ?>
+                                <span class="badge bg-secondary ms-2">
+                                    Filter: <?= ucfirst($_GET['filter']) ?>
+                                    <a href="?" class="text-white ms-1"><i class="bi bi-x"></i></a>
+                                </span>
+                            <?php endif; ?>
+                            <?php if (isset($_GET['sort'])): ?>
+                                <span class="badge bg-secondary ms-2">
+                                    Sort: <?= ucfirst($_GET['sort']) ?>
+                                    <a href="?<?php echo isset($_GET['filter']) ? 'filter=' . $_GET['filter'] : '' ?>" class="text-white ms-1"><i class="bi bi-x"></i></a>
+                                </span>
+                            <?php endif; ?>
                         </p>
                     </div>
-                    <div class="col-md-6 text-end">
-                        <a href="/menu" class="btn btn-success">
-                            <i class="bi bi-plus-circle me-2"></i>New Order
-                        </a>
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-end gap-2">
+                            <!-- Sort Dropdown -->
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown">
+                                    <i class="bi bi-sort-down me-1"></i>Sort
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item <?= (isset($_GET['sort']) && $_GET['sort'] === 'newest') || !isset($_GET['sort']) ? 'active' : '' ?>" href="?<?php echo isset($_GET['filter']) ? 'filter=' . $_GET['filter'] . '&' : '' ?>sort=newest">Newest First</a></li>
+                                    <li><a class="dropdown-item <?= isset($_GET['sort']) && $_GET['sort'] === 'oldest' ? 'active' : '' ?>" href="?<?php echo isset($_GET['filter']) ? 'filter=' . $_GET['filter'] . '&' : '' ?>sort=oldest">Oldest First</a></li>
+                                    <li><a class="dropdown-item <?= isset($_GET['sort']) && $_GET['sort'] === 'highest' ? 'active' : '' ?>" href="?<?php echo isset($_GET['filter']) ? 'filter=' . $_GET['filter'] . '&' : '' ?>sort=highest">Highest Amount</a></li>
+                                    <li><a class="dropdown-item <?= isset($_GET['sort']) && $_GET['sort'] === 'lowest' ? 'active' : '' ?>" href="?<?php echo isset($_GET['filter']) ? 'filter=' . $_GET['filter'] . '&' : '' ?>sort=lowest">Lowest Amount</a></li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Filter Dropdown -->
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown">
+                                    <i class="bi bi-funnel me-1"></i>Filter
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item <?= (!isset($_GET['filter']) || $_GET['filter'] === 'all') ? 'active' : '' ?>" href="?<?php echo isset($_GET['sort']) ? 'sort=' . $_GET['sort'] : '' ?>">All Orders</a></li>
+                                    <li><a class="dropdown-item <?= isset($_GET['filter']) && $_GET['filter'] === 'pending' ? 'active' : '' ?>" href="?<?php echo isset($_GET['sort']) ? 'sort=' . $_GET['sort'] . '&' : '' ?>filter=pending">Pending</a></li>
+                                    <li><a class="dropdown-item <?= isset($_GET['filter']) && $_GET['filter'] === 'confirmed' ? 'active' : '' ?>" href="?<?php echo isset($_GET['sort']) ? 'sort=' . $_GET['sort'] . '&' : '' ?>filter=confirmed">Confirmed</a></li>
+                                    <li><a class="dropdown-item <?= isset($_GET['filter']) && $_GET['filter'] === 'preparing' ? 'active' : '' ?>" href="?<?php echo isset($_GET['sort']) ? 'sort=' . $_GET['sort'] . '&' : '' ?>filter=preparing">Preparing</a></li>
+                                    <li><a class="dropdown-item <?= isset($_GET['filter']) && $_GET['filter'] === 'ready' ? 'active' : '' ?>" href="?<?php echo isset($_GET['sort']) ? 'sort=' . $_GET['sort'] . '&' : '' ?>filter=ready">Ready</a></li>
+                                    <li><a class="dropdown-item <?= isset($_GET['filter']) && $_GET['filter'] === 'completed' ? 'active' : '' ?>" href="?<?php echo isset($_GET['sort']) ? 'sort=' . $_GET['sort'] . '&' : '' ?>filter=completed">Completed</a></li>
+                                    <li><a class="dropdown-item <?= isset($_GET['filter']) && $_GET['filter'] === 'cancelled' ? 'active' : '' ?>" href="?<?php echo isset($_GET['sort']) ? 'sort=' . $_GET['sort'] . '&' : '' ?>filter=cancelled">Cancelled</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item <?= isset($_GET['filter']) && $_GET['filter'] === 'gcash' ? 'active' : '' ?>" href="?<?php echo isset($_GET['sort']) ? 'sort=' . $_GET['sort'] . '&' : '' ?>filter=gcash">GCash Payment</a></li>
+                                    <li><a class="dropdown-item <?= isset($_GET['filter']) && $_GET['filter'] === 'cash' ? 'active' : '' ?>" href="?<?php echo isset($_GET['sort']) ? 'sort=' . $_GET['sort'] . '&' : '' ?>filter=cash">Cash on Delivery</a></li>
+                                </ul>
+                            </div>
+                            
+                            <a href="/menu" class="btn btn-success">
+                                <i class="bi bi-plus-circle me-2"></i>New Order
+                            </a>
+                        </div>
                     </div>
                 </div>
                 
                 <div class="row">
                     <?php foreach ($orders as $order): ?>
-                        <div class="col-lg-6 mb-4">
+                        <div class="col-lg-3 col-md-6 mb-4">
                             <div class="card h-100">
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-0 fw-bold"><?= htmlspecialchars($order['order_number']) ?></h6>
+                                <?php if (!empty($order['first_product_image'])): ?>
+                                    <img src="/assets/images/products/<?= htmlspecialchars($order['first_product_image']) ?>" 
+                                         class="card-img-top" 
+                                         alt="Product Image"
+                                         style="height: 150px; object-fit: cover;"
+                                         onerror="this.src='/assets/images/placeholder-product.jpg';">
+                                <?php endif; ?>
+                                <div class="card-body p-3">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h6 class="mb-1 fw-bold"><?= htmlspecialchars($order['order_number']) ?></h6>
+                                            <?php if (!empty($order['first_product_name'])): ?>
+                                                <small class="text-primary d-block">
+                                                    <i class="bi bi-box me-1"></i>
+                                                    <?= htmlspecialchars($order['first_product_name']) ?>
+                                                </small>
+                                            <?php endif; ?>
+                                        </div>
+                                        <span class="badge <?= Order::getStatusBadgeClass($order['status']) ?> mb-2">
+                                            <?= Order::getStatusText($order['status']) ?>
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="mb-2">
                                         <small class="text-muted">
                                             <i class="bi bi-calendar3 me-1"></i>
                                             <?= date('M d, Y h:i A', strtotime($order['created_at'])) ?>
                                         </small>
                                     </div>
-                                    <span class="badge <?= Order::getStatusBadgeClass($order['status']) ?>">
-                                        <?= Order::getStatusText($order['status']) ?>
-                                    </span>
-                                </div>
-                                
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <small class="text-muted d-block mb-1">Items (<?= $order['item_count'] ?>):</small>
-                                        <p class="mb-0 small"><?= htmlspecialchars($order['items_summary'] ?? 'No items') ?></p>
-                                    </div>
                                     
                                     <div class="row">
-                                        <div class="col-6">
-                                            <small class="text-muted d-block">Total Amount:</small>
-                                            <h5 class="mb-0 text-primary">₱<?= number_format($order['total_amount'], 2) ?></h5>
+                                        <div class="col-12">
+                                            <small class="text-muted d-block">Total:</small>
+                                            <h6 class="mb-2 text-primary">₱<?= number_format($order['total_amount'], 2) ?></h6>
                                         </div>
-                                        <div class="col-6">
+                                        <div class="col-12">
                                             <small class="text-muted d-block">Payment:</small>
-                                            <p class="mb-0 small text-capitalize"><?= htmlspecialchars($order['payment_method']) ?></p>
+                                            <p class="mb-2 small text-capitalize"><?= htmlspecialchars($order['payment_method']) ?></p>
                                         </div>
                                     </div>
                                 </div>
@@ -85,7 +141,7 @@ ob_start();
                                             <i class="bi bi-eye me-1"></i>View Details
                                         </a>
                                         
-                                        <?php if (in_array($order['status'], ['pending', 'confirmed'])): ?>
+                                        <?php if (in_array($order['status'], ['pending', 'confirmed']) && $order['payment_method'] !== 'gcash'): ?>
                                             <button class="btn btn-outline-danger btn-sm cancel-order-btn" 
                                                     data-order-id="<?= $order['id'] ?>"
                                                     data-order-number="<?= htmlspecialchars($order['order_number']) ?>">
@@ -191,5 +247,9 @@ document.addEventListener('DOMContentLoaded', function() {
 <?php
 $content = ob_get_clean();
 $title = 'My Orders - MacCafe';
+
+// Load constants for the layout
+require_once __DIR__ . '/../../config/constants.php';
+
 include __DIR__ . '/../layouts/main.php';
 ?>

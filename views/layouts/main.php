@@ -21,21 +21,7 @@
     <!-- Navigation -->
     <?php include __DIR__ . '/header.php'; ?>
     
-    <!-- Flash Messages -->
-    <?php if (Session::getFlash('success')): ?>
-        <div class="alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 9999;" role="alert">
-            <?= Session::getFlash('success') ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php endif; ?>
-    
-    <?php if (Session::getFlash('error')): ?>
-        <div class="alert alert-danger alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 9999;" role="alert">
-            <?= Session::getFlash('error') ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php endif; ?>
-    
+        
     <!-- Main Content -->
     <main>
         <?= $content ?? '' ?>

@@ -31,7 +31,7 @@ class User extends Model {
     
     public static function getProfile($userId) {
         $stmt = self::query(
-            "SELECT id, first_name, last_name, email, phone, address, role, created_at 
+            "SELECT id, first_name, last_name, email, phone, address, role, email_verified_at, created_at 
              FROM users WHERE id = ?", 
             [$userId]
         );

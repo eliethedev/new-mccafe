@@ -127,6 +127,7 @@ class AuthController extends Controller {
             'email' => $data['email'],
             'password' => $data['password'],
             'phone' => $data['phone'] ?? null,
+            'address' => $data['address'] ?? null,
             'role' => ROLE_CUSTOMER
         ];
         
@@ -139,12 +140,16 @@ class AuthController extends Controller {
             $emailSent = $email->sendVerificationEmail($data['email'], $data['first_name'], $token);
             
             if ($emailSent) {
-                Session::flash('success', 'Registration successful! Please check your email to verify your account before logging in.');
+                Session::flash('success', 'Registration successful! Please check your email to verify your account.');
             } else {
                 Session::flash('warning', 'Registration successful! However, we couldn\'t send the verification email. Please contact support.');
             }
             
-            return $this->redirect('/login');
+            // Store user info for resend verification functionality
+            Session::flash('new_user_id', $userId);
+            Session::flash('new_user_email', $data['email']);
+            
+            return $this->redirect('/verify-email');
         } else {
             Session::flash('error', 'Registration failed. Please try again.');
             return $this->redirect('/register');
@@ -264,20 +269,33 @@ class AuthController extends Controller {
     public function verifyEmail(Request $request) {
         $token = $request->getQuery('token');
         
+        // If no token, show the verification page
         if (!$token) {
-            Session::flash('error', 'Invalid verification link.');
-            return $this->redirect('/login');
+            return $this->view('auth/verify-email');
         }
         
+        // Process email verification
         $userId = User::verifyEmail($token);
         
         if ($userId) {
-            Session::flash('success', 'Email verified successfully! You can now login.');
+            Session::flash('success', 'Email verified successfully! You can now login with your account.');
+            
+            // Check if there's a redirect URL after verification
+            $redirectUrl = Session::get('redirect_after_verification');
+            if ($redirectUrl) {
+                Session::remove('redirect_after_verification');
+                Session::flash('success', 'Email verified successfully! You can now login and proceed with payment proof upload.');
+            }
+            
+            // Ensure session data is written before redirect
+            session_write_close();
+            
+            return $this->redirect('/login');
         } else {
             Session::flash('error', 'Invalid or expired verification link.');
+            session_write_close();
+            return $this->redirect('/login');
         }
-        
-        return $this->redirect('/login');
     }
     
     public function resendVerification(Request $request) {
@@ -296,6 +314,6 @@ class AuthController extends Controller {
             Session::flash('error', 'Failed to send verification email. Please try again later.');
         }
         
-        return $this->redirect('/login');
+        return $this->redirect('/verify-email');
     }
 }

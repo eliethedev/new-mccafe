@@ -3,32 +3,54 @@
 class Order extends Model {
     protected $table = 'orders';
     protected $primaryKey = 'id';
-    
-    public static function getUserOrders($userId, $page = 1, $limit = 10) {
+
+    /**
+     * Get paginated orders for a user
+     */
+    public static function getUserOrders($userId, $page = 1, $limit = 10)
+    {
+        $page  = max(1, (int)$page);
+        $limit = max(1, min(50, (int)$limit)); // security: reasonable limit
         $offset = ($page - 1) * $limit;
-        
+
+        $sql = "SELECT 
+                    o.id, o.order_number, o.user_id, o.status, o.subtotal, o.tax_amount, 
+                    o.total_amount, o.payment_method, o.payment_status, o.customer_name, 
+                    o.customer_phone, o.customer_email, o.customer_address, o.customer_city, 
+                    o.notes, o.prepared_by, o.preparation_started_at, o.ready_at, 
+                    o.completed_at, o.created_at, o.updated_at,
+                    (SELECT p.image 
+                     FROM order_items oi 
+                     LEFT JOIN products p ON oi.product_id = p.id 
+                     WHERE oi.order_id = o.id 
+                     LIMIT 1) as first_product_image,
+                    (SELECT oi.product_name 
+                     FROM order_items oi 
+                     WHERE oi.order_id = o.id 
+                     LIMIT 1) as first_product_name
+                FROM orders o
+                WHERE o.user_id = ?
+                ORDER BY o.created_at DESC
+                LIMIT ? OFFSET ?";
+
+        $stmt = self::query($sql, [$userId, $limit, $offset]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Get total count of orders for a user (for pagination)
+     */
+    public static function getUserOrderCount($userId)
+    {
         $stmt = self::query(
-            "SELECT o.*, 
-                    COUNT(oi.id) as item_count,
-                    GROUP_CONCAT(CONCAT(oi.product_name, ' (', oi.quantity, ')') SEPARATOR ', ') as items_summary
-             FROM orders o
-             LEFT JOIN order_items oi ON o.id = oi.order_id
-             WHERE o.user_id = ?
-             GROUP BY o.id
-             ORDER BY o.created_at DESC
-             LIMIT ? OFFSET ?", 
-            [$userId, $limit, $offset]
+            "SELECT COUNT(*) as total FROM orders WHERE user_id = ?", 
+            [$userId]
         );
-        
-        return $stmt->fetchAll();
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)($result['total'] ?? 0);
     }
-    
-    public static function getUserOrderCount($userId) {
-        $stmt = self::query("SELECT COUNT(*) as count FROM orders WHERE user_id = ?", [$userId]);
-        $result = $stmt->fetch();
-        return $result['count'];
-    }
-    
     public static function getOrderById($orderId, $userId = null) {
         $query = "SELECT o.*, u.first_name, u.last_name, u.email, u.phone
                   FROM orders o
@@ -74,6 +96,7 @@ class Order extends Model {
             'customer_name' => $data['customer_name'],
             'customer_phone' => $data['customer_phone'],
             'customer_email' => $data['customer_email'],
+            'customer_address' => $data['customer_address'] ?? null,
             'notes' => $data['notes'] ?? null
         ];
         

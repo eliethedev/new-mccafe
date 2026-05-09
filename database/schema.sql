@@ -100,6 +100,8 @@ CREATE TABLE orders (
     customer_name VARCHAR(200),
     customer_phone VARCHAR(20),
     customer_email VARCHAR(150),
+    customer_address VARCHAR(255),
+    customer_city VARCHAR(100),
     notes TEXT,
     prepared_by INT NULL COMMENT 'Staff who prepared the order',
     preparation_started_at TIMESTAMP NULL,
@@ -357,3 +359,8 @@ CREATE TABLE payment_proofs (
 -- Update orders table to support manual payment
 ALTER TABLE orders 
 MODIFY COLUMN payment_method ENUM('cash', 'card', 'gcash', 'paymaya', 'bank_transfer') DEFAULT 'gcash';
+
+-- Add address columns to existing orders table
+ALTER TABLE orders 
+ADD COLUMN customer_address VARCHAR(255) AFTER customer_email,
+ADD COLUMN customer_city VARCHAR(100) AFTER customer_address;

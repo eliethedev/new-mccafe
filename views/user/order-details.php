@@ -64,9 +64,10 @@ ob_start();
                                                 <td>
                                                     <div class="d-flex align-items-center">
                                                         <?php if ($item['image']): ?>
-                                                            <img src="/public/assets/images/products/<?= htmlspecialchars($item['image']) ?>" 
+                                                            <img src="/assets/images/products/<?= htmlspecialchars($item['image']) ?>" 
                                                                  alt="<?= htmlspecialchars($item['product_name']) ?>" 
-                                                                 class="me-3" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                                                                 class="me-3" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;"
+                                                                 onerror="this.src='/assets/images/placeholder-product.jpg';">
                                                         <?php else: ?>
                                                             <div class="me-3 bg-light d-flex align-items-center justify-content-center" 
                                                                  style="width: 50px; height: 50px; border-radius: 8px;">
@@ -189,12 +190,19 @@ ob_start();
                             </h6>
                         </div>
                         <div class="card-body">
-                            <?php if (in_array($order['status'], ['pending', 'confirmed'])): ?>
+                            <?php if (in_array($order['status'], ['pending', 'confirmed']) && strtolower($order['payment_method']) !== 'gcash'): ?>
                                 <button class="btn btn-danger w-100 mb-2 cancel-order-btn" 
                                         data-order-id="<?= $order['id'] ?>"
                                         data-order-number="<?= htmlspecialchars($order['order_number']) ?>">
                                     <i class="bi bi-x-circle me-2"></i>Cancel Order
                                 </button>
+                            <?php endif; ?>
+                            
+                            <?php if (strtolower($order['payment_method']) === 'gcash'): ?>
+                                <div class="alert alert-info small">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    <strong>No Cancellation Policy:</strong> Orders paid via GCash cannot be canceled.
+                                </div>
                             <?php endif; ?>
                             
                             <a href="/menu" class="btn btn-primary w-100 mb-2">

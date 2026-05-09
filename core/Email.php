@@ -1,5 +1,8 @@
 <?php
 
+// Use Composer autoloader instead of manual requires
+require_once __DIR__ . '/../vendor/autoload.php';
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
@@ -34,15 +37,16 @@ class Email {
     public function sendVerificationEmail($email, $name, $token) {
         try {
             $this->mailer->addAddress($email, $name);
-            $this->mailer->Subject = 'Verify Your Email - MacCafe';
+            $this->mailer->Subject = 'Verify Your Email - McCafe';
             
-            $verificationUrl = "http://localhost/maccafe-mor-demo/verify-email?token=" . urlencode($token);
+            $config = require __DIR__ . '/../config/config.php';
+$verificationUrl = $config['app']['url'] . "/verify-email?token=" . urlencode($token);
             
             $this->mailer->Body = "
                 <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
-                    <h2 style='color: #8B4513;'>Welcome to MacCafe!</h2>
+                    <h2 style='color: #8B4513;'>Welcome to MCCafe!</h2>
                     <p>Hi {$name},</p>
-                    <p>Thank you for registering with MacCafe Ordering System. To complete your registration and start placing orders, please verify your email address.</p>
+                    <p>Thank you for registering with McCafe Ordering System. To complete your registration and start placing orders, please verify your email address.</p>
                     
                     <div style='text-align: center; margin: 30px 0;'>
                         <a href='{$verificationUrl}' style='background-color: #8B4513; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;'>Verify Email Address</a>
@@ -54,22 +58,22 @@ class Email {
                     <p><strong>Note:</strong> This verification link will expire in 24 hours.</p>
                     
                     <hr style='border: none; border-top: 1px solid #eee; margin: 30px 0;'>
-                    <p style='color: #666; font-size: 14px;'>If you didn't create an account with MacCafe, you can safely ignore this email.</p>
+                    <p style='color: #666; font-size: 14px;'>If you didn't create an account with McCafe, you can safely ignore this email.</p>
                 </div>
             ";
             
             $this->mailer->AltBody = "
-                Welcome to MacCafe!
+                Welcome to McCafe!
                 
                 Hi {$name},
                 
-                Thank you for registering with MacCafe Ordering System. To complete your registration, please visit this link:
+                Thank you for registering with McCafe Ordering System. To complete your registration, please visit this link:
                 
                 {$verificationUrl}
                 
                 This verification link will expire in 24 hours.
                 
-                If you didn't create an account with MacCafe, you can safely ignore this email.
+                If you didn't create an account with McCafe, you can safely ignore this email.
             ";
             
             return $this->mailer->send();
@@ -83,7 +87,7 @@ class Email {
     public function sendOrderConfirmation($email, $name, $orderData) {
         try {
             $this->mailer->addAddress($email, $name);
-            $this->mailer->Subject = "Order Confirmation - MacCafe Order #{$orderData['order_number']}";
+            $this->mailer->Subject = "Order Confirmation - McCafe Order #{$orderData['order_number']}";
             
             $this->mailer->Body = "
                 <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
@@ -110,7 +114,7 @@ class Email {
                     <p>You can track your order status by logging into your account.</p>
                     
                     <hr style='border: none; border-top: 1px solid #eee; margin: 30px 0;'>
-                    <p style='color: #666; font-size: 14px;'>Thank you for choosing MacCafe!</p>
+                    <p style='color: #666; font-size: 14px;'>Thank you for choosing McCafe!</p>
                 </div>
             ";
             
@@ -134,7 +138,7 @@ class Email {
                 
                 You can track your order status by logging into your account.
                 
-                Thank you for choosing MacCafe!
+                Thank you for choosing McCafe!
             ";
             
             return $this->mailer->send();

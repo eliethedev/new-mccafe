@@ -14,9 +14,21 @@ class OrderController extends Controller {
         $page = $request->getQuery('page', 1);
         $limit = 10;
         
-        $orders = Order::getUserOrders($userId, $page, $limit);
-        $totalOrders = Order::getUserOrderCount($userId);
-        $totalPages = ceil($totalOrders / $limit);
+        try {
+            $orders = Order::getUserOrders($userId, $page, $limit);
+            $totalOrders = Order::getUserOrderCount($userId);
+            $totalPages = ceil($totalOrders / $limit);
+            
+        } catch (Exception $e) {
+            // Handle any errors gracefully
+            error_log("OrderController error: " . $e->getMessage());
+            $orders = [];
+            $totalOrders = 0;
+            $totalPages = 0;
+            
+            // Show error message to user
+            Session::flash('message', 'Unable to load orders. Please try again later.');
+        }
         
         return $this->view('user/my-orders', [
             'title' => 'My Orders',

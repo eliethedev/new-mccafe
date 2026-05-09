@@ -23,6 +23,9 @@ if ($uri !== '/' && file_exists(__DIR__ . $uri)) {
 // Load configuration (this defines ROOT_PATH)
 require_once __DIR__ . '/../config/constants.php';
 
+// Load Composer autoloader
+require_once __DIR__ . '/../vendor/autoload.php';
+
 // Load core classes
 require_once ROOT_PATH . '/core/Session.php';
 require_once ROOT_PATH . '/core/Request.php';

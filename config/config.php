@@ -3,7 +3,7 @@
 return [
     'app' => [
         'name' => 'MacCafe Ordering System',
-        'url' => 'http://localhost/maccafe-mor-demo',
+        'url' => 'http://localhost:8000',
         'timezone' => 'Asia/Manila',
         'debug' => true,
     ],
@@ -40,9 +40,9 @@ return [
     'email' => [
         'host' => 'smtp.gmail.com',
         'port' => 587,
-        'username' => 'your-email@gmail.com', // Update with your email
-        'password' => 'your-app-password',    // Update with your app password
-        'from_name' => 'MacCafe Ordering System',
-        'from_email' => 'your-email@gmail.com', // Update with your email
+        'username' => 'eliezersantillan648@gmail.com', // Update with your email
+        'password' => 'hyzk efov pklc oejr',    // Replace with generated App Password
+        'from_name' => 'mccafe',
+        'from_email' => 'eliezersantillan648@gmail.com', // Update with your email
     ],
 ];

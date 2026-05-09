@@ -11,10 +11,12 @@
                         <p class="text-muted">Join MacCafe today</p>
                     </div>
                     
-                    <?php if (Session::getFlash('errors')): ?>
+                    <?php 
+$errors = Session::getFlash('errors');
+if ($errors && is_array($errors)): ?>
                         <div class="alert alert-danger">
-                            <?php foreach (Session::getFlash('errors') as $field => $errors): ?>
-                                <?php foreach ($errors as $error): ?>
+                            <?php foreach ($errors as $field => $fieldErrors): ?>
+                                <?php foreach ($fieldErrors as $error): ?>
                                     <small><?= $error ?></small><br>
                                 <?php endforeach; ?>
                             <?php endforeach; ?>
@@ -54,12 +56,7 @@
                                    value="<?= Session::getFlash('old.address') ?? '' ?>" required>
                         </div>
                         
-                        <div class="mb-3">
-                            <label for="city" class="form-label">City</label>
-                            <input type="text" class="form-control" id="city" name="city" 
-                                   value="<?= Session::getFlash('old.city') ?? '' ?>" required>
-                        </div>
-                        
+                                                
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
                             <input type="password" class="form-control" id="password" name="password" required>

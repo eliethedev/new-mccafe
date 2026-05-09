@@ -17,6 +17,9 @@ class Controller {
             throw new Exception("View template not found: $template");
         }
         
+        // Store view data for debugging
+        $GLOBALS['__view_data'] = $data;
+        
         ob_start();
         include $templatePath;
         $content = ob_get_clean();

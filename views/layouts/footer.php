@@ -2,7 +2,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-4">
-                <h5><i class="bi bi-cup-hot-fill me-2"></i>MacCafe</h5>
+                <h5><i class="bi bi-cup-hot-fill me-2"></i>MCCafe</h5>
                 <p class="text-white">Your favorite cafe ordering system. Fresh coffee, delicious food, delivered with love.</p>
             </div>
             <div class="col-md-4">
@@ -19,7 +19,7 @@
                 <p class="text-white">
                     <i class="bi bi-geo-alt me-2"></i>123 Cafe Street, Manila, Philippines<br>
                     <i class="bi bi-telephone me-2"></i>+63 2 1234 5678<br>
-                    <i class="bi bi-envelope me-2"></i>info@maccafe.com
+                    <i class="bi bi-envelope me-2"></i>info@mccafe.com
                 </p>
                 <div>
                     <a href="#" class="text-white me-3"><i class="bi bi-facebook fs-5"></i></a>
@@ -30,7 +30,7 @@
         </div>
         <hr class="border-secondary">
         <div class="text-center">
-            <p class="text-white mb-0">&copy; <?= date('Y') ?> MacCafe Ordering System. All rights reserved.</p>
+            <p class="text-white mb-0">&copy; <?= date('Y') ?> MCCafe Ordering System. All rights reserved.</p>
         </div>
     </div>
 </footer>
