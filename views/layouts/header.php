@@ -2,12 +2,12 @@
 <style>/* MacCafe Custom Styles */
 
 :root {
-    --maccafe-primary: #ffc107;
+    --maccafe-primary: #e09407;
     --maccafe-secondary: #6c757d;
     --maccafe-accent: #ffc107;
     --maccafe-dark: #343a40;
     --maccafe-light: #f8f9fa;
-    --primary: #ffc107;
+    --primary: #e09407;
 }
 
 body {
@@ -311,6 +311,186 @@ footer a:hover {
 .status-completed { background-color: #6c757d; }
 .status-cancelled { background-color: #dc3545; }
 
+/* Enhanced User Dropdown Styles */
+.user-dropdown {
+    position: relative;
+}
+
+.user-dropdown .nav-link {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 25px;
+    padding: 8px 16px !important;
+    margin: 0 5px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.user-dropdown .nav-link:hover {
+    background: linear-gradient(135deg, var(--maccafe-primary), #ffb300);
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+    border-color: var(--maccafe-primary);
+}
+
+.user-dropdown .nav-link i {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.user-dropdown .nav-link:hover i {
+    transform: scale(1.1);
+}
+
+.user-dropdown .dropdown-menu {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    background: white;
+    padding: 10px;
+    margin-top: 10px;
+    min-width: 220px;
+    animation: dropdownSlide 0.3s ease;
+}
+
+@keyframes dropdownSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.user-dropdown .dropdown-item {
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 2px 0;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+    font-weight: 500;
+}
+
+.user-dropdown .dropdown-item:hover {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    color: var(--maccafe-dark) !important;
+    transform: translateX(5px);
+    border-left-color: var(--maccafe-primary);
+}
+
+.user-dropdown .dropdown-item i {
+    margin-right: 8px;
+    font-size: 1.1rem;
+}
+
+.dropdown-divider {
+    margin: 8px 0;
+    border-color: #e9ecef;
+}
+
+.logout-btn {
+    background: linear-gradient(135deg, #dc3545, #c82333) !important;
+    color: white !important;
+    border: none;
+    border-radius: 10px !important;
+    margin-top: 5px;
+}
+
+.logout-btn:hover {
+    background: linear-gradient(135deg, #c82333, #bd2130) !important;
+    transform: translateX(5px) scale(1.02);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+/* Enhanced Cart Icon Styles */
+.cart-icon-wrapper {
+    position: relative;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 25px;
+    padding: 8px 16px !important;
+    margin: 0 5px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.cart-icon-wrapper:hover {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+    border-color: #28a745;
+}
+
+.cart-icon-wrapper .nav-link {
+    color: inherit !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.cart-icon-wrapper i {
+    font-size: 1.3rem;
+    transition: transform 0.3s ease;
+}
+
+.cart-icon-wrapper:hover i {
+    transform: scale(1.1);
+}
+
+#cart-count {
+    font-size: 0.65rem;
+    padding: 3px 7px;
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+    animation: pulse 2s infinite;
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+    }
+    50% {
+        box-shadow: 0 2px 12px rgba(220, 53, 69, 0.6);
+        transform: scale(1.05);
+    }
+    100% {
+        box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+    }
+}
+
+/* Auth Buttons Styles */
+.auth-btn {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border: 2px solid transparent;
+    border-radius: 25px;
+    padding: 8px 20px !important;
+    margin: 0 5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    font-weight: 500;
+}
+
+.auth-btn:hover {
+    background: linear-gradient(135deg, var(--maccafe-primary), #ffb300);
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+    border-color: var(--maccafe-primary);
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     .hero-section h1 {
@@ -324,6 +504,17 @@ footer a:hover {
     .cart-sidebar {
         width: 100%;
         right: -100%;
+    }
+    
+    .user-dropdown .nav-link,
+    .cart-icon-wrapper,
+    .auth-btn {
+        margin: 2px;
+        padding: 6px 12px !important;
+    }
+    
+    .user-dropdown .dropdown-menu {
+        min-width: 200px;
     }
 }
 
@@ -348,7 +539,7 @@ footer a:hover {
 </style>
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
     <div class="container">
-<div class="logo"><h1 style="color: black;">MC<b style="color: orange;">Caffe</b></h1></div>
+<div class="logo"><h1 class="text-dark">MC<b style="color: orange;">Caffe</b></h1></div>
         
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -369,26 +560,26 @@ footer a:hover {
                     <a class="nav-link text-dark" href="/#contact">Contact</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="/#about">About Us</a>
+                    <a class="nav-link text-dark" href="/#about-us">About Us</a>
                 </li>
             </ul>
             
             <ul class="navbar-nav">
                 <?php if (Session::has('user')): ?>
-                    <li class="nav-item dropdown">
+                    <li class="nav-item user-dropdown">
                         <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="bi bi-person-circle me-1"></i>
                             <?= Session::get('user.first_name') ?>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item text-dark" href="/dashboard">Dashboard</a></li>
-                            <li><a class="dropdown-item text-dark" href="/orders">My Orders</a></li>
-                            <li><a class="dropdown-item text-dark" href="/profile">Profile</a></li>
+                            <li><a class="dropdown-item text-dark" href="/dashboard"><i class="bi bi-speedometer2"></i>Dashboard</a></li>
+                            <li><a class="dropdown-item text-dark" href="/orders"><i class="bi bi-bag-check"></i>My Orders</a></li>
+                            <li><a class="dropdown-item text-dark" href="/profile"><i class="bi bi-person-gear"></i>Profile</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form action="/logout" method="POST" style="display: inline;">
-                                    <button type="submit" class="dropdown-item text-dark" style="border: none; background: none; width: 100%; text-align: left; padding: 0.25rem 1rem; cursor: pointer;">
-                                        <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                    <button type="submit" class="dropdown-item text-dark logout-btn" style="border: none; background: none; width: 100%; text-align: left; padding: 0.25rem 1rem; cursor: pointer;">
+                                        <i class="bi bi-box-arrow-right"></i>Logout
                                     </button>
                                 </form>
                             </li>
@@ -396,14 +587,14 @@ footer a:hover {
                     </li>
                 <?php else: ?>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="/login">Login</a>
+                        <a class="nav-link text-dark auth-btn" href="/login">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="/register">Register</a>
+                        <a class="nav-link text-dark auth-btn" href="/register">Register</a>
                     </li>
                 <?php endif; ?>
                 
-                <li class="nav-item">
+                <li class="nav-item cart-icon-wrapper">
                     <a class="nav-link position-relative text-dark" href="/cart">
                         <i class="bi bi-cart3"></i>
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-count">

@@ -1,5 +1,6 @@
 <?php 
 require_once __DIR__ . '/../../models/Order.php';
+require_once __DIR__ . '/../components/order-status-tracker.php';
 ob_start(); 
 ?>
 
@@ -27,7 +28,13 @@ ob_start();
                             </span>
                         </div>
                         
+                        <!-- Visual Status Tracker -->
                         <div class="card-body">
+                            <?php renderOrderStatusTracker($order['status'], $order); ?>
+                        </div>
+                        
+                        <!-- Order Details -->
+                        <div class="card-body border-top">
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <small class="text-muted">Order Date:</small>
@@ -177,6 +184,12 @@ ob_start();
                                 <p class="mb-0">
                                     <strong>Email:</strong><br>
                                     <?= htmlspecialchars($order['customer_email']) ?>
+                                </p>
+                            <?php endif; ?>
+                              <?php if ($order['customer_address']): ?>
+                                <p class="mb-0">
+                                    <strong>Address:</strong><br>
+                                    <?= htmlspecialchars($order['customer_address']) ?>
                                 </p>
                             <?php endif; ?>
                         </div>

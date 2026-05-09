@@ -82,8 +82,12 @@ $router->delete('/admin/products/variants/{id}', 'ProductController@deleteVarian
 
 // Orders management
 $router->get('/admin/orders', 'OrderController@adminIndex', [AdminMiddleware::class]);
-$router->get('/admin/orders/{id}', 'OrderController@adminShow', [AdminMiddleware::class]);
 $router->post('/admin/orders/{id}/status', 'OrderController@updateStatus', [AdminMiddleware::class]);
+$router->get('/admin/orders/{id}/payment-proof', 'OrderController@getPaymentProof', [AdminMiddleware::class]);
+$router->post('/admin/orders/verify-payment', 'OrderController@verifyPayment', [AdminMiddleware::class]);
+$router->post('/admin/orders/process-refund', 'OrderController@processRefund', [AdminMiddleware::class]);
+$router->get('/admin/orders/{id}', 'OrderController@adminShow', [AdminMiddleware::class]);
+
 
 // Users management
 $router->get('/admin/users', 'UserController@adminIndex', [AdminMiddleware::class]);

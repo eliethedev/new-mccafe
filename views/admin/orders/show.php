@@ -133,35 +133,7 @@
             </div>
         </div>
 
-        <!-- Status Update -->
-        <?php if ($order['status'] !== 'completed' && $order['status'] !== 'cancelled'): ?>
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Update Status</h5>
-            </div>
-            <div class="card-body">
-                <form method="POST" action="/admin/orders/<?= $order['id'] ?>/status">
-                    <div class="mb-3">
-                        <label for="status" class="form-label">New Status</label>
-                        <select class="form-select" name="status" required>
-                            <option value="">Select Status</option>
-                            <option value="pending" <?= $order['status'] === 'pending' ? 'selected' : '' ?>>Pending</option>
-                            <option value="confirmed">Confirmed</option>
-                            <option value="preparing">Preparing</option>
-                            <option value="ready">Ready</option>
-                            <option value="completed">Completed</option>
-                            <option value="cancelled">Cancelled</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="notes" class="form-label">Notes</label>
-                        <textarea class="form-control" name="notes" rows="3" placeholder="Add notes about this status change..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Update Status</button>
-                </form>
-            </div>
-        </div>
-        <?php endif; ?>
+    
 
         <!-- Status History -->
         <div class="card">
@@ -204,7 +176,7 @@
 
 <?php
 $content = ob_get_clean();
-$title = 'Order Details - MacCafe';
+$title = 'Order Details - McCafe';
 $currentPage = 'orders';
 include __DIR__ . '/../layout.php';
 ?>

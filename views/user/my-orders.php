@@ -1,4 +1,5 @@
-<?php
+<?php 
+require_once __DIR__ . '/../components/order-status-tracker.php';
 ob_start(); 
 ?>
 
@@ -101,6 +102,8 @@ ob_start();
                                          onerror="this.src='/assets/images/placeholder-product.jpg';">
                                 <?php endif; ?>
                                 <div class="card-body p-3">
+                                    <?php renderCompactStatusIndicator($order['status']); ?>
+                                    
                                     <div class="d-flex justify-content-between align-items-start mb-2">
                                         <div>
                                             <h6 class="mb-1 fw-bold"><?= htmlspecialchars($order['order_number']) ?></h6>

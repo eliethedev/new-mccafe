@@ -58,6 +58,12 @@ class User extends Model {
         return $result['count'];
     }
     
+    public static function getTotalCustomers() {
+        $stmt = self::query("SELECT COUNT(*) as total FROM users WHERE role = 'customer'");
+        $result = $stmt->fetch();
+        return (int)($result['total'] ?? 0);
+    }
+    
     public static function recordLoginAttempt($email, $ipAddress, $userAgent, $success) {
         self::query(
             "INSERT INTO login_attempts (email, ip_address, user_agent, success) 

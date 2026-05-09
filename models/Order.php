@@ -202,4 +202,102 @@ class Order extends Model {
         
         return $texts[$status] ?? 'Unknown';
     }
+    
+    /**
+     * Get total amount spent by a user
+     */
+    public static function getUserTotalSpent($userId)
+    {
+        $stmt = self::query(
+            "SELECT COALESCE(SUM(total_amount), 0) as total FROM orders WHERE user_id = ? AND status IN ('completed', 'ready')", 
+            [$userId]
+        );
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return floatval($result['total'] ?? 0);
+    }
+    
+    /**
+     * Get recent orders for a user
+     */
+    public static function getUserRecentOrders($userId, $limit = 5)
+    {
+        $sql = "SELECT o.id, o.order_number, o.status, o.total_amount, o.created_at
+                FROM orders o
+                WHERE o.user_id = ?
+                ORDER BY o.created_at DESC
+                LIMIT ?";
+        
+        $stmt = self::query($sql, [$userId, $limit]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Get total order count (admin)
+     */
+    public static function getTotalOrderCount()
+    {
+        $stmt = self::query("SELECT COUNT(*) as total FROM orders");
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)($result['total'] ?? 0);
+    }
+    
+    /**
+     * Get pending order count
+     */
+    public static function getPendingOrderCount()
+    {
+        $stmt = self::query("SELECT COUNT(*) as total FROM orders WHERE status = 'pending'");
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)($result['total'] ?? 0);
+    }
+    
+    /**
+     * Get total revenue
+     */
+    public static function getTotalRevenue()
+    {
+        $stmt = self::query("SELECT COALESCE(SUM(total_amount), 0) as total FROM orders WHERE status IN ('completed', 'ready')");
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return floatval($result['total'] ?? 0);
+    }
+    
+    /**
+     * Get recent orders (admin)
+     */
+    public static function getRecentOrders($limit = 10)
+    {
+        $sql = "SELECT o.id, o.order_number, o.customer_name, o.customer_phone, o.status, o.total_amount, o.created_at
+                FROM orders o
+                ORDER BY o.created_at DESC
+                LIMIT ?";
+        
+        $stmt = self::query($sql, [$limit]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Get urgent orders (pending orders)
+     */
+    public static function getUrgentOrders($limit = 5)
+    {
+        $sql = "SELECT o.id, o.order_number, o.customer_name, o.customer_phone, o.status, o.total_amount, o.created_at
+                FROM orders o
+                WHERE o.status = 'pending'
+                ORDER BY o.created_at ASC
+                LIMIT ?";
+        
+        $stmt = self::query($sql, [$limit]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Get order item count
+     */
+    public static function getOrderItemCount($orderId)
+    {
+        $stmt = self::query("SELECT COUNT(*) as total FROM order_items WHERE order_id = ?", [$orderId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)($result['total'] ?? 0);
+    }
 }

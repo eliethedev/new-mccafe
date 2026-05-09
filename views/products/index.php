@@ -7,7 +7,7 @@
 <div class="container py-4" style="margin-top: 70px;">
     <div class="row mb-4">
         <div class="col-md-8">
-            <h1 class="h3 mb-0"><?= $title ?? 'Menu - MacCafe' ?></h1>
+            <h1 class="h3 mb-0"><?= $title ?? 'Menu - McCafe' ?></h1>
         </div>
         <div class="col-md-4">
             <form method="GET" class="d-flex">
@@ -424,6 +424,6 @@ function addModalProductToCart() {
 
 <?php
 $content = ob_get_clean();
-$title = $title ?? 'Menu - MacCafe';
+$title = $title ?? 'Menu - McCafe';
 include __DIR__ . '/../layouts/main.php';
 ?>
