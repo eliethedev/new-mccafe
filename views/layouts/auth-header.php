@@ -71,6 +71,44 @@
             border-radius: 10px;
             border: none;
         }
+
+        /* Enhanced Back to Home Button */
+        .btn-outline-secondary {
+            color: var(--maccafe-secondary);
+            border-color: var(--maccafe-secondary);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn-outline-secondary:hover {
+            color: white;
+            background-color: var(--maccafe-secondary);
+            border-color: var(--maccafe-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-outline-secondary i {
+            transition: transform 0.3s ease;
+        }
+
+        .btn-outline-secondary:hover i {
+            transform: translateX(-3px);
+        }
+
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+
+        .gap-2 {
+            gap: 0.5rem;
+        }
     </style>
 </head>
 <body>

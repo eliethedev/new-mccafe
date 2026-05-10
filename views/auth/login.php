@@ -5,34 +5,16 @@
         <div class="col-md-6 col-lg-4">
             <div class="card shadow">
                 <div class="card-body p-4">
-                    <div class="text-center mb-4">
-                        <i class="bi bi-cup-hot-fill fs-1 text-success"></i>
+                    <div class="text-center mb-2">
                         <h3 class="mt-2">Welcome Back</h3>
                         <p class="text-muted">Sign in to your account</p>
                     </div>
                     
-                    <!-- Registration Success Notification -->
-                    <?php if (Session::getFlash('registered')): ?>
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="bi bi-check-circle-fill me-2"></i>
-                            <strong>Registration Successful!</strong> Please sign in to your new account.
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    <?php endif; ?>
-                    
-                    <!-- Login Success Notification -->
-                    <?php if (Session::getFlash('logged_in')): ?>
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="bi bi-check-circle-fill me-2"></i>
-                            <strong>Welcome back!</strong> You have successfully logged in.
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    <?php endif; ?>
                     
                     <!-- Form Validation Errors -->
                     <?php 
-$errors = Session::getFlash('errors');
-if ($errors): ?>
+                    $errors = Session::getFlash('errors');
+                    if ($errors): ?>
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <i class="bi bi-exclamation-triangle-fill me-2"></i>
                             <strong>Please fix the following errors:</strong><br>
@@ -100,11 +82,16 @@ if ($errors): ?>
                                 <a href="/register" class="text-success text-decoration-none">Sign up</a>
                             </p>
                             <p class="mt-2">
-                                <a href="/forgot-password" class="text-decoration-none">Forgot password?</a>
+                                <a href="" class="text-decoration-none">Forgot password?</a>
                             </p>
                         </div>
                     </form>
-                    <button class="btn justify-content-center" onclick="window.location.href='/';">Go back to home</button>
+                    <div class="text-center mt-4">
+                        <a href="/" class="btn btn-outline-secondary d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill text-decoration-none transition-all hover-scale">
+                            <i class="bi bi-house-door-fill"></i>
+                            <span>Back to Home</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

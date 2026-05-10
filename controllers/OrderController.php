@@ -443,9 +443,9 @@ public function getPaymentProof(Request $request, $id) {
             $stmt = $this->query("SELECT proof_image, payment_method, amount FROM payment_proofs WHERE order_id = ? ORDER BY created_at DESC LIMIT 1", [$id]);
             $proofData = $stmt->fetch();
             
-            if ($proofData && $proofData['proof_image']) {
+            if ($proofData && !empty($proofData['proof_image'])) {
                 $proofImage = '/assets/images/payment-proofs/' . $proofData['proof_image'];
-                error_log("Found proof image in payment_proofs table: $proofImage");
+                error_log("Found proof image in payment_proofs table: " . $proofData['proof_image']);
             }
         } catch (Exception $e) {
             error_log("Error checking payment_proofs table: " . $e->getMessage());
@@ -454,7 +454,7 @@ public function getPaymentProof(Request $request, $id) {
         // If not found in payment_proofs, check payment_verifications table
         if (!$proofImage) {
             try {
-                $tableCheck = $this->query("SHOW TABLES LIKE 'payment_verifications'", []);
+                $tableCheck = $this->query("SHOW TABLES LIKE 'payment_verifications'");
                 $tableExists = $tableCheck->rowCount() > 0;
                 
                 if ($tableExists) {
@@ -476,23 +476,25 @@ public function getPaymentProof(Request $request, $id) {
         if (!$proofImage) {
             $uploadPath = __DIR__ . '/../public/assets/images/payment-proofs/';
             
-            // Check for files with order_id as prefix (timestamp naming pattern)
-            $files = glob($uploadPath . "{$id}_*");
+            // Check for files with order_id as prefix (timestamp naming pattern from checkout)
+            $files = glob($uploadPath . "*{$id}*");
             if (!empty($files)) {
                 $proofImage = '/assets/images/payment-proofs/' . basename($files[0]);
-                error_log("Found local proof image with order prefix: $proofImage");
+                error_log("Found local proof image with order ID pattern: $proofImage");
             } else {
-                // Check for the old naming pattern
+                // Check for the old naming patterns
                 $possibleFiles = [
+                    $uploadPath . "{$id}_*",
                     $uploadPath . "order_{$id}_proof.jpg",
                     $uploadPath . "order_{$id}_proof.png",
                     $uploadPath . "order_{$id}_proof.jpeg"
                 ];
                 
-                foreach ($possibleFiles as $file) {
-                    if (file_exists($file)) {
-                        $proofImage = '/assets/images/payment-proofs/' . basename($file);
-                        error_log("Found local proof image: $proofImage");
+                foreach ($possibleFiles as $filePattern) {
+                    $matchedFiles = glob($filePattern);
+                    if (!empty($matchedFiles)) {
+                        $proofImage = '/assets/images/payment-proofs/' . basename($matchedFiles[0]);
+                        error_log("Found local proof image with pattern: $proofImage");
                         break;
                     }
                 }
@@ -552,7 +554,7 @@ public function verifyPayment(Request $request) {
             error_log("Updated order payment_status to 'paid' for approved order: $orderId");
             
             // Also update payment_verifications table if it exists
-            $tableCheck = $this->query("SHOW TABLES LIKE 'payment_verifications'", []);
+            $tableCheck = $this->query("SHOW TABLES LIKE 'payment_verifications'");
             if ($tableCheck->rowCount() > 0) {
                 // Check if verification record exists
                 $existingCheck = $this->query("SELECT id FROM payment_verifications WHERE order_id = ?", [$orderId]);
@@ -587,7 +589,7 @@ public function verifyPayment(Request $request) {
             error_log("Updated order payment_status to 'unpaid' for rejected order: $orderId");
             
             // Also update payment_verifications table if it exists
-            $tableCheck = $this->query("SHOW TABLES LIKE 'payment_verifications'", []);
+            $tableCheck = $this->query("SHOW TABLES LIKE 'payment_verifications'");
             if ($tableCheck->rowCount() > 0) {
                 $existingCheck = $this->query("SELECT id FROM payment_verifications WHERE order_id = ?", [$orderId]);
                 if ($existingCheck->rowCount() > 0) {
@@ -618,7 +620,7 @@ public function verifyPayment(Request $request) {
 private function getPaymentVerifications($status = null) {
     try {
         // Check if payment_verifications table exists
-        $tableCheck = $this->query("SHOW TABLES LIKE 'payment_verifications'", []);
+        $tableCheck = $this->query("SHOW TABLES LIKE 'payment_verifications'");
         $tableExists = $tableCheck->rowCount() > 0;
         
         if ($tableExists) {
@@ -652,7 +654,7 @@ private function getPaymentVerifications($status = null) {
 private function getPaymentStats() {
     try {
         // Check if payment_verifications table exists
-        $tableCheck = $this->query("SHOW TABLES LIKE 'payment_verifications'", []);
+        $tableCheck = $this->query("SHOW TABLES LIKE 'payment_verifications'");
         $tableExists = $tableCheck->rowCount() > 0;
         
         if ($tableExists) {

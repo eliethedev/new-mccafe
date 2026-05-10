@@ -23,7 +23,7 @@ if ($errors && is_array($errors)): ?>
                         </div>
                     <?php endif; ?>
                     
-                    <form method="POST" action="/register">
+                    <form id="registerForm" method="POST" action="/register" onsubmit="return handleRegisterSubmit(event);">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="first_name" class="form-label">First Name</label>
@@ -84,6 +84,77 @@ if ($errors && is_array($errors)): ?>
         </div>
     </div>
 </div>
+
+<!-- Loading Screen -->
+<div id="loadingScreen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; backdrop-filter: blur(5px);">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: white;">
+        <div class="spinner-border text-light mb-3" style="width: 3rem; height: 3rem; border-width: 0.3em;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <h5 class="mb-2">Creating Your Account</h5>
+        <p class="mb-0 text-muted">Please wait while we process your registration...</p>
+    </div>
+</div>
+
+<script>
+let isSubmitting = false;
+
+function handleRegisterSubmit(event) {
+    // Prevent multiple submissions
+    if (isSubmitting) {
+        event.preventDefault();
+        return false;
+    }
+    
+    isSubmitting = true;
+    
+    // Show loading screen immediately
+    const loadingScreen = document.getElementById('loadingScreen');
+    loadingScreen.style.display = 'block';
+    
+    // Get form data BEFORE disabling inputs
+    const form = document.getElementById('registerForm');
+    const formData = new FormData(form);
+    
+    // Disable all form inputs AFTER capturing data
+    const inputs = form.querySelectorAll('input, button');
+    inputs.forEach(input => input.disabled = true);
+    
+    // Create and submit a new form with the captured data
+    setTimeout(() => {
+        const newForm = document.createElement('form');
+        newForm.method = 'POST';
+        newForm.action = '/register';
+        
+        // Add all form data to new form
+        for (let [key, value] of formData.entries()) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = value;
+            newForm.appendChild(input);
+        }
+        
+        // Submit the new form
+        document.body.appendChild(newForm);
+        newForm.submit();
+    }, 100);
+    
+    // Prevent original form submission
+    event.preventDefault();
+    return false;
+}
+
+// Prevent form resubmission on page reload
+if (window.history.replaceState) {
+    window.history.replaceState(null, null, window.location.href);
+}
+
+// Reset submitting flag on page load
+document.addEventListener('DOMContentLoaded', function() {
+    isSubmitting = false;
+});
+</script>
 
 <?php
 $content = ob_get_clean();

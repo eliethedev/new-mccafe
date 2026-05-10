@@ -389,7 +389,7 @@ $baseUrl = rtrim(APP_URL, '/') . '/assets/images/';
             <div class="col-lg-6">
                 <div class="card animate-on-scroll animate-scale animate-delay-2">
                     <div class="card-body">
-                        <form action="/contact" method="POST">
+                        <form id="contactForm" action="/home" method="POST" onsubmit="return handleContactSubmit(event);">
                             <div class="mb-3">
                                 <label for="name" class="form-label">Your Name</label>
                                 <input type="text" class="form-control" id="name" name="name" required>
@@ -514,6 +514,104 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// Contact Form Handler
+function handleContactSubmit(event) {
+    event.preventDefault();
+    
+    // Get form values
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const message = document.getElementById('message').value;
+    
+    // Create demo alert notification
+    showContactAlert(name, email, message);
+    
+    // Reset form
+    document.getElementById('contactForm').reset();
+    
+    return false;
+}
+
+function showContactAlert(name, email, message) {
+    // Create alert container if it doesn't exist
+    let alertContainer = document.getElementById('contactAlertContainer');
+    if (!alertContainer) {
+        alertContainer = document.createElement('div');
+        alertContainer.id = 'contactAlertContainer';
+        alertContainer.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 400px;
+        `;
+        document.body.appendChild(alertContainer);
+    }
+    
+    // Create alert element
+    const alert = document.createElement('div');
+    alert.className = 'alert alert-success alert-dismissible fade show';
+    alert.style.cssText = `
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        animation: slideInRight 0.3s ease-out;
+    `;
+    
+    alert.innerHTML = `
+        <div class="d-flex align-items-start">
+            <i class="bi bi-check-circle-fill me-2" style="color: #28a745; font-size: 1.2rem;"></i>
+            <div class="flex-grow-1">
+                <strong>Message Sent Successfully!</strong><br>
+                <small class="text-muted">
+                    Thank you <strong>${name}</strong> for contacting us!<br>
+                    We'll respond to <strong>${email}</strong> within 24 hours.<br>
+                    <em>Your message: "${message.substring(0, 50)}${message.length > 50 ? '...' : ''}"</em>
+                </small>
+            </div>
+            <button type="button" class="btn-close" onclick="this.parentElement.parentElement.remove()"></button>
+        </div>
+    `;
+    
+    // Add alert to container
+    alertContainer.appendChild(alert);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (alert.parentElement) {
+            alert.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => alert.remove(), 300);
+        }
+    }, 5000);
+}
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
 </script>
 
 <?php
