@@ -1,12 +1,12 @@
 /* MacCafe Custom Styles */
 
 :root {
-    --maccafe-primary: #e09407
+    --maccafe-primary: #d88911;
     --maccafe-secondary: #6c757d;
-    --maccafe-accent: #ffc107;
+    --maccafe-accent: #d88911;
     --maccafe-dark: #343a40;
     --maccafe-light: #f8f9fa;
-    --primary: #e09407;
+    --primary: #d88911;
 }
 
 body {

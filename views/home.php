@@ -5,12 +5,12 @@ $baseUrl = rtrim(APP_URL, '/') . '/assets/images/';
 <style>
     
 :root {
-    --maccafe-primary: #ffc107;
+    --maccafe-primary: #d88911;
     --maccafe-secondary: #6c757d;
-    --maccafe-accent: #ffc107;
+    --maccafe-accent: #d88911;
     --maccafe-dark: #343a40;
     --maccafe-light: #f8f9fa;
-    --primary: #ffc107;
+    --primary: #d88911;
 }
 
 /* Scroll Animations */
@@ -86,51 +86,354 @@ $baseUrl = rtrim(APP_URL, '/') . '/assets/images/';
     }
 }
 
-/* Popular items hover effect enhancement */
-.popular-item {
+/* Enhanced animations and transitions */
+.hero-content {
+    opacity: 0;
+    transform: translateX(-50px);
+    animation: slideInLeft 1s ease-out forwards;
+}
+
+.hero-section .swiper {
+    opacity: 0;
+    transform: translateX(50px);
+    animation: slideInRight 1s ease-out 0.3s forwards;
+}
+
+/* Enhanced hero button styles */
+.hero-btn {
+    position: relative;
+    overflow: hidden;
     transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    padding: 15px 35px;
+    border-radius: 50px;
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+}
+
+.hero-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(255, 193, 7, 0.4);
+    background: linear-gradient(45deg, #ffc107, #ffb300) !important;
+}
+
+.hero-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.hero-btn:hover::before {
+    left: 100%;
+}
+
+/* Enhanced popular items */
+.popular-item {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+}
+
+.popular-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.popular-item:hover::before {
+    opacity: 1;
 }
 
 .popular-item:hover {
-    transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    transform: translateY(-15px) scale(1.03);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.15);
 }
 
-/* Service box animations */
+.popular-item .card-img-top {
+    transition: transform 0.4s ease;
+    height: 200px;
+    object-fit: cover;
+}
+
+.popular-item:hover .card-img-top {
+    transform: scale(1.1);
+}
+
+.popular-item .card-body {
+    position: relative;
+    z-index: 2;
+}
+
+.popular-item .btn-add-cart {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.popular-item:hover .btn-add-cart {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Statistics section */
+.stats-section {
+    background: linear-gradient(135deg, var(--maccafe-primary), var(--maccafe-accent));
+    color: white;
+    padding: 60px 0;
+}
+
+.stat-item {
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.stat-label {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* Enhanced service box */
 .service-box {
     transition: all 0.3s ease;
+    padding: 30px 20px;
+    border-radius: 15px;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    height: 100%;
 }
 
 .service-box:hover {
     transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(255, 193, 7, 0.2);
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.05), rgba(255, 193, 7, 0.02));
 }
 
 .service-box i {
     transition: all 0.3s ease;
+    font-size: 3.5rem;
+    background: linear-gradient(135deg, var(--maccafe-primary), var(--maccafe-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .service-box:hover i {
     transform: scale(1.1) rotate(5deg);
 }
 
-/* Category cards animations */
+/* Enhanced menu category cards */
 .menu-category-card {
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 15px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
 }
 
 .menu-category-card:hover {
-    transform: translateY(-10px) scale(1.05);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(255, 193, 7, 0.15);
+    border-color: var(--maccafe-primary);
 }
 
-/* Contact form animations */
-.card {
+.menu-category-card .card-img-top {
+    transition: transform 0.4s ease;
+    height: 120px;
+    object-fit: cover;
+}
+
+.menu-category-card:hover .card-img-top {
+    transform: scale(1.1);
+}
+
+.menu-category-card .btn {
+    transition: all 0.3s ease;
+    border-radius: 25px;
+}
+
+.menu-category-card:hover .btn {
+    background: var(--maccafe-primary) !important;
+    border-color: var(--maccafe-primary) !important;
+    transform: translateX(5px);
+}
+
+/* Testimonials section */
+.testimonial-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    height: 100%;
+    position: relative;
+}
+
+.testimonial-card::before {
+    content: '"';
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    font-size: 4rem;
+    color: var(--maccafe-primary);
+    opacity: 0.2;
+    font-family: Georgia, serif;
+}
+
+.testimonial-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(255, 193, 7, 0.15);
+}
+
+.testimonial-rating {
+    color: #ffc107;
+    margin-bottom: 15px;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.testimonial-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+    background: linear-gradient(135deg, var(--maccafe-primary), var(--maccafe-accent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+/* Enhanced contact form */
+.contact-form {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     transition: all 0.3s ease;
 }
 
-.card:hover {
+.contact-form:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    box-shadow: 0 20px 40px rgba(255, 193, 7, 0.15);
+}
+
+.contact-form .form-control {
+    border-radius: 10px;
+    border: 2px solid #e9ecef;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+}
+
+.contact-form .form-control:focus {
+    border-color: var(--maccafe-primary);
+    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+}
+
+.contact-form .btn-primary {
+    background: linear-gradient(135deg, var(--maccafe-primary), var(--maccafe-accent));
+    border: none;
+    border-radius: 25px;
+    padding: 12px 30px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.contact-form .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(255, 193, 7, 0.3);
+}
+
+/* Floating action buttons */
+.floating-buttons {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.fab {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--maccafe-primary), var(--maccafe-accent));
+    color: white;
+    border: none;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 1.2rem;
+}
+
+.fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 10px 25px rgba(255, 193, 7, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+.fab-whatsapp {
+    background: #25D366;
+}
+
+.fab-cart {
+    background: linear-gradient(135deg, var(--maccafe-primary), var(--maccafe-accent));
+    position: relative;
+}
+
+.cart-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #dc3545;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: bold;
 }
 
 /* Map animation */
@@ -149,9 +452,14 @@ $baseUrl = rtrim(APP_URL, '/') . '/assets/images/';
         <div class="row align-items-center">
             <div class="col-lg-6">
                 <div class="hero-content">
-                    <h1 class="display-4 fw-bold mb-4 text-dark">Cravings?<br>Come get it at MC Coffee n' Tea</h1>
-                    <p class="lead mb-4">Savor the Moment: Treat Yourself</p>
-                    <a href="/menu" class="btn btn-warning btn-lg me-3">Explore Food <i class="fas fa-arrow-right ms-2"></i></a>
+                    <div class="badge bg-warning text-dark mb-3 animate-fade-in">Hot Deals Available</div>
+                    <h1 class="display-3 fw-bold mb-4 text-dark animate-fade-in">Cravings?<br>Come get it at <span class="text-warning">MC Coffee n' Tea</span></h1>
+                    <p class="lead mb-4 text-dark animate-fade-in animate-delay-1">Savor the Moment: Treat Yourself to Premium Coffee, Tea & Delicious Food</p>
+                    <div class="d-flex flex-wrap gap-3 animate-fade-in animate-delay-2">
+                        <a href="/menu" class="btn hero-btn" style="background-color: var(--maccafe-accent);">Explore Food <i class="fas fa-utensils ms-2"></i></a>
+                        <a href="/menu" class="btn btn-outline hero-btn text-dark">Order Now <i class="fas fa-shopping-bag ms-2"></i></a>
+                    </div>
+                   
                 </div>
             </div>
             <div class="col-lg-6">
@@ -180,41 +488,95 @@ $baseUrl = rtrim(APP_URL, '/') . '/assets/images/';
     </div>
 </section>  
     <section class="py-5 bg-light">
-    <div class="container bg-light">
-        <h2 class="text-center mb-5 mt-5 text-primary animate-on-scroll animate-fade-in">Popular Order</h2>
+    <div class="container">
+        <div class="text-center mb-5">
+            <div class="badge bg-warning text-dark mb-3">Customer Favorites</div>
+            <h2 class="display-5 fw-bold text-primary animate-on-scroll animate-fade-in">Popular Orders</h2>
+            <p class="lead text-muted animate-on-scroll animate-fade-in animate-delay-1">Handpicked by our customers, loved by everyone</p>
+        </div>
         <div class="row g-4">
             <div class="col-lg-3 col-md-6">
                 <div class="card h-100 popular-item animate-on-scroll animate-scale animate-delay-1">
-                    <img src="<?= $baseUrl ?>Cookiesandcream.jpg" class="card-img-top" alt="Cookies and Cream">
+                    <div class="position-relative">
+                        <img src="<?= $baseUrl ?>Cookiesandcream.jpg" class="card-img-top" alt="Cookies and Cream">
+                        <div class="position-absolute top-0 end-0 m-2">
+                            <span class="badge bg-danger">Bestseller</span>
+                        </div>
+                    </div>
                     <div class="card-body text-center">
                         <h5 class="card-title text-dark">Cookies and Cream</h5>
+                        <div class="text-warning mb-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
                         <p class="card-text text-dark fw-bold">₱99 16oz ┃ ₱119 22oz</p>
                     </div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="card h-100 popular-item animate-on-scroll animate-scale animate-delay-2">
-                    <img src="<?= $baseUrl ?>matcha.jpg" class="card-img-top" alt="Matcha Espresso">
+                    <div class="position-relative">
+                        <img src="<?= $baseUrl ?>matcha.jpg" class="card-img-top" alt="Matcha Espresso">
+                        <div class="position-absolute top-0 end-0 m-2">
+                            <span class="badge bg-success">Trending</span>
+                        </div>
+                    </div>
                     <div class="card-body text-center">
                         <h5 class="card-title text-dark">Matcha Espresso</h5>
+                        <div class="text-warning mb-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
                         <p class="card-text text-dark fw-bold">₱79 16oz ┃ ₱99 22oz</p>
+                       
                     </div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="card h-100 popular-item animate-on-scroll animate-scale animate-delay-3">
-                    <img src="<?= $baseUrl ?>nachos.jpg" class="card-img-top" alt="Nachos">
+                    <div class="position-relative">
+                        <img src="<?= $baseUrl ?>nachos.jpg" class="card-img-top" alt="Nachos">
+                        <div class="position-absolute top-0 end-0 m-2">
+                            <span class="badge bg-warning text-dark">Popular</span>
+                        </div>
+                    </div>
                     <div class="card-body text-center">
-                        <h5 class="card-title text-dark">Nachos</h5>
+                        <h5 class="card-title text-dark">Loaded Nachos</h5>
+                        <div class="text-warning mb-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
                         <p class="card-text text-dark fw-bold">₱89</p>
+                       
                     </div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="card h-100 popular-item animate-on-scroll animate-scale animate-delay-4">
-                    <img src="<?= $baseUrl ?>cheesybacon.jpg" class="card-img-top" alt="Cheesy Bacon">
+                    <div class="position-relative">
+                        <img src="<?= $baseUrl ?>cheesybacon.jpg" class="card-img-top" alt="Cheesy Bacon">
+                        <div class="position-absolute top-0 end-0 m-2">
+                            <span class="badge bg-danger">Hot</span>
+                        </div>
+                    </div>
                     <div class="card-body text-center">
                         <h5 class="card-title text-dark">Cheesy Bacon</h5>
+                        <div class="text-warning mb-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
                         <p class="card-text text-dark fw-bold">₱150</p>
                     </div>
                 </div>
@@ -227,6 +589,7 @@ $baseUrl = rtrim(APP_URL, '/') . '/assets/images/';
 <section class="py-5 bg-light">
     <div class="container">
         <div class="text-center mb-5">
+            <div class="badge bg-warning text-dark mb-3"> Why Choose Us</div>
             <h2 class="display-5 fw-bold animate-on-scroll animate-fade-in">Our <span class="text-primary">Services</span></h2>
             <p class="lead animate-on-scroll animate-fade-in animate-delay-1">We provide quality service with love and care</p>
         </div>
@@ -234,7 +597,7 @@ $baseUrl = rtrim(APP_URL, '/') . '/assets/images/';
             <div class="col-md-4 text-center">
                 <div class="service-box animate-on-scroll animate-slide-left animate-delay-1">
                     <div class="mb-3">
-                        <i class="fas fa-truck fa-3x text-primary"></i>
+                        <i class="bi bi-truck"></i>
                     </div>
                     <h4>Fast Delivery</h4>
                     <p class="text-muted">Quick and reliable delivery service</p>
@@ -243,7 +606,7 @@ $baseUrl = rtrim(APP_URL, '/') . '/assets/images/';
             <div class="col-md-4 text-center">
                 <div class="service-box animate-on-scroll animate-fade-in animate-delay-2">
                     <div class="mb-3">
-                        <i class="fas fa-utensils fa-3x text-primary"></i>
+                        <i class="bi bi-cup-hot-fill"></i>
                     </div>
                     <h4>Quality Food</h4>
                     <p class="text-muted">Fresh ingredients and great taste</p>
@@ -252,7 +615,7 @@ $baseUrl = rtrim(APP_URL, '/') . '/assets/images/';
             <div class="col-md-4 text-center">
                 <div class="service-box animate-on-scroll animate-slide-right animate-delay-3">
                     <div class="mb-3">
-                        <i class="fas fa-headset fa-3x text-primary"></i>
+                        <i class="bi bi-headset"></i>
                     </div>
                     <h4>24/7 Support</h4>
                     <p class="text-muted">Always here to help you</p>
@@ -266,8 +629,10 @@ $baseUrl = rtrim(APP_URL, '/') . '/assets/images/';
 <section class="py-5" id="menu">
     <div class="container">
         <div class="text-center mb-5">
+            <div class="badge bg-warning text-dark mb-3">Explore Our Menu</div>
             <h2 class="display-5 fw-bold animate-on-scroll animate-fade-in">Browse Our Hottest <br><span class="text-primary">Menu</span></h2>
-            <a href="/menu" class="btn btn-primary btn-lg mt-3 animate-on-scroll animate-fade-in animate-delay-1">See All <i class="fas fa-arrow-right ms-2"></i></a>
+            <p class="lead text-muted animate-on-scroll animate-fade-in animate-delay-1">From premium coffee to delicious meals, we have it all</p>
+            <a href="/menu" class="btn btn-warning btn-lg mt-3 animate-on-scroll animate-fade-in animate-delay-2 hero-btn">View Full Menu <i class="fas fa-arrow-right ms-2"></i></a>
         </div>
         
         <?php
@@ -329,7 +694,7 @@ $baseUrl = rtrim(APP_URL, '/') . '/assets/images/';
         // Category images mapping
         $categoryImages = [
             'coffee' => 'americano.webp',
-            'frappe' => 'javaF.jpg',
+            'frappe' => 'frappenobg.png',
             'milk tea' => 'milk_teanobg.png',
             'fruit tea' => 'fruit_teanobg.png',
             'non coffee' => 'noncoffe.jpg',
@@ -360,15 +725,22 @@ $baseUrl = rtrim(APP_URL, '/') . '/assets/images/';
                         : "/menu/{$category['name']}";
                     $delayClass = 'animate-delay-' . (($index % 4) + 1);
                     ?>
-                    <div class="card menu-category-card h-10 animate-on-scroll animate-scale <?= $delayClass ?>" onclick="window.location.href='<?= $routePath ?>'">
-                        <img src="<?= $baseUrl ?><?= $categoryImages[$category['name']] ?? 'default.jpg' ?>" class="card-img-top h-50 object-fit-cover" alt="<?= htmlspecialchars($category['name']) ?>">
+                    <div class="card menu-category-card h-9 0 animate-on-scroll animate-scale <?= $delayClass ?>" onclick="window.location.href='<?= $routePath ?>'">
+                        <div class="position-relative overflow-hidden">
+                            <img src="<?= $baseUrl ?><?= $categoryImages[$category['name']] ?? 'default.jpg' ?>" class="card-img-top h-75 object-fit-cover" alt="<?= htmlspecialchars($category['name']) ?>">
+                            <div class="position-absolute top-0 end-0 m-2">
+                                <span class="badge bg-warning text-dark">Hot</span>
+                            </div>
+                        </div>
                         <div class="card-body d-flex flex-column justify-content-between">
                             <div>
-                                <h4 class="card-title"><?= ucfirst($category['name']) ?></h4>
-                                <p class="text-muted"><?= $category['product_count'] ?> Items</p>
+                                <h4 class="card-title fw-bold"><?= ucfirst($category['name']) ?></h4>
+                                <p class="text-muted mb-2"><?= $category['product_count'] ?> Items Available</p>
+                                <div class="text-warning small mb-3">
+                                </div>
                             </div>
-                            <button class="btn btn-outline-primary align-self-start">
-                                <i class="fas fa-arrow-right"></i>
+                            <button class="btn btn-outline-warning align-self-start">
+                                <i class="fas fa-arrow-right me-1"></i> Explore
                             </button>
                         </div>
                     </div>
@@ -382,29 +754,36 @@ $baseUrl = rtrim(APP_URL, '/') . '/assets/images/';
 <section class="py-5 bg-light" id="contact">
     <div class="container">
         <div class="text-center mb-5">
+            <div class="badge bg-warning text-dark mb-3">Get In Touch</div>
             <h2 class="display-5 fw-bold animate-on-scroll animate-fade-in">Contact <span class="text-primary">Us</span></h2>
-            <p class="lead animate-on-scroll animate-fade-in animate-delay-1">Get in touch with us for any inquiries</p>
+            <p class="lead text-muted animate-on-scroll animate-fade-in animate-delay-1">We'd love to hear from you! Send us a message.</p>
         </div>
         <div class="row justify-content-center">
             <div class="col-lg-6">
-                <div class="card animate-on-scroll animate-scale animate-delay-2">
-                    <div class="card-body">
-                        <form id="contactForm" action="/home" method="POST" onsubmit="return handleContactSubmit(event);">
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Your Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                <div class="contact-form animate-on-scroll animate-scale animate-delay-2">
+                    <form id="contactForm" action="/home" method="POST" onsubmit="return handleContactSubmit(event);">
+                        <div class="mb-3">
+                            <label for="name" class="form-label fw-bold">Your Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-warning text-dark"><i class="fas fa-user"></i></span>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
                             </div>
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Your Email</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label fw-bold">Your Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-warning text-dark"><i class="fas fa-envelope"></i></span>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
                             </div>
-                            <div class="mb-3">
-                                <label for="message" class="form-label">Your Message</label>
-                                <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Send Message</button>
-                        </form>
-                    </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="message" class="form-label fw-bold">Your Message</label>
+                            <textarea class="form-control" id="message" name="message" rows="5" placeholder="Tell us what's on your mind..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-paper-plane me-2"></i> Send Message
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -612,6 +991,96 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+</script>
+
+<!-- Floating Action Buttons -->
+<div class="floating-buttons">
+    <button class="fab" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Back to Top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+</div>
+
+<script>
+// Cart functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Update cart count from localStorage
+    updateCartCount();
+    
+    // Add to cart functionality
+    document.querySelectorAll('.btn-add-cart').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const card = this.closest('.popular-item');
+            const productName = card.querySelector('.card-title').textContent;
+            const price = card.querySelector('.card-text').textContent;
+            
+            // Add to cart animation
+            this.innerHTML = '<i class="fas fa-check me-1"></i> Added!';
+            this.classList.add('btn-success');
+            this.classList.remove('btn-warning');
+            
+            // Update cart count
+            let cartCount = parseInt(localStorage.getItem('cartCount') || '0');
+            cartCount++;
+            localStorage.setItem('cartCount', cartCount.toString());
+            updateCartCount();
+            
+            // Show notification
+            showNotification(`${productName} added to cart!`);
+            
+            // Reset button after 2 seconds
+            setTimeout(() => {
+                this.innerHTML = '<i class="fas fa-plus me-1"></i> Add to Cart';
+                this.classList.remove('btn-success');
+                this.classList.add('btn-warning');
+            }, 2000);
+        });
+    });
+});
+
+function updateCartCount() {
+    const cartCount = localStorage.getItem('cartCount') || '0';
+    const cartElement = document.getElementById('cartCount');
+    if (cartElement) {
+        cartElement.textContent = cartCount;
+        cartElement.style.display = cartCount === '0' ? 'none' : 'flex';
+    }
+}
+
+function showNotification(message) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = 'alert alert-success alert-dismissible fade show position-fixed';
+    notification.style.cssText = `
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 250px;
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        animation: slideInRight 0.3s ease-out;
+    `;
+    notification.innerHTML = `
+        <div class="d-flex align-items-center">
+            <i class="bi bi-check-circle-fill me-2" style="color: #28a745; font-size: 1.2rem;"></i>
+            <div class="flex-grow-1">${message}</div>
+            <button type="button" class="btn-close" onclick="this.parentElement.parentElement.remove()"></button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 3 seconds
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => notification.remove(), 300);
+        }
+    }, 3000);
+}
 </script>
 
 <?php

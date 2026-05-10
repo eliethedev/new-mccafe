@@ -2,8 +2,8 @@
     <div class="container">
         <div class="row">
             <div class="col-md-4">
-                <h5><i class="bi bi-cup-hot-fill me-2"></i>MCCafe</h5>
-                <p class="text-white">Your favorite cafe ordering system. Fresh coffee, delicious food, delivered with love.</p>
+                <h5>MCCafe</h5>
+                <p class="text-white">Fresh coffee, delicious food, delivered with care.</p>
             </div>
             <div class="col-md-4">
                 <h5>Quick Links</h5>
@@ -30,7 +30,7 @@
         </div>
         <hr class="border-secondary">
         <div class="text-center">
-            <p class="text-white mb-0">&copy; <?= date('Y') ?> MCCafe Ordering System. All rights reserved.</p>
+            <p class="text-white mb-0">&copy; <?= date('Y') ?> MCCafe All rights reserved.</p>
         </div>
     </div>
 </footer>
