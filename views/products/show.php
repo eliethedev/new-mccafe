@@ -20,7 +20,7 @@
         <div class="col-lg-6">
             <div class="card">
                 <?php if ($product['image']): ?>
-                    <img src="/public/assets/images/products/<?= $product['image'] ?>" class="card-img-top" alt="<?= htmlspecialchars($product['name']) ?>">
+                    <img src="/assets/images/products/<?= $product['image'] ?>" class="card-img-top" alt="<?= htmlspecialchars($product['name']) ?>">
                 <?php else: ?>
                     <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
                         <i class="bi bi-image fs-1 text-muted"></i>
@@ -199,7 +199,7 @@ async function addToCart() {
 
 <?php
 $content = ob_get_clean();
-$title = $product['name'] . ' - MacCafe';
+$title = $product['name'] . ' - CafeCat';
 include __DIR__ . '/../layouts/main.php';
 ?>
 

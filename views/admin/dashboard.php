@@ -1,565 +1,215 @@
 <?php ob_start(); ?>
-
+<?php
+$stats = $stats ?? ['totalOrders'=>0,'pendingOrders'=>0,'totalRevenue'=>0,'todayRevenue'=>0,'weekRevenue'=>0,'ordersToday'=>0,'customers'=>0,'menu'=>['total'=>0,'available'=>0,'unavailable'=>0,'bestsellers'=>0,'featured'=>0]];
+$menu = $stats['menu'] ?? ['total'=>0,'available'=>0,'unavailable'=>0,'bestsellers'=>0,'featured'=>0];
+$trend = $salesTrend ?? [];
+$byStatus = $ordersByStatus ?? [];
+$catRev = $revenueByCategory ?? [];
+$best = $bestSellers ?? [];
+$recent = $recentOrders ?? [];
+$urgent = $urgentOrders ?? [];
+$unavail = $unavailableItems ?? [];
+$adminUser = Session::get('user') ?? [];
+?>
 <style>
-:root {
-    --maccafe-primary: #e09407;
-    --maccafe-secondary: #6c757d;
-    --maccafe-accent: #ffc107;
-    --maccafe-dark: #343a40;
-    --maccafe-light: #f8f9fa;
-    --primary: #e09407;
-}
-
-/* Admin Dashboard Custom Styles */
-.admin-dashboard {
-    background: var(--maccafe-light);
-    min-height: 100vh;
-}
-
-.dashboard-header {
-    background: var(--maccafe-primary);
-    color: white;
-    padding: 1rem;
-    margin-bottom: 2rem;
-    border-radius: 0 0 20px 20px;
-}
-
-.dashboard-header h1 {
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-}
-
-.dashboard-header .subtitle {
-    opacity: 0.9;
-    font-size: 1.1rem;
-}
-
-.stats-card {
-    zoom: 80%;
-    background: white;
-    border-radius: 15px;
-    padding: 1rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    transition: all 0.3s ease;
-    border-left: 4px solid transparent;
-    position: relative;
-    overflow: hidden;
-}
-
-.stats-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-}
-
-.stats-card.orders {
-    border-left-color: var(--maccafe-primary);
-}
-
-.stats-card.pending {
-    border-left-color: var(--maccafe-accent);
-}
-
-.stats-card.revenue {
-    border-left-color: var(--maccafe-secondary);
-}
-
-.stats-card.customers {
-    border-left-color: var(--maccafe-dark);
-}
-
-.stats-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-}
-
-.stats-icon.orders {
-    background: var(--maccafe-primary);
-    color: white;
-}
-
-.stats-icon.pending {
-    background: var(--maccafe-accent);
-    color: var(--maccafe-dark);
-}
-
-.stats-icon.revenue {
-    background: var(--maccafe-secondary);
-    color: white;
-}
-
-.stats-icon.customers {
-    background: var(--maccafe-dark);
-    color: white;
-}
-
-.stats-number {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #2c3e50;
-    margin-bottom: 0.5rem;
-}
-
-.stats-label {
-    color: #6c757d;
-    font-size: 0.9rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.stats-change {
-    font-size: 0.85rem;
-    margin-top: 0.5rem;
-}
-
-.stats-change.positive {
-    color: #28a745;
-}
-
-.stats-change.negative {
-    color: #dc3545;
-}
-
-.orders-section {
-    background: white;
-    border-radius: 15px;
-    zoom: 80%;
-    padding: 1.5rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-}
-
-.section-header {
-    display: flex;
-    justify-content: between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #f0f0f0;
-}
-
-.section-title {
-    font-size: 1.25rem;
-    font-weight: bold;
-    color: var(--maccafe-dark);
-    margin: 0;
-}
-
-.order-table {
-    background: white;
-}
-
-.order-table th {
-    background: #f8f9fa;
-    font-weight: 600;
-    color: var(--maccafe-dark);
-    border: none;
-    padding: 1rem;
-}
-
-.order-table td {
-    padding: 1rem;
-    vertical-align: middle;
-    border-color: #f0f0f0;
-}
-
-.order-table tbody tr:hover {
-    background: #f8f9fa;
-}
-
-.order-number {
-    font-weight: bold;
-    color: var(--maccafe-primary);
-}
-
-.customer-info {
-    display: flex;
-    align-items: center;
-}
-
-.customer-avatar {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    background: #e9ecef;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 10px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    color: #6c757d;
-}
-
-.order-amount {
-    font-weight: bold;
-    color: var(--maccafe-dark);
-}
-
-.status-badge {
-    padding: 0.4rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    text-transform: uppercase;
-}
-
-.status-pending {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.status-confirmed {
-    background: #d1ecf1;
-    color: #0c5460;
-}
-
-.status-preparing {
-    background: #cce5ff;
-    color: #004085;
-}
-
-.status-ready {
-    background: #d4edda;
-    color: #155724;
-}
-
-.status-completed {
-    background: #e2e3e5;
-    color: #383d41;
-}
-
-.status-cancelled {
-    background: #f8d7da;
-    color: #721c24;
-}
-
-.quick-actions-card {
-    background: white;
-    border-radius: 15px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    margin-bottom: 1.5rem;
-}
-
-.action-btn {
-    display: flex;
-    align-items: center;
-    padding: 1rem;
-    border-radius: 10px;
-    border: 2px solid #f0f0f0;
-    background: white;
-    color: var(--maccafe-dark);
-    text-decoration: none;
-    transition: all 0.3s ease;
-    margin-bottom: 0.75rem;
-    font-weight: 500;
-}
-
-.action-btn:hover {
-    background: var(--maccafe-primary);
-    border-color: var(--maccafe-primary);
-    color: white;
-    transform: translateX(5px);
-    text-decoration: none;
-}
-
-.action-btn i {
-    font-size: 1.2rem;
-    margin-right: 1rem;
-    width: 30px;
-    text-align: center;
-}
-
-.urgent-orders {
-    background: #dc3545;
-    color: white;
-    border-radius: 15px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-
-.urgent-orders h5 {
-    color: white;
-    margin-bottom: 1rem;
-}
-
-.urgent-order-item {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
-    padding: 1rem;
-    margin-bottom: 0.75rem;
-    backdrop-filter: blur(10px);
-}
-
-@media (max-width: 768px) {
-    .dashboard-header {
-        padding: 1.5rem 0;
-    }
-    
-    .stats-card {
-        margin-bottom: 1rem;
-    }
-    
-    .order-table {
-        font-size: 0.9rem;
-    }
+.admin-dashboard { background: #f4f4f4; min-height: 100vh; }
+.dashboard-header { background: #000; color: #fff; padding: 1.5rem 0; margin-bottom: 1.5rem; border-radius: 0 0 20px 20px; }
+.dashboard-header h1 { font-weight: 800; margin: 0; color: #fff !important; }
+.dashboard-header .subtitle { opacity: .75; }
+.kpi { background: #fff; border-radius: 14px; padding: 1.1rem 1.2rem; box-shadow: 0 4px 15px rgba(0,0,0,.08); border-left: 5px solid #000; height: 100%; }
+.kpi .kpi-top { display: flex; justify-content: space-between; align-items: center; }
+.kpi .kpi-icon { width: 46px; height: 46px; border-radius: 12px; background: #000; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+.kpi .kpi-icon.light { background: #e9ecef; color: #000; }
+.kpi .kpi-num { font-size: 1.7rem; font-weight: 800; }
+.kpi .kpi-label { text-transform: uppercase; font-size: .75rem; letter-spacing: .5px; color: #6c757d; }
+.panel { background: #fff; border-radius: 14px; box-shadow: 0 4px 15px rgba(0,0,0,.08); }
+.panel-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border-bottom: 2px solid #f0f0f0; }
+.panel-header h5 { margin: 0; font-weight: 700; }
+.urgent-banner { background: #000; color: #fff; border-radius: 14px; padding: 1.25rem; }
+.urgent-item { background: rgba(255,255,255,.12); border-radius: 10px; padding: .8rem 1rem; margin-top: .6rem; display: flex; justify-content: space-between; align-items: center; }
+.status-badge { padding: .35rem .75rem; border-radius: 20px; font-size: .75rem; font-weight: 600; text-transform: uppercase; background: #000; color: #fff; }
+.action-btn { display: flex; align-items: center; gap: .8rem; padding: .85rem 1rem; border-radius: 10px; border: 2px solid #eee; color: #111; text-decoration: none; font-weight: 600; margin-bottom: .6rem; transition: all .25s ease; }
+.action-btn:hover { background: #000; border-color: #000; color: #fff; transform: translateX(4px); }
+.action-btn small { display: block; font-weight: 400; opacity: .65; }
+.rank-badge { width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; background: #e9ecef; }
+.rank-1 { background: #000; color: #fff; }
+.chart-fallback { padding: 2rem 1rem; text-align: center; color: #6c757d; }
+@media print {
+    .dashboard-header .btn, .panel-header .btn, .action-btn, .urgent-banner .btn { display: none !important; }
+    .admin-dashboard { background: #fff; }
+    .kpi, .panel { box-shadow: none !important; border: 1px solid #dee2e6; break-inside: avoid; }
+    .dashboard-header { border-radius: 0; }
+    #printReportBtn { display: none !important; }
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
 <div class="admin-dashboard">
-    <!-- Dashboard Header -->
     <div class="dashboard-header">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <h1>Dashboard</h1>
-                    <div class="subtitle">Welcome back, <?= Session::get('user.first_name') ?>! Ready to manage today's orders?</div>
+                    <div class="subtitle">Welcome back, <?= htmlspecialchars($adminUser['first_name'] ?? 'Admin') ?>! Here's what's happening at Caf&eacute;Cat today — <?= date('l, F j, Y') ?></div>
                 </div>
-                <div class="col-md-4 text-md-end">
-                    <div class="text-white-50">
-                        <i class="bi bi-clock me-2"></i>
-                        <?= date('l, F j, Y') ?>
-                    </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <button type="button" id="printReportBtn" class="btn btn-light me-2" onclick="window.print()"><i class="bi bi-printer me-1"></i> Print report</button>
+                    <a href="/admin/products/create" class="btn btn-light me-2"><i class="bi bi-plus-circle me-1"></i> Add product</a>
+                    <a href="/" target="_blank" class="btn btn-outline-light"><i class="bi bi-shop me-1"></i> View store</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="container">
-        <!-- Statistics Cards -->
-        <div class="row mb-4">
-            <?php
-            // Get real statistics
-            $totalOrders = 0;
-            $pendingOrders = 0;
-            $totalRevenue = 0;
-            $totalCustomers = 0;
-            
-            try {
-                $totalOrders = Order::getTotalOrderCount();
-                $pendingOrders = Order::getPendingOrderCount();
-                $totalRevenue = Order::getTotalRevenue();
-                $totalCustomers = User::getTotalCustomers();
-            } catch (Exception $e) {
-                // Fallback to 0 if database fails
-            }
-            ?>
-            
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="stats-card orders">
-                    <div class="stats-icon orders">
-                        <i class="bi bi-bag-check"></i>
-                    </div>
-                    <div class="stats-number"><?= $totalOrders ?></div>
-                    <div class="stats-label">Total Orders</div>
-                    <div class="stats-change positive">
-                        <i class="bi bi-arrow-up"></i> 12% from yesterday
-                    </div>
-                </div>
+    <div class="container pb-4">
+        <!-- KPI row -->
+        <div class="row g-3 mb-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="kpi"><div class="kpi-top"><div><div class="kpi-num">₱<?= number_format($stats['todayRevenue'] ?? 0, 2) ?></div><div class="kpi-label">Revenue today</div></div><div class="kpi-icon"><i class="bi bi-cash-stack"></i></div></div>
+                <small class="text-muted">₱<?= number_format($stats['weekRevenue'] ?? 0, 2) ?> last 7 days · ₱<?= number_format($stats['totalRevenue'] ?? 0, 2) ?> total</small></div>
             </div>
-            
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="stats-card pending">
-                    <div class="stats-icon pending">
-                        <i class="bi bi-clock-history"></i>
-                    </div>
-                    <div class="stats-number"><?= $pendingOrders ?></div>
-                    <div class="stats-label">Pending Orders</div>
-                    <div class="stats-change negative">
-                        <i class="bi bi-arrow-down"></i> 5% from yesterday
-                    </div>
-                </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="kpi"><div class="kpi-top"><div><div class="kpi-num"><?= $stats['ordersToday'] ?? 0 ?></div><div class="kpi-label">Orders today</div></div><div class="kpi-icon light"><i class="bi bi-bag-check"></i></div></div>
+                <small class="text-muted"><?= $stats['totalOrders'] ?? 0 ?> total orders</small></div>
             </div>
-            
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="stats-card revenue">
-                    <div class="stats-icon revenue">
-                        <i class="bi bi-currency-dollar"></i>
-                    </div>
-                    <div class="stats-number">₱<?= number_format($totalRevenue, 2) ?></div>
-                    <div class="stats-label">Total Revenue</div>
-                    <div class="stats-change positive">
-                        <i class="bi bi-arrow-up"></i> 8% from yesterday
-                    </div>
-                </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="kpi" style="border-left-color:#6c757d;"><div class="kpi-top"><div><div class="kpi-num"><?= $stats['pendingOrders'] ?? 0 ?></div><div class="kpi-label">Needs attention</div></div><div class="kpi-icon light"><i class="bi bi-clock-history"></i></div></div>
+                <small class="text-muted">Pending orders awaiting confirmation</small></div>
             </div>
-            
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="stats-card customers">
-                    <div class="stats-icon customers">
-                        <i class="bi bi-people"></i>
-                    </div>
-                    <div class="stats-number"><?= $totalCustomers ?></div>
-                    <div class="stats-label">Customers</div>
-                    <div class="stats-change positive">
-                        <i class="bi bi-arrow-up"></i> 3 new today
-                    </div>
-                </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="kpi"><div class="kpi-top"><div><div class="kpi-num"><?= $stats['customers'] ?? 0 ?></div><div class="kpi-label">Customers</div></div><div class="kpi-icon light"><i class="bi bi-people"></i></div></div>
+                <small class="text-muted"><?= $menu['total'] ?? 0 ?> menu items · <?= $menu['available'] ?? 0 ?> available</small></div>
             </div>
         </div>
 
-        <!-- Urgent Orders Alert -->
-        <?php if ($pendingOrders > 0): ?>
-        <div class="urgent-orders">
-            <h5><i class="bi bi-exclamation-triangle me-2"></i>Urgent: <?= $pendingOrders ?> orders need attention!</h5>
-            <?php
-            $urgentOrders = Order::getUrgentOrders(3);
-            foreach ($urgentOrders as $order):
-            ?>
-            <div class="urgent-order-item">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>Order #<?= $order['order_number'] ?></strong>
-                        <div class="small">Customer: <?= $order['customer_name'] ?></div>
-                    </div>
-                    <a href="/admin/orders/<?= $order['id'] ?>" class="btn btn-sm btn-light">
-                        <i class="bi bi-eye"></i> View
-                    </a>
-                </div>
+        <?php if (!empty($urgent)): ?>
+        <div class="urgent-banner mb-4">
+            <h5 class="mb-1 text-white"><i class="bi bi-exclamation-triangle me-2"></i><?= count($urgent) ?> order<?= count($urgent) > 1 ? 's' : '' ?> need<?= count($urgent) === 1 ? 's' : '' ?> attention</h5>
+            <small style="opacity:.7">Oldest pending orders first — confirm or start preparing.</small>
+            <?php foreach ($urgent as $o): ?>
+            <div class="urgent-item">
+                <div><a class="order-number-link" href="/admin/orders/<?= $o['id'] ?>">#<?= htmlspecialchars($o['order_number']) ?></a> · <?= htmlspecialchars($o['customer_name']) ?> · ₱<?= number_format($o['total_amount'], 2) ?></div>
+                <a href="/admin/orders/<?= $o['id'] ?>" class="btn btn-sm btn-light">Review</a>
             </div>
             <?php endforeach; ?>
         </div>
         <?php endif; ?>
 
-        <div class="row">
-            <!-- Recent Orders Table -->
-            <div class="col-lg-8 mb-4">
-                <div class="orders-section">
-                    <div class="section-header">
-                        <h5 class="section-title">Recent Orders</h5>
-                        <a href="/admin/orders" class="btn btn-sm btn-primary" style="margin-left: 550px;">
-                            View All <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                    
+        <!-- Charts -->
+        <div class="row g-3 mb-4">
+            <div class="col-lg-8">
+                <div class="panel h-100">
+                    <div class="panel-header"><h5><i class="bi bi-graph-up me-2"></i>Sales — last 14 days</h5><a href="/admin/orders" class="btn btn-sm btn-outline-secondary">All orders</a></div>
+                    <div class="p-3"><canvas id="salesChart" height="120"></canvas>
+                    <div id="salesChartEmpty" class="chart-fallback" style="display:none;"><i class="bi bi-bar-chart fs-3 d-block mb-2"></i>No sales recorded in this period.</div></div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="panel h-100">
+                    <div class="panel-header"><h5><i class="bi bi-pie-chart me-2"></i>Orders by status</h5></div>
+                    <div class="p-3"><canvas id="statusChart" height="200"></canvas>
+                    <div id="statusChartEmpty" class="chart-fallback" style="display:none;"><i class="bi bi-pie-chart fs-3 d-block mb-2"></i>No orders yet.</div>
+                    <div class="mt-3 d-flex flex-wrap gap-2">
+                        <?php foreach (($byStatus ?? []) as $st => $n): ?>
+                            <span class="badge bg-dark"><?= htmlspecialchars($st) ?>: <?= $n ?></span>
+                        <?php endforeach; ?>
+                        <?php if (empty($byStatus)): ?><small class="text-muted">No orders yet.</small><?php endif; ?>
+                    </div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-lg-8">
+                <!-- Best sellers -->
+                <div class="panel mb-3">
+                    <div class="panel-header"><h5><i class="bi bi-trophy me-2"></i>Best sellers</h5><a href="/admin/best-sellers" class="btn btn-sm btn-dark">Manage <i class="bi bi-arrow-right"></i></a></div>
                     <div class="table-responsive">
-                        <table class="table order-table">
-                            <thead>
-                                <tr>
-                                    <th>Order #</th>
-                                    <th>Customer</th>
-                                    <th>Items</th>
-                                    <th>Amount</th>
-                                    <th>Status</th>
-                                    <th>Time</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead><tr><th>#</th><th>Product</th><th>Sold</th><th>Revenue</th><th>Status</th></tr></thead>
                             <tbody>
-                                <?php
-                                $recentOrders = Order::getRecentOrders(10);
-                                if (!empty($recentOrders)):
-                                    foreach ($recentOrders as $order):
-                                ?>
+                            <?php if (empty($best)): ?>
+                                <tr><td colspan="5" class="text-center text-muted py-4">No products yet.</td></tr>
+                            <?php else: ?>
+                                <?php foreach (array_slice($best, 0, 6) as $i => $p): ?>
                                 <tr>
-                                    <td class="order-number">#<?= $order['order_number'] ?></td>
-                                    <td>
-                                        <div class="customer-info">
-                                            <div class="customer-avatar">
-                                                <?= strtoupper(substr($order['customer_name'], 0, 1)) ?>
-                                            </div>
-                                            <div>
-                                                <div><?= $order['customer_name'] ?></div>
-                                                <small class="text-muted"><?= $order['customer_phone'] ?></small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <?php
-                                        $itemCount = Order::getOrderItemCount($order['id']);
-                                        echo $itemCount . ' item' . ($itemCount > 1 ? 's' : '');
-                                        ?>
-                                    </td>
-                                    <td class="order-amount">₱<?= number_format($order['total_amount'], 2) ?></td>
-                                    <td>
-                                        <span class="status-badge status-<?= $order['status'] ?>">
-                                            <?= Order::getStatusText($order['status']) ?>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <small><?= date('H:i', strtotime($order['created_at'])) ?></small>
-                                    </td>
-                                    <td>
-                                        <div class="btn-group btn-group-sm">
-                                            <a href="/admin/orders/<?= $order['id'] ?>" class="btn btn-outline-primary">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                            <?php if ($order['status'] === 'pending'): ?>
-                                            <button onclick="updateOrderStatus(<?= $order['id'] ?>, 'confirmed')" class="btn btn-outline-success">
-                                                <i class="bi bi-check"></i>
-                                            </button>
-                                            <?php endif; ?>
-                                        </div>
-                                    </td>
+                                    <td><span class="rank-badge <?= $i === 0 ? 'rank-1' : '' ?>"><?= $i + 1 ?></span></td>
+                                    <td><strong><?= htmlspecialchars($p['name']) ?></strong><br><small class="text-muted"><?= htmlspecialchars($p['category_name'] ?? '') ?></small>
+                                        <?php if (!empty($p['is_bestseller'])): ?><span class="badge bg-dark ms-1">Pinned</span><?php endif; ?></td>
+                                    <td><span class="badge bg-dark"><?= (int)($p['total_sold'] ?? 0) ?></span></td>
+                                    <td>₱<?= number_format($p['total_revenue'] ?? 0, 2) ?></td>
+                                    <td><?= empty($p['is_available']) ? '<span class="badge bg-secondary">Unavailable</span>' : '<span class="badge bg-dark">Available</span>' ?></td>
                                 </tr>
-                                <?php
-                                    endforeach;
-                                else:
-                                ?>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Recent orders -->
+                <div class="panel">
+                    <div class="panel-header"><h5><i class="bi bi-receipt me-2"></i>Recent orders</h5><a href="/admin/orders" class="btn btn-sm btn-outline-secondary">View all</a></div>
+                    <div class="table-responsive">
+                        <table class="table mb-0 align-middle">
+                            <thead><tr><th>Order #</th><th>Customer</th><th>Amount</th><th>Status</th><th>Time</th><th></th></tr></thead>
+                            <tbody>
+                            <?php if (empty($recent)): ?>
+                                <tr><td colspan="6" class="text-center text-muted py-4"><i class="bi bi-inbox fs-3 d-block mb-2"></i>No orders yet.</td></tr>
+                            <?php else: ?>
+                                <?php foreach ($recent as $o): ?>
                                 <tr>
-                                    <td colspan="7" class="text-center text-muted py-4">
-                                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-                                        No recent orders found
-                                    </td>
+                                    <td><a class="order-number-link" href="/admin/orders/<?= $o['id'] ?>">#<?= htmlspecialchars($o['order_number']) ?></a></td>
+                                    <td><?= htmlspecialchars($o['customer_name']) ?><br><small class="text-muted"><?= htmlspecialchars($o['customer_phone'] ?? '') ?></small></td>
+                                    <td><strong>₱<?= number_format($o['total_amount'], 2) ?></strong></td>
+                                    <td><span class="status-badge"><?= htmlspecialchars($o['status']) ?></span></td>
+                                    <td><small><?= date('M j H:i', strtotime($o['created_at'])) ?></small></td>
+                                    <td><a href="/admin/orders/<?= $o['id'] ?>" class="btn btn-sm btn-outline-secondary"><i class="bi bi-eye"></i></a></td>
                                 </tr>
-                                <?php endif; ?>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-            
-            <!-- Quick Actions -->
-            <div class="col-lg-4 mb-4">
-                <div class="quick-actions-card">
-                    <h5 class="section-title mb-3">Quick Actions</h5>
-                    <a href="/admin/orders" class="action-btn">
-                        <i class="bi bi-bag-check"></i>
-                        <div>
-                            <div>Manage Orders</div>
-                            <small class="text-muted">View and process orders</small>
-                        </div>
-                    </a>
-                    <a href="/admin/products/create" class="action-btn">
-                        <i class="bi bi-plus-circle"></i>
-                        <div>
-                            <div>Add Product</div>
-                            <small class="text-muted">Create new menu item</small>
-                        </div>
-                    </a>
-                    <a href="/admin/products" class="action-btn">
-                        <i class="bi bi-box-seam"></i>
-                        <div>
-                            <div>Manage Products</div>
-                            <small class="text-muted">Edit menu items</small>
-                        </div>
-                    </a>
+            <div class="col-lg-4">
+                <!-- Menu health -->
+                <div class="panel mb-3">
+                    <div class="panel-header"><h5><i class="bi bi-book me-2"></i>Menu health</h5><a href="/admin/menu" class="btn btn-sm btn-outline-secondary">Manage</a></div>
+                    <div class="p-3">
+                        <div class="d-flex justify-content-between mb-2"><span><i class="bi bi-trophy me-2"></i>Best sellers pinned</span><strong><?= $menu['bestsellers'] ?? 0 ?></strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span><i class="bi bi-star me-2"></i>Featured</span><strong><?= $menu['featured'] ?? 0 ?></strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span><i class="bi bi-check-circle me-2"></i>Available</span><strong><?= $menu['available'] ?? 0 ?></strong></div>
+                        <div class="d-flex justify-content-between"><span><i class="bi bi-x-circle me-2"></i>Unavailable</span><strong><?= $menu['unavailable'] ?? 0 ?></strong></div>
+                        <hr>
+                        <h6 class="text-uppercase text-muted" style="font-size:.75rem;">Revenue by category</h6>
+                        <?php if (empty($catRev)): ?><small class="text-muted">No completed sales yet.</small>
+                        <?php else: foreach ($catRev as $c): ?>
+                            <div class="d-flex justify-content-between mb-1"><span><?= htmlspecialchars($c['category']) ?> <small class="text-muted">(<?= (int)$c['qty'] ?> sold)</small></span><strong>₱<?= number_format($c['revenue'], 2) ?></strong></div>
+                        <?php endforeach; endif; ?>
+                    </div>
                 </div>
-                
-                <!-- System Status -->
-                <div class="quick-actions-card">
-                    <h5 class="section-title mb-3">System Status</h5>
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span><i class="bi bi-database me-2"></i>Database</span>
-                        <span class="badge bg-success">Connected</span>
+                <!-- Unavailable -->
+                <div class="panel mb-3">
+                    <div class="panel-header"><h5><i class="bi bi-eye-slash me-2"></i>Unavailable items</h5></div>
+                    <div class="p-3">
+                        <?php if (empty($unavail)): ?><small class="text-success"><i class="bi bi-check-circle me-1"></i>Everything is available — nice.</small>
+                        <?php else: foreach ($unavail as $p): ?>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div><strong><?= htmlspecialchars($p['name']) ?></strong><br><small class="text-muted"><?= htmlspecialchars($p['category_name'] ?? '') ?></small></div>
+                                <a href="/admin/products/<?= $p['id'] ?>/edit" class="btn btn-sm btn-outline-secondary">Fix</a>
+                            </div>
+                        <?php endforeach; endif; ?>
                     </div>
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span><i class="bi bi-hdd me-2"></i>Storage</span>
-                        <span class="badge bg-success">Available</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span><i class="bi bi-clock me-2"></i>Server Time</span>
-                        <span class="text-muted"><?= date('H:i:s') ?></span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span><i class="bi bi-calendar me-2"></i>Last Backup</span>
-                        <span class="text-muted">Never</span>
+                </div>
+                <!-- Quick actions -->
+                <div class="panel">
+                    <div class="p-3">
+                        <h5 class="mb-3">Quick actions</h5>
+                        <a href="/admin/orders" class="action-btn"><i class="bi bi-bag-check"></i><div>Manage orders<small>Confirm, prepare & complete</small></div></a>
+                        <a href="/admin/menu" class="action-btn"><i class="bi bi-book"></i><div>Menu management<small>Edit prices & availability</small></div></a>
+                        <a href="/admin/best-sellers" class="action-btn"><i class="bi bi-trophy"></i><div>Best sellers<small>Pin & feature top items</small></div></a>
+                        <a href="/admin/categories" class="action-btn"><i class="bi bi-tags"></i><div>Categories<small>Organize the menu</small></div></a>
                     </div>
                 </div>
             </div>
@@ -568,38 +218,80 @@
 </div>
 
 <script>
-function updateOrderStatus(orderId, status) {
-    if (confirm('Are you sure you want to update this order status?')) {
-        fetch('/admin/orders/update-status', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({
-                order_id: orderId,
-                status: status
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            } else {
-                alert('Error updating order status');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error updating order status');
-        });
+(function () {
+    var trendLabels = <?= json_encode(array_column($trend, 'label')) ?>;
+    var trendRevenue = <?= json_encode(array_column($trend, 'revenue')) ?>;
+    var trendOrders = <?= json_encode(array_column($trend, 'orders')) ?>;
+    var statusLabels = <?= json_encode(array_keys($byStatus)) ?>;
+    var statusData = <?= json_encode(array_values($byStatus)) ?>;
+
+    function showFallback(canvasId, emptyId) {
+        var canvas = document.getElementById(canvasId);
+        var empty = document.getElementById(emptyId);
+        if (canvas) canvas.style.display = 'none';
+        if (empty) empty.style.display = 'block';
     }
-}
+
+    // If the Chart.js CDN failed (offline/blocked), the tables below still
+    // constitute the report — show a notice instead of throwing.
+    if (typeof Chart === 'undefined') {
+        showFallback('salesChart', 'salesChartEmpty');
+        showFallback('statusChart', 'statusChartEmpty');
+        var note = document.createElement('div');
+        note.className = 'alert alert-warning small mt-2 mb-0';
+        note.textContent = 'Charts unavailable (chart library failed to load). Tabular data below is unaffected.';
+        var salesCanvas = document.getElementById('salesChart');
+        if (salesCanvas && salesCanvas.parentNode) salesCanvas.parentNode.appendChild(note);
+        return;
+    }
+
+    try {
+        var salesCanvas = document.getElementById('salesChart');
+        var hasSales = trendRevenue.some(function (v) { return Number(v) > 0; }) ||
+                       trendOrders.some(function (v) { return Number(v) > 0; });
+        if (!salesCanvas) {
+            showFallback('salesChart', 'salesChartEmpty');
+        } else if (!hasSales) {
+            showFallback('salesChart', 'salesChartEmpty');
+        } else {
+            new Chart(salesCanvas, {
+                type: 'bar',
+                data: { labels: trendLabels, datasets: [
+                    { label: 'Revenue (₱)', data: trendRevenue, backgroundColor: '#111111', borderRadius: 6 },
+                    { label: 'Orders', data: trendOrders, type: 'line', borderColor: '#6c757d', backgroundColor: '#6c757d', tension: .35, yAxisID: 'y1' }
+                ]},
+                options: { responsive: true, plugins: { legend: { position: 'bottom' } },
+                    scales: { y: { beginAtZero: true }, y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false } } } }
+            });
+        }
+    } catch (e) {
+        console.error('Sales chart failed:', e);
+        showFallback('salesChart', 'salesChartEmpty');
+    }
+
+    try {
+        var statusCanvas = document.getElementById('statusChart');
+        if (!statusCanvas || !statusData.length) {
+            showFallback('statusChart', 'statusChartEmpty');
+        } else {
+            new Chart(statusCanvas, {
+                type: 'doughnut',
+                data: { labels: statusLabels,
+                    datasets: [{ data: statusData,
+                    backgroundColor: ['#111111','#343a40','#6c757d','#adb5bd','#dee2e6','#000000'] }] },
+                options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+            });
+        }
+    } catch (e) {
+        console.error('Status chart failed:', e);
+        showFallback('statusChart', 'statusChartEmpty');
+    }
+})();
 </script>
 
 <?php
 $content = ob_get_clean();
-$title = 'Admin Dashboard - McCafe';
+$title = 'Admin Dashboard - CafeCat';
 $currentPage = 'dashboard';
 include __DIR__ . '/layout.php';
 ?>

@@ -1,13 +1,13 @@
-<link rel="stylesheet" href="assets/css/style.css">
-<style>/* MacCafe Custom Styles */
+<link rel="stylesheet" href="/assets/css/style.css">
+<style>/* CafeCat Custom Styles */
 
 :root {
-    --maccafe-primary: #e09407;
-    --maccafe-secondary: #6c757d;
-    --maccafe-accent: #ffc107;
-    --maccafe-dark: #343a40;
-    --maccafe-light: #f8f9fa;
-    --primary: #e09407;
+    --cafecat-primary: #111111;
+    --cafecat-secondary: #6c757d;
+    --cafecat-accent: #000000;
+    --cafecat-dark: #000000;
+    --cafecat-light: #f8f9fa;
+    --primary: #111111;
 }
 
 body {
@@ -22,14 +22,14 @@ body {
 }
 
 .navbar-nav .nav-link {
-    margin: 0 15px;
+    margin: 0 22px;
     font-weight: 500;
     transition: all 0.3s ease;
     position: relative;
 }
 
 .navbar-nav .nav-link:hover {
-    color: var(--maccafe-accent) !important;
+    color: #f1f1f1 !important;
     transform: translateY(-2px);
 }
 
@@ -40,7 +40,7 @@ body {
     left: 50%;
     width: 0;
     height: 2px;
-    background-color: var(--maccafe-accent);
+    background-color: #f1f1f1;
     transition: all 0.3s ease;
     transform: translateX(-50%);
 }
@@ -51,7 +51,7 @@ body {
 
 /* Hero Section */
 .hero-section {
-    background: linear-gradient(135deg, var(--maccafe-primary), var(--maccafe-dark));
+    background: linear-gradient(135deg, var(--cafecat-primary), var(--cafecat-dark));
     color: white;
     padding: 80px 0;
     margin-bottom: 50px;
@@ -94,12 +94,12 @@ body {
 .product-price {
     font-size: 1.5rem;
     font-weight: bold;
-    color: var(--maccafe-primary);
+    color: var(--cafecat-primary);
 }
 
 .popular-item {
     background-color: transparent !important;
-    border: 2px solid rgba(248, 184, 8, 0.884) !important;
+    border: 2px solid rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
 }
@@ -113,7 +113,7 @@ body {
 .popular-item:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    border-color: var(--maccafe-accent) !important;
+    border-color: var(--cafecat-accent) !important;
 }
 
 /* Category Cards */
@@ -153,7 +153,7 @@ body {
 .menu-category-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-    border: 2px solid var(--maccafe-accent);
+    border: 2px solid var(--cafecat-accent);
 }
 
 .category-card img {
@@ -176,65 +176,65 @@ body {
 
 /* Button Styles */
 .btn-success {
-    background-color: var(--maccafe-primary);
-    border-color: var(--maccafe-primary);
+    background-color: var(--cafecat-primary);
+    border-color: var(--cafecat-primary);
 }
 
 .btn-primary {
-    background-color: var(--maccafe-primary) !important;
-    border-color: var(--maccafe-primary) !important;
+    background-color: var(--cafecat-primary) !important;
+    border-color: var(--cafecat-primary) !important;
 }
 
 .btn-success:hover {
-    background-color: #218838;
-    border-color: #1e7e34;
+    background-color: #000000;
+    border-color: #000000;
 }
 
 /* Category Filter Button Hover Effects */
 .btn-outline-success {
-    color: var(--maccafe-primary);
-    border-color: var(--maccafe-primary);
+    color: var(--cafecat-primary);
+    border-color: var(--cafecat-primary);
     transition: all 0.3s ease;
 }
 
 .btn-outline-success:hover {
-    background-color: var(--maccafe-primary);
-    border-color: var(--maccafe-primary);
+    background-color: var(--cafecat-primary);
+    border-color: var(--cafecat-primary);
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .btn-outline-success.active {
-    background-color: var(--maccafe-primary);
-    border-color: var(--maccafe-primary);
+    background-color: var(--cafecat-primary);
+    border-color: var(--cafecat-primary);
     color: white;
 }
 
-.btn-maccafe-accent {
-    background-color: var(--maccafe-accent);
-    border-color: var(--maccafe-accent);
-    color: #fab011;
+.btn-cafecat-accent {
+    background-color: #f1f1f1;
+    border-color: var(--cafecat-accent);
+    color: #ffffff;
 }
 
-.btn-maccafe-accent:hover {
-    background-color: #e0a800;
-    border-color: #d39e00;
+.btn-cafecat-accent:hover {
+    background-color: #333333;
+    border-color: #000000;
     color: #212529;
 }
 
 .text-primary {
-    color: #ffc107 !important;
+    color: #111111 !important;
 }
 
 h1, h2, h3 {
-    color: var(--maccafe-primary) !important;
+    color: var(--cafecat-primary) !important;
 }
 
 /* Form Styles */
 .form-control:focus {
-    border-color: var(--maccafe-primary);
-    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    border-color: var(--cafecat-primary);
+    box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.25);
 }
 
 /* Alert Styles */
@@ -249,7 +249,7 @@ footer {
 }
 
 footer a:hover {
-    color: var(--maccafe-accent) !important;
+    color: var(--cafecat-accent) !important;
 }
 
 /* Loading Spinner */
@@ -286,7 +286,7 @@ footer a:hover {
 }
 
 .cart-sidebar-header {
-    background: var(--maccafe-primary);
+    background: var(--cafecat-primary);
     color: white;
     padding: 20px;
     display: flex;
@@ -304,12 +304,12 @@ footer a:hover {
 }
 
 /* Order Status Badges */
-.status-pending { background-color: #ffc107; }
-.status-confirmed { background-color: #17a2b8; }
-.status-preparing { background-color: #6f42c1; }
-.status-ready { background-color: #28a745; }
+.status-pending { background-color: #111111; }
+.status-confirmed { background-color: #343a40; }
+.status-preparing { background-color: #3a3a3a; }
+.status-ready { background-color: #000000; }
 .status-completed { background-color: #6c757d; }
-.status-cancelled { background-color: #dc3545; }
+.status-cancelled { background-color: #000000; }
 
 /* Enhanced User Dropdown Styles */
 .user-dropdown {
@@ -327,11 +327,11 @@ footer a:hover {
 }
 
 .user-dropdown .nav-link:hover {
-    background: linear-gradient(135deg, var(--maccafe-primary), #ffb300);
-    color: white !important;
+    background: #f1f1f1;
+    color: #000000 !important;
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
-    border-color: var(--maccafe-primary);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    border-color: var(--cafecat-primary);
 }
 
 .user-dropdown .nav-link i {
@@ -340,6 +340,7 @@ footer a:hover {
 }
 
 .user-dropdown .nav-link:hover i {
+    color: #000000 !important;
     transform: scale(1.1);
 }
 
@@ -375,10 +376,10 @@ footer a:hover {
 }
 
 .user-dropdown .dropdown-item:hover {
-    background: linear-gradient(135deg, #fff8e1, #ffecb3);
-    color: var(--maccafe-dark) !important;
+    background: linear-gradient(135deg, #f4f4f4, #e9ecef);
+    color: var(--cafecat-dark) !important;
     transform: translateX(5px);
-    border-left-color: var(--maccafe-primary);
+    border-left-color: var(--cafecat-primary);
 }
 
 .user-dropdown .dropdown-item i {
@@ -392,7 +393,7 @@ footer a:hover {
 }
 
 .logout-btn {
-    background: linear-gradient(135deg, #dc3545, #c82333) !important;
+    background: linear-gradient(135deg, #111111, #000000) !important;
     color: white !important;
     border: none;
     border-radius: 10px !important;
@@ -400,9 +401,9 @@ footer a:hover {
 }
 
 .logout-btn:hover {
-    background: linear-gradient(135deg, #c82333, #bd2130) !important;
+    background: linear-gradient(135deg, #000000, #1f1f1f) !important;
     transform: translateX(5px) scale(1.02);
-    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
 }
 
 /* Enhanced Cart Icon Styles */
@@ -418,11 +419,11 @@ footer a:hover {
 }
 
 .cart-icon-wrapper:hover {
-    background: linear-gradient(135deg, #28a745, #20c997);
-    color: white !important;
+    background: #f1f1f1;
+    color: #000000 !important;
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
-    border-color: #28a745;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    border-color: #000000;
 }
 
 .cart-icon-wrapper .nav-link {
@@ -440,15 +441,16 @@ footer a:hover {
 }
 
 .cart-icon-wrapper:hover i {
+    color: #000000 !important;
     transform: scale(1.1);
 }
 
 #cart-count {
     font-size: 0.65rem;
     padding: 3px 7px;
-    background: linear-gradient(135deg, #dc3545, #c82333);
+    background: linear-gradient(135deg, #000000, #1f1f1f);
     border: 2px solid white;
-    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     animation: pulse 2s infinite;
     min-width: 20px;
     height: 20px;
@@ -460,14 +462,14 @@ footer a:hover {
 
 @keyframes pulse {
     0% {
-        box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     }
     50% {
-        box-shadow: 0 2px 12px rgba(220, 53, 69, 0.6);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
         transform: scale(1.05);
     }
     100% {
-        box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     }
 }
 
@@ -484,11 +486,11 @@ footer a:hover {
 }
 
 .auth-btn:hover {
-    background: linear-gradient(135deg, var(--maccafe-primary), #ffb300);
+    background: linear-gradient(135deg, var(--cafecat-primary), #111111);
     color: white !important;
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
-    border-color: var(--maccafe-primary);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    border-color: var(--cafecat-primary);
 }
 
 /* Responsive Adjustments */
@@ -537,9 +539,9 @@ footer a:hover {
     to { transform: translateX(0); }
 }
 </style>
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background: linear-gradient(135deg, #000000, #1f1f1f); box-shadow: 0 2px 10px rgba(0,0,0,0.35);">
     <div class="container">
-<div class="logo"><h1 class="text-dark">MC<b style="color: orange;">Caffe</b></h1></div>
+<div class="logo"><a href="/" style="text-decoration:none;display:inline-block;line-height:1;"><span style="font-weight:800;font-size:1.8rem;letter-spacing:-1px;color:#ffffff;">caf&eacute;<span style="color:#d9d9d9;">cat</span></span><br><small style="letter-spacing:3px;font-size:0.55rem;color:#d9d9d9;">CRAFTED FOR YOUR CRAVINGS</small></a></div>
         
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -548,26 +550,28 @@ footer a:hover {
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="/">Home</a>
+                    <a class="nav-link text-white" href="/">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="/menu">Menu</a>
+                    <a class="nav-link text-white" href="/menu">Menu</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="/#services">Services</a>
+                    <a class="nav-link text-white" href="/#services">Services</a>
+                </li><li class="nav-item">
+                    <a class="nav-link text-white" href="/#about-us">About Us</a>
                 </li>
+                <?php $navUser = Session::get('user'); ?>
+                <?php if (!empty($navUser) && in_array($navUser['role'] ?? '', ['rider', 'admin'], true)): ?>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="/#contact">Contact</a>
+                    <a class="nav-link text-white" href="/rider"><i class="bi bi-bicycle me-1"></i>Deliveries</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" href="/#about-us">About Us</a>
-                </li>
+                <?php endif; ?>
             </ul>
             
             <ul class="navbar-nav">
                 <?php if (Session::has('user')): ?>
                     <li class="nav-item user-dropdown">
-                        <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="bi bi-person-circle me-1"></i>
                             <?= Session::get('user.first_name') ?>
                         </a>
@@ -578,7 +582,7 @@ footer a:hover {
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form action="/logout" method="POST" style="display: inline;">
-                                    <button type="submit" class="dropdown-item text-dark logout-btn" style="border: none; background: none; width: 100%; text-align: left; padding: 0.25rem 1rem; cursor: pointer;">
+                                    <button type="submit" class="dropdown-item logout-btn" style="border: none; width: 100%; text-align: left; padding: 0.25rem 1rem; cursor: pointer;">
                                         <i class="bi bi-box-arrow-right"></i>Logout
                                     </button>
                                 </form>
@@ -587,16 +591,27 @@ footer a:hover {
                     </li>
                 <?php else: ?>
                     <li class="nav-item">
-                        <a class="nav-link text-dark auth-btn" href="/login">Login</a>
+                        <a class="nav-link text-white auth-btn" href="/login">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark auth-btn" href="/register">Register</a>
+                        <a class="nav-link text-white auth-btn" href="/register">Register</a>
                     </li>
                 <?php endif; ?>
                 
+                <?php if (Session::has('user')): ?>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link position-relative text-white" href="#" id="notifBell" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications">
+                            <i class="bi bi-bell"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notifBadge" style="display:none;">0</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end p-2" id="notifList" style="min-width:320px;max-height:380px;overflow-y:auto;" aria-labelledby="notifBell">
+                            <li class="px-3 py-3 text-muted small text-center">Loading notifications…</li>
+                        </ul>
+                    </li>
+                <?php endif; ?>
                 <li class="nav-item cart-icon-wrapper">
-                    <a class="nav-link position-relative text-dark" href="/cart">
-                        <i class="bi bi-cart3"></i>
+                    <a class="nav-link position-relative text-white" href="/cart">
+                        <i class="bi bi-cart3" style="color:#ffffff !important;"></i>
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-count">
                             <?php 
                             $user = Session::get('user');
@@ -615,3 +630,6 @@ footer a:hover {
         </div>
     </div>
 </nav>
+
+
+

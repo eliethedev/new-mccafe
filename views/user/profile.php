@@ -81,6 +81,46 @@ if (isset($_SESSION['error_message'])) {
                                     <label for="address" class="form-label">Address</label>
                                     <textarea class="form-control" id="address" name="address" rows="3"><?= $userProfile['address'] ?? '' ?></textarea>
                                 </div>
+
+                                <hr>
+                                <h6 class="mb-2"><i class="bi bi-badge-ad me-2"></i>Senior Citizen / PWD Discount</h6>
+                                <p class="text-muted small">20% off + VAT exemption (RA 9994 / RA 10754). Verified profiles get the discount applied automatically at checkout. Changes reset verification until staff confirm your ID.</p>
+                                <?php if (!empty($userProfile['discount_verified']) && (!empty($userProfile['is_senior']) || !empty($userProfile['is_pwd']))): ?>
+                                    <div class="alert alert-success small"><i class="bi bi-patch-check me-2"></i>Your <?= !empty($userProfile['is_senior']) ? 'Senior Citizen' : 'PWD' ?> status is verified — the discount auto-applies at checkout.</div>
+                                <?php elseif (!empty($userProfile['is_senior']) || !empty($userProfile['is_pwd'])): ?>
+                                    <div class="alert alert-warning small"><i class="bi bi-hourglass-split me-2"></i>Your claim is awaiting staff verification of your ID.</div>
+                                <?php endif; ?>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="is_senior" name="is_senior" value="1" <?= !empty($userProfile['is_senior']) ? 'checked' : '' ?>>
+                                            <label class="form-check-label" for="is_senior">I am a Senior Citizen</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="is_pwd" name="is_pwd" value="1" <?= !empty($userProfile['is_pwd']) ? 'checked' : '' ?>>
+                                            <label class="form-check-label" for="is_pwd">I am a Person with Disability (PWD)</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="discount_id_no" class="form-label">Senior / PWD ID Number</label>
+                                    <input type="text" class="form-control" id="discount_id_no" name="discount_id_no"
+                                           value="<?= htmlspecialchars($userProfile['discount_id_no'] ?? '') ?>"
+                                           placeholder="e.g. OSCA-123456" maxlength="32">
+                                    <small class="text-muted">Required when claiming either discount.</small>
+                                </div>
+                                <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    var senior = document.getElementById('is_senior');
+                                    var pwd = document.getElementById('is_pwd');
+                                    if (senior && pwd) {
+                                        senior.addEventListener('change', function () { if (senior.checked) pwd.checked = false; });
+                                        pwd.addEventListener('change', function () { if (pwd.checked) senior.checked = false; });
+                                    }
+                                });
+                                </script>
                                 
                                 <div class="d-flex gap-2">
                                     <button type="submit" class="btn btn-success">
@@ -132,6 +172,6 @@ if (isset($_SESSION['error_message'])) {
 
 <?php
 $content = ob_get_clean();
-$title = 'My Profile - MacCafe';
+$title = 'My Profile - CafeCat';
 include __DIR__ . '/../layouts/main.php';
 ?>

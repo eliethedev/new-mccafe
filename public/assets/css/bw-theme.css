@@ -1,0 +1,542 @@
+/* ============================================================
+   CafeCat — BLACK & WHITE THEME OVERRIDE
+   Loaded last so it wins over style.css / cafecat-style.css /
+   inline <style> blocks and Bootstrap defaults.
+   Palette: pure black, white + neutral grays only.
+   ============================================================ */
+:root {
+    --bw-black: #0a0a0a;
+    --bw-ink: #111111;
+    --bw-charcoal: #1f1f1f;
+    --bw-gray-dark: #3a3a3a;
+    --bw-gray: #6c757d;
+    --bw-gray-light: #e9ecef;
+    --bw-offwhite: #f4f4f4;
+    --bw-white: #ffffff;
+
+    /* Remap legacy brand tokens to monochrome */
+    --cafecat-primary: #111111;
+    --cafecat-secondary: #6c757d;
+    --cafecat-accent: #000000;
+    --cafecat-dark: #000000;
+    --cafecat-light: #f8f9fa;
+    --cafecat-cream: #f4f4f4;
+    --primary: #111111;
+    --maccafe-primary: #111111;
+    --maccafe-accent: #000000;
+    --maccafe-dark: #000000;
+    --maccafe-light: #f8f9fa;
+    --mc-primary: #111111;
+    --mc-secondary: #3a3a3a;
+    --mc-accent: #000000;
+    --mc-dark: #000000;
+    --mc-light: #f8f9fa;
+}
+
+body {
+    background-color: var(--bw-white) !important;
+    color: var(--bw-ink) !important;
+}
+
+h1, h2, h3, h4, h5 {
+    color: var(--bw-ink) !important;
+}
+
+/* ---------- Bootstrap contextual colors → B&W ---------- */
+.text-primary, .text-warning, .text-success {
+    color: var(--bw-ink) !important;
+}
+
+.bg-warning, .bg-success {
+    background-color: var(--bw-ink) !important;
+    color: var(--bw-white) !important;
+}
+.bg-warning.text-dark {
+    color: var(--bw-white) !important;
+}
+.badge.bg-warning, .badge.bg-success, .badge.bg-danger, .badge.bg-info, .badge.bg-primary {
+    background-color: var(--bw-ink) !important;
+    color: var(--bw-white) !important;
+    border: 1px solid var(--bw-ink) !important;
+}
+.badge.bg-light {
+    background-color: var(--bw-white) !important;
+    color: var(--bw-ink) !important;
+    border: 1px solid var(--bw-gray-light) !important;
+}
+
+/* ---------- Buttons → black / white ---------- */
+.btn-warning, .btn-success, .btn-primary, .btn-cafecat-accent,
+.btn.btn-warning, .btn.btn-success, .btn.btn-primary {
+    background-color: var(--bw-ink) !important;
+    border-color: var(--bw-ink) !important;
+    color: var(--bw-white) !important;
+}
+.btn-warning:hover, .btn-success:hover, .btn-primary:hover, .btn-cafecat-accent:hover,
+.btn.btn-warning:hover, .btn.btn-success:hover, .btn.btn-primary:hover {
+    background-color: var(--bw-charcoal) !important;
+    border-color: var(--bw-charcoal) !important;
+    color: var(--bw-white) !important;
+}
+.btn-outline-warning, .btn-outline-success, .btn-outline-primary {
+    color: var(--bw-ink) !important;
+    border-color: var(--bw-ink) !important;
+    background-color: transparent !important;
+}
+.btn-outline-warning:hover, .btn-outline-success:hover, .btn-outline-primary:hover {
+    background-color: var(--bw-ink) !important;
+    border-color: var(--bw-ink) !important;
+    color: var(--bw-white) !important;
+}
+.btn-outline-secondary {
+    color: var(--bw-gray-dark) !important;
+    border-color: var(--bw-gray) !important;
+}
+.btn-outline-secondary:hover {
+    background-color: var(--bw-ink) !important;
+    border-color: var(--bw-ink) !important;
+    color: var(--bw-white) !important;
+}
+.btn-outline-danger {
+    color: var(--bw-ink) !important;
+    border-color: var(--bw-ink) !important;
+}
+.btn-outline-danger:hover {
+    background-color: var(--bw-ink) !important;
+    color: var(--bw-white) !important;
+}
+
+/* ---------- Navbar / footer ---------- */
+.navbar {
+    background: linear-gradient(135deg, #000000, #1f1f1f) !important;
+}
+.navbar .nav-link, .navbar-brand {
+    color: var(--bw-white) !important;
+}
+.navbar .nav-link:hover {
+    color: #d9d9d9 !important;
+}
+.navbar .nav-link::after {
+    background-color: var(--bw-white) !important;
+}
+footer, footer.bg-dark {
+    background: #000000 !important;
+    color: var(--bw-white) !important;
+}
+footer a, footer .text-white {
+    color: var(--bw-white) !important;
+}
+
+/* ---------- Hero ---------- */
+.hero-section {
+    background-color: #000000 !important;
+}
+.hero-btn {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35) !important;
+}
+.hero-btn:hover {
+    background: linear-gradient(45deg, #1f1f1f, #000000) !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 0 6px rgba(255, 255, 255, 0.15), 0 0 24px rgba(255, 255, 255, 0.25) !important;
+}
+
+/* ---------- Cards / services / categories ---------- */
+.popular-item, .menu-category-card, .product-card, .category-card,
+.service-box, .testimonial-card, .contact-form {
+    border-color: rgba(0, 0, 0, 0.12) !important;
+}
+.popular-item:hover, .menu-category-card:hover, .product-card:hover {
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.22) !important;
+    border-color: var(--bw-ink) !important;
+}
+.popular-item::before {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.03)) !important;
+}
+.price-badge {
+    background: linear-gradient(135deg, #000000, #3a3a3a) !important;
+    color: var(--bw-white) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35) !important;
+}
+.service-box:hover {
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22) !important;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.02)) !important;
+}
+.service-box i {
+    background: linear-gradient(135deg, #000000, #3a3a3a) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+.stats-section {
+    background: linear-gradient(135deg, #000000, #1f1f1f) !important;
+    color: var(--bw-white) !important;
+}
+
+/* ---------- Forms ---------- */
+.form-control:focus {
+    border-color: var(--bw-ink) !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.18) !important;
+}
+.contact-form .btn-primary {
+    background: linear-gradient(135deg, #000000, #1f1f1f) !important;
+}
+.input-group-text.bg-warning {
+    background-color: var(--bw-ink) !important;
+    color: var(--bw-white) !important;
+    border-color: var(--bw-ink) !important;
+}
+
+/* ---------- Alerts → monochrome ---------- */
+.alert-success, .alert-warning, .alert-danger, .alert-info {
+    background-color: var(--bw-white) !important;
+    color: var(--bw-ink) !important;
+    border: 1px solid var(--bw-ink) !important;
+    border-left: 5px solid var(--bw-ink) !important;
+}
+
+/* ---------- Status badges → grayscale ---------- */
+.status-pending, .status-confirmed, .status-preparing,
+.status-ready, .status-completed, .status-cancelled {
+    background-color: var(--bw-ink) !important;
+    color: var(--bw-white) !important;
+}
+.status-pending { background-color: #6c757d !important; }
+.status-confirmed { background-color: #343a40 !important; }
+.status-completed { background-color: #adb5bd !important; color: #000 !important; }
+
+/* ---------- Misc brand surfaces ---------- */
+.bg-light {
+    background-color: var(--bw-offwhite) !important;
+}
+.cart-sidebar-header {
+    background: #000000 !important;
+}
+.fab, .fab-cart {
+    background: linear-gradient(135deg, #000000, #1f1f1f) !important;
+    color: var(--bw-white) !important;
+}
+.fab-whatsapp {
+    background: #111111 !important;
+}
+.cart-count {
+    background: var(--bw-white) !important;
+    color: #000000 !important;
+    border: 1px solid #000000 !important;
+}
+.swiper-pagination-bullet-active {
+    background: #000000 !important;
+}
+.swiper-button-next, .swiper-button-prev {
+    color: #000000 !important;
+}
+.testimonial-avatar {
+    background: linear-gradient(135deg, #000000, #3a3a3a) !important;
+}
+.testimonial-rating, .text-warning .fa-star, .text-warning .fa-star-half-alt {
+    color: #000000 !important;
+}
+
+/* ============================================================
+   APPENDIX — customer-side B&W alignment (checkout-first)
+   Covers Bootstrap contextual leftovers, header leaks, checkout,
+   cart, orders, status tracker and legacy colorful surfaces.
+   ============================================================ */
+
+/* Bootstrap primary surfaces → black */
+.bg-primary, .card-header.bg-primary, .input-group-text.bg-primary {
+    background-color: var(--bw-ink) !important;
+    color: var(--bw-white) !important;
+    border-color: var(--bw-ink) !important;
+}
+.bg-primary h1, .bg-primary h2, .bg-primary h3, .bg-primary h4,
+.bg-primary h5, .bg-primary h6, .card-header.bg-primary h5 {
+    color: var(--bw-white) !important;
+}
+.border-primary {
+    border-color: var(--bw-ink) !important;
+}
+.table-primary, .table-primary > th, .table-primary > td {
+    background-color: var(--bw-offwhite) !important;
+    color: var(--bw-ink) !important;
+    border-color: var(--bw-gray-light) !important;
+}
+.link-primary, a.link-primary {
+    color: var(--bw-ink) !important;
+}
+.page-item.active .page-link {
+    background-color: var(--bw-ink) !important;
+    border-color: var(--bw-ink) !important;
+    color: var(--bw-white) !important;
+}
+.page-link {
+    color: var(--bw-ink) !important;
+}
+.progress-bar {
+    background-color: var(--bw-ink) !important;
+}
+.spinner-border.text-primary, .spinner-grow.text-primary {
+    color: var(--bw-ink) !important;
+}
+.form-check-input:checked {
+    background-color: var(--bw-ink) !important;
+    border-color: var(--bw-ink) !important;
+}
+.form-check-input:focus {
+    border-color: var(--bw-ink) !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.18) !important;
+}
+.accordion-button:not(.collapsed) {
+    background-color: var(--bw-offwhite) !important;
+    color: var(--bw-ink) !important;
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,0.12) !important;
+}
+.accordion-button:focus {
+    border-color: var(--bw-ink) !important;
+    box-shadow: 0 0 0 0.2rem rgba(0,0,0,0.15) !important;
+}
+
+/* Remaining buttons → monochrome */
+.btn-secondary {
+    background-color: var(--bw-white) !important;
+    border-color: var(--bw-ink) !important;
+    color: var(--bw-ink) !important;
+}
+.btn-secondary:hover {
+    background-color: var(--bw-ink) !important;
+    border-color: var(--bw-ink) !important;
+    color: var(--bw-white) !important;
+}
+.btn-danger, .btn.btn-danger {
+    background-color: var(--bw-ink) !important;
+    border-color: var(--bw-ink) !important;
+    color: var(--bw-white) !important;
+}
+.btn-danger:hover, .btn.btn-danger:hover {
+    background-color: var(--bw-charcoal) !important;
+    border-color: var(--bw-charcoal) !important;
+}
+.btn-outline-danger {
+    color: var(--bw-ink) !important;
+    border-color: var(--bw-ink) !important;
+    background-color: transparent !important;
+}
+.btn-outline-danger:hover {
+    background-color: var(--bw-ink) !important;
+    border-color: var(--bw-ink) !important;
+    color: var(--bw-white) !important;
+}
+.btn-outline-dark:hover {
+    background-color: var(--bw-ink) !important;
+    border-color: var(--bw-ink) !important;
+}
+.btn-dark {
+    background-color: var(--bw-ink) !important;
+    border-color: var(--bw-ink) !important;
+}
+.btn-light {
+    background-color: var(--bw-white) !important;
+    border-color: var(--bw-gray-light) !important;
+    color: var(--bw-ink) !important;
+}
+
+/* Alerts: keep monochrome but give each a distinct grayscale weight */
+.alert-info {
+    background-color: #f4f4f4 !important;
+    border: 1px solid #111111 !important;
+    border-left: 5px solid #111111 !important;
+}
+.alert-warning {
+    background-color: #ececec !important;
+    border: 1px solid #3a3a3a !important;
+    border-left: 5px solid #3a3a3a !important;
+}
+.alert-danger {
+    background-color: #111111 !important;
+    color: #ffffff !important;
+    border: 1px solid #000000 !important;
+    border-left: 5px solid #000000 !important;
+}
+.alert-danger strong, .alert-danger p, .alert-danger i {
+    color: #ffffff !important;
+}
+.alert-success {
+    background-color: #ffffff !important;
+    border: 1px solid #111111 !important;
+    border-left: 5px solid #111111 !important;
+}
+
+/* Dropdown / header leak fixes (beat inline <style> in header.php) */
+.navbar.navbar-dark {
+    background: linear-gradient(135deg, #000000, #1f1f1f) !important;
+}
+.navbar .nav-link.text-dark, .navbar .nav-link {
+    color: #ffffff !important;
+}
+.navbar .logo span, .navbar .logo small {
+    color: #ffffff !important;
+}
+.navbar .logo span span {
+    color: #d9d9d9 !important;
+}
+.user-dropdown .nav-link {
+    background: transparent !important;
+    border: 1px solid rgba(255,255,255,0.35) !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+}
+.user-dropdown .nav-link:hover {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border-color: #ffffff !important;
+    box-shadow: none !important;
+}
+.user-dropdown .dropdown-item:hover {
+    background: #ececec !important;
+    color: #000000 !important;
+    border-left-color: #000000 !important;
+}
+.auth-btn {
+    background: transparent !important;
+    border: 1px solid rgba(255,255,255,0.5) !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+}
+.auth-btn:hover {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border-color: #ffffff !important;
+}
+.cart-icon-wrapper {
+    background: transparent !important;
+    border: 1px solid rgba(255,255,255,0.35) !important;
+    box-shadow: none !important;
+}
+.cart-icon-wrapper:hover {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border-color: #ffffff !important;
+    box-shadow: none !important;
+}
+.cart-icon-wrapper .nav-link, .cart-icon-wrapper i {
+    color: inherit !important;
+}
+#cart-count, .cart-count {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #000000 !important;
+    animation: none !important;
+    box-shadow: none !important;
+}
+.logout-btn {
+    background: #111111 !important;
+    color: #ffffff !important;
+}
+.logout-btn:hover {
+    background: #000000 !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+}
+
+/* Legacy colorful surfaces → grayscale */
+.popular-item {
+    border: 2px solid rgba(0, 0, 0, 0.25) !important;
+}
+.menu-container .box:nth-child(1),
+.menu-container .box:nth-child(2),
+.menu-container .box:nth-child(3),
+.menu-container .box:nth-child(4),
+.menu-container .box:nth-child(5) {
+    background-color: #f4f4f4 !important;
+    border: 1px solid rgba(0,0,0,0.1) !important;
+}
+.content .content-left button,
+.menu-container .box button {
+    background-color: #111111 !important;
+    color: #ffffff !important;
+}
+.category .card-list .card {
+    background-color: #f4f4f4 !important;
+    outline: 2px solid rgba(0,0,0,0.2) !important;
+}
+.contact-form input:focus, .contact-form textarea:focus,
+.form-control:focus {
+    border-color: #111111 !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Checkout + customer cards */
+.checkout-page .card {
+    border: 1px solid rgba(0,0,0,0.14) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06) !important;
+}
+.checkout-page .card-header {
+    background-color: #111111 !important;
+    color: #ffffff !important;
+    border-bottom: 1px solid #000000 !important;
+    border-radius: 14px 14px 0 0 !important;
+}
+.checkout-page .card-header h5 {
+    color: #ffffff !important;
+}
+.checkout-page .card-header .badge {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #ffffff !important;
+}
+.payment-option {
+    border: 1px solid rgba(0,0,0,0.16) !important;
+    background: #ffffff !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    cursor: pointer;
+}
+.payment-option:hover {
+    border-color: #111111 !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.10) !important;
+}
+.payment-option.selected {
+    border: 2px solid #000000 !important;
+    background: #f4f4f4 !important;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.12) !important;
+}
+.payment-option .badge {
+    background-color: #111111 !important;
+    color: #ffffff !important;
+    border: 1px solid #111111 !important;
+}
+.font-monospace {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
+}
+
+/* Status tracker grayscale */
+.order-status-tracker .progress-line {
+    background: #111111 !important;
+}
+.order-status-tracker .pulse-ring {
+    border-color: #111111 !important;
+}
+.order-status-tracker .status-icon,
+.compact-status .status-icon {
+    background-color: #111111 !important;
+}
+.order-status-tracker .status-step.upcoming .status-icon {
+    background-color: #e9ecef !important;
+}
+.mini-progress .progress-bar {
+    background-color: #111111 !important;
+}
+.compact-status .status-text strong {
+    color: #111111 !important;
+}
+
+/* Clickable order numbers — inherit surrounding color, underline on hover */
+a.order-number-link {
+    color: inherit !important;
+    font-weight: 700;
+    text-decoration: none;
+    border-bottom: 1px dotted currentColor;
+}
+a.order-number-link:hover {
+    color: inherit !important;
+    text-decoration: underline;
+    border-bottom-style: solid;
+}

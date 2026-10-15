@@ -75,7 +75,14 @@
                             <div class="mb-3">
                                 <label for="sort_order" class="form-label">Sort Order</label>
                                 <input type="number" class="form-control" id="sort_order" name="sort_order" 
-                                       min="0" value="<?= Session::getFlash('old.sort_order') ?? $product['sort_order'] ?>">
+                                       min="0" value="<?= $product['sort_order'] ?? 0 ?>">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="preparation_time" class="form-label">Prep time (mins)</label>
+                                <input type="number" class="form-control" id="preparation_time" name="preparation_time"
+                                       min="0" value="<?= $product['preparation_time'] ?? 0 ?>">
                             </div>
                         </div>
                     </div>
@@ -95,12 +102,23 @@
                         </div>
                     </div>
 
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="is_available" name="is_available" 
-                               <?= (Session::getFlash('old.is_available') ?? $product['is_available']) ? 'checked' : '' ?>>
-                        <label class="form-check-label" for="is_available">
-                            Available for ordering
-                        </label>
+                    <div class="mb-3">
+                        <label class="form-label">Visibility & Highlights</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="is_available" name="is_available"
+                                   <?= !empty($product['is_available']) ? 'checked' : '' ?>>
+                            <label class="form-check-label" for="is_available">Available for ordering</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="is_bestseller" name="is_bestseller"
+                                   <?= !empty($product['is_bestseller']) ? 'checked' : '' ?>>
+                            <label class="form-check-label" for="is_bestseller"><i class="bi bi-trophy me-1"></i>Best seller</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="is_featured" name="is_featured"
+                                   <?= !empty($product['is_featured']) ? 'checked' : '' ?>>
+                            <label class="form-check-label" for="is_featured"><i class="bi bi-star me-1"></i>Featured on storefront</label>
+                        </div>
                     </div>
 
                     <div class="d-flex justify-content-between">
@@ -241,7 +259,7 @@ function deleteProduct() {
 
 <?php
 $content = ob_get_clean();
-$title = 'Edit Product - MacCafe';
+$title = 'Edit Product - CafeCat';
 $currentPage = 'products';
 include __DIR__ . '/../layout.php';
 ?>

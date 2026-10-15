@@ -1,4 +1,4 @@
-// Menu Cart Integration
+﻿// Menu Cart Integration
 class MenuCart {
     constructor() {
         this.cart = [];
@@ -7,7 +7,7 @@ class MenuCart {
 
     init() {
         // Load cart from localStorage if exists
-        const savedCart = localStorage.getItem('mccafe_cart');
+        const savedCart = localStorage.getItem('CafeCat_cart');
         if (savedCart) {
             this.cart = JSON.parse(savedCart);
         }
@@ -71,7 +71,7 @@ class MenuCart {
     }
 
     saveCart() {
-        localStorage.setItem('mccafe_cart', JSON.stringify(this.cart));
+        localStorage.setItem('CafeCat_cart', JSON.stringify(this.cart));
     }
 
     updateCartDisplay() {
@@ -355,8 +355,9 @@ document.addEventListener('DOMContentLoaded', function() {
 // Modal functionality
 let currentModalProduct = null;
 
-function showProductModal(name, image, description, category, time, basePrice) {
+function showProductModal(productId, name, image, description, category, time, basePrice) {
     currentModalProduct = {
+        productId: productId,
         name: name,
         image: image,
         description: description,
@@ -401,8 +402,8 @@ async function addModalProductToCart() {
     }
 
     try {
-        // Get product ID from mapping
-        const productId = productMapping[currentModalProduct.name];
+        // Use the actual product id attached to the modal
+        const productId = currentModalProduct.productId;
         if (!productId) {
             menuCart.showNotification('Product not found', 'error');
             return;

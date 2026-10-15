@@ -34,6 +34,7 @@ require_once ROOT_PATH . '/core/Router.php';
 require_once ROOT_PATH . '/core/Controller.php';
 require_once ROOT_PATH . '/core/Model.php';
 require_once ROOT_PATH . '/core/Email.php';
+require_once ROOT_PATH . '/core/ReceiptPdf.php';
 
 // Load models
 require_once ROOT_PATH . '/models/User.php';
@@ -43,6 +44,12 @@ require_once ROOT_PATH . '/models/Order.php';
 require_once ROOT_PATH . '/models/OrderItem.php';
 require_once ROOT_PATH . '/models/OrderStatusHistory.php';
 require_once ROOT_PATH . '/models/PaymentProof.php';
+require_once ROOT_PATH . '/models/PaymentMethod.php';
+require_once ROOT_PATH . '/models/Discount.php';
+require_once ROOT_PATH . '/models/Notification.php';
+require_once ROOT_PATH . '/models/Delivery.php';
+require_once ROOT_PATH . '/models/Substitution.php';
+require_once ROOT_PATH . '/models/ChatMessage.php';
 
 // Start session
 Session::start();
@@ -51,6 +58,7 @@ Session::start();
 require_once ROOT_PATH . '/middleware/AuthMiddleware.php';
 require_once ROOT_PATH . '/middleware/GuestMiddleware.php';
 require_once ROOT_PATH . '/middleware/AdminMiddleware.php';
+require_once ROOT_PATH . '/middleware/RiderMiddleware.php';
 
 // Load controllers
 require_once ROOT_PATH . '/controllers/HomeController.php';
@@ -63,6 +71,8 @@ require_once ROOT_PATH . '/controllers/AdminController.php';
 require_once ROOT_PATH . '/controllers/ApiController.php';
 require_once ROOT_PATH . '/controllers/CategoryController.php';
 require_once ROOT_PATH . '/controllers/CheckoutController.php';
+require_once ROOT_PATH . '/controllers/RiderController.php';
+require_once ROOT_PATH . '/controllers/ChatController.php';
 
 // Load routes
 $routes = require_once ROOT_PATH . '/routes/web.php';

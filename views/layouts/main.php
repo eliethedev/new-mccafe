@@ -14,8 +14,10 @@
     <!-- Swiper CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <!-- Custom CSS -->
-    <link href="/public/assets/css/style.css" rel="stylesheet">
-    <link href="/public/assets/css/mc-style.css" rel="stylesheet">
+    <link href="/assets/css/style.css" rel="stylesheet">
+    <link href="/assets/css/cafecat-style.css" rel="stylesheet">
+    <!-- Black & White theme (loads last, wins) -->
+    <link href="/assets/css/bw-theme.css" rel="stylesheet">
 </head>
 <body data-user-logged-in="<?= Session::has('user') ? 'true' : 'false' ?>">
     <!-- Navigation -->
@@ -29,10 +31,29 @@
     
     <!-- Footer -->
     <?php include __DIR__ . '/footer.php'; ?>
+
+    <!-- Live support chat widget -->
+    <?php include __DIR__ . '/../components/support-widget.php'; ?>
     
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <!-- Delivery notification bell (real-time polling) -->
+    <script src="/assets/js/notifications.js"></script>
+    <?php if (Session::has('user')): ?>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.CafeCatNotifications && document.getElementById('notifBadge')) {
+            window.CafeCatNotifications.initBell({
+                badgeId: 'notifBadge',
+                listId: 'notifList',
+                bellId: 'notifBell',
+                ordersUrl: '/orders'
+            });
+        }
+    });
+    </script>
+    <?php endif; ?>
 </body>
 </html>

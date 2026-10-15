@@ -2,7 +2,7 @@
 
 return [
     'app' => [
-        'name' => 'MacCafe Ordering System',
+        'name' => 'CafeCat Ordering System',
         'url' => 'http://localhost:8000',
         'timezone' => 'Asia/Manila',
         'debug' => true,
@@ -42,7 +42,7 @@ return [
         'port' => 587,
         'username' => 'eliezersantillan648@gmail.com', // Update with your email
         'password' => 'hyzk efov pklc oejr',    // Replace with generated App Password
-        'from_name' => 'mccafe',
+        'from_name' => 'cafecat',
         'from_email' => 'eliezersantillan648@gmail.com', // Update with your email
     ],
 ];

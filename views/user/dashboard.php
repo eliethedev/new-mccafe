@@ -25,11 +25,11 @@ function timeAgo($timestamp) {
 <style>
 /* Dashboard Custom Styles */
 .dashboard-hero {
-    background: linear-gradient(135deg, var(--maccafe-primary), #e48d0a);
+    background: linear-gradient(135deg, var(--cafecat-primary), #111111);
     border-radius: 20px;
     padding: 40px;
     margin-bottom: 30px;
-    box-shadow: 0 10px 30px rgba(255, 193, 7, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     position: relative;
     overflow: hidden;
 }
@@ -78,7 +78,7 @@ function timeAgo($timestamp) {
     left: 0;
     width: 4px;
     height: 100%;
-    background: linear-gradient(135deg, var(--maccafe-primary), #ffb300);
+    background: linear-gradient(135deg, var(--cafecat-primary), #111111);
 }
 
 .stats-card:hover {
@@ -120,7 +120,7 @@ function timeAgo($timestamp) {
 .stats-number {
     font-size: 2rem;
     font-weight: bold;
-    color: var(--maccafe-dark);
+    color: var(--cafecat-dark);
     margin-bottom: 5px;
 }
 
@@ -147,7 +147,7 @@ function timeAgo($timestamp) {
     left: 0;
     right: 0;
     height: 100px;
-    background: linear-gradient(135deg, var(--maccafe-primary), #ffb300);
+    background: linear-gradient(135deg, var(--cafecat-primary), #111111);
 }
 
 .user-avatar {
@@ -167,13 +167,13 @@ function timeAgo($timestamp) {
 
 .user-avatar i {
     font-size: 3rem;
-    color: var(--maccafe-primary);
+    color: var(--cafecat-primary);
 }
 
 .user-name {
     font-size: 1.5rem;
     font-weight: bold;
-    color: var(--maccafe-dark);
+    color: var(--cafecat-dark);
     margin-bottom: 5px;
 }
 
@@ -200,7 +200,7 @@ function timeAgo($timestamp) {
 }
 
 .quick-actions-card h5 {
-    color: var(--maccafe-dark);
+    color: var(--cafecat-dark);
     font-weight: bold;
     margin-bottom: 25px;
     position: relative;
@@ -215,7 +215,7 @@ function timeAgo($timestamp) {
     transform: translateY(-50%);
     width: 4px;
     height: 20px;
-    background: linear-gradient(135deg, var(--maccafe-primary), #ffb300);
+    background: linear-gradient(135deg, var(--cafecat-primary), #111111);
 }
 
 .action-btn {
@@ -225,7 +225,7 @@ function timeAgo($timestamp) {
     border-radius: 15px;
     border: 2px solid #f0f0f0;
     background: white;
-    color: var(--maccafe-dark);
+    color: var(--cafecat-dark);
     text-decoration: none;
     transition: all 0.3s ease;
     margin-bottom: 15px;
@@ -234,8 +234,8 @@ function timeAgo($timestamp) {
 
 .action-btn:hover {
     background: linear-gradient(135deg, #fff8e1, #ffecb3);
-    border-color: var(--maccafe-primary);
-    color: var(--maccafe-dark);
+    border-color: var(--cafecat-primary);
+    color: var(--cafecat-dark);
     transform: translateX(5px);
     text-decoration: none;
 }
@@ -250,7 +250,7 @@ function timeAgo($timestamp) {
 .action-btn.orders i { color: #667eea; }
 .action-btn.menu i { color: #28a745; }
 .action-btn.profile i { color: #17a2b8; }
-.action-btn.cart i { color: #ffc107; }
+.action-btn.cart i { color: #111111; }
 
 .recent-activity {
     background: white;
@@ -261,7 +261,7 @@ function timeAgo($timestamp) {
 }
 
 .recent-activity h5 {
-    color: var(--maccafe-dark);
+    color: var(--cafecat-dark);
     font-weight: bold;
     margin-bottom: 20px;
     position: relative;
@@ -276,7 +276,7 @@ function timeAgo($timestamp) {
     transform: translateY(-50%);
     width: 4px;
     height: 20px;
-    background: linear-gradient(135deg, var(--maccafe-primary), #ffb300);
+    background: linear-gradient(135deg, var(--cafecat-primary), #111111);
 }
 
 .activity-item {
@@ -307,7 +307,7 @@ function timeAgo($timestamp) {
 
 .activity-title {
     font-weight: 500;
-    color: var(--maccafe-dark);
+    color: var(--cafecat-dark);
     margin-bottom: 2px;
 }
 
@@ -504,7 +504,7 @@ function timeAgo($timestamp) {
                             <i class="bi bi-bag-check"></i>
                         </div>
                         <div class="activity-content">
-                            <div class="activity-title">Order #<?= $order['id'] ?> <?= ucfirst($order['status']) ?></div>
+                            <div class="activity-title"><a class="order-number-link" href="/orders/<?= $order['id'] ?>">Order #<?= htmlspecialchars($order['order_number']) ?></a> <?= ucfirst($order['status']) ?></div>
                             <div class="activity-time"><?= $timeAgo ?></div>
                         </div>
                     </div>
@@ -544,6 +544,6 @@ function timeAgo($timestamp) {
 
 <?php
 $content = ob_get_clean();
-$title = 'Dashboard - MacCafe';
+$title = 'Dashboard - CafeCat';
 include __DIR__ . '/../layouts/main.php';
 ?>

@@ -83,7 +83,7 @@ ob_start();
                                 </ul>
                             </div>
                             
-                            <a href="/menu" class="btn btn-success">
+                            <a href="/menu" class="btn btn-dark">
                                 <i class="bi bi-plus-circle me-2"></i>New Order
                             </a>
                         </div>
@@ -106,9 +106,9 @@ ob_start();
                                     
                                     <div class="d-flex justify-content-between align-items-start mb-2">
                                         <div>
-                                            <h6 class="mb-1 fw-bold"><?= htmlspecialchars($order['order_number']) ?></h6>
+                                            <h6 class="mb-1 fw-bold"><a class="order-number-link" href="/orders/<?= $order['id'] ?>"><?= htmlspecialchars($order['order_number']) ?></a></h6>
                                             <?php if (!empty($order['first_product_name'])): ?>
-                                                <small class="text-primary d-block">
+                                                <small class="d-block">
                                                     <i class="bi bi-box me-1"></i>
                                                     <?= htmlspecialchars($order['first_product_name']) ?>
                                                 </small>
@@ -129,7 +129,11 @@ ob_start();
                                     <div class="row">
                                         <div class="col-12">
                                             <small class="text-muted d-block">Total:</small>
-                                            <h6 class="mb-2 text-primary">₱<?= number_format($order['total_amount'], 2) ?></h6>
+                                            <h6 class="mb-2">₱<?= number_format($order['total_amount'], 2) ?>
+                                                <?php if (!empty($order['discount_type']) && $order['discount_type'] !== 'none'): ?>
+                                                    <span class="badge bg-dark ms-1" title="Senior/PWD 20% discount (<?= ucfirst($order['discount_status'] ?? 'pending') ?>)">−20% <?= $order['discount_type'] === 'senior' ? 'Senior' : 'PWD' ?></span>
+                                                <?php endif; ?>
+                                            </h6>
                                         </div>
                                         <div class="col-12">
                                             <small class="text-muted d-block">Payment:</small>
@@ -140,11 +144,17 @@ ob_start();
                                 
                                 <div class="card-footer bg-transparent">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <a href="/orders/<?= $order['id'] ?>" class="btn btn-outline-primary btn-sm">
-                                            <i class="bi bi-eye me-1"></i>View Details
-                                        </a>
+                                        <div class="d-flex gap-2">
+                                            <a href="/orders/<?= $order['id'] ?>" class="btn btn-outline-primary btn-sm">
+                                                <i class="bi bi-eye me-1"></i>View Details
+                                            </a>
+                                            <a href="/orders/<?= $order['id'] ?>/receipt" class="btn btn-outline-dark btn-sm" title="Download receipt (PDF)">
+                                                <i class="bi bi-file-earmark-pdf me-1"></i>Receipt
+                                            </a>
+                                        </div>
                                         
-                                        <?php if (in_array($order['status'], ['pending', 'confirmed']) && $order['payment_method'] !== 'gcash'): ?>
+                                        <?php $isManualList = in_array(strtolower($order['payment_method'] ?? ''), ['gcash', 'paymaya', 'maya', 'bank_transfer'], true); ?>
+                                        <?php if (in_array($order['status'], ['pending', 'confirmed']) && !$isManualList): ?>
                                             <button class="btn btn-outline-danger btn-sm cancel-order-btn" 
                                                     data-order-id="<?= $order['id'] ?>"
                                                     data-order-number="<?= htmlspecialchars($order['order_number']) ?>">
@@ -249,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <?php
 $content = ob_get_clean();
-$title = 'My Orders - MacCafe';
+$title = 'My Orders - CafeCat';
 
 // Load constants for the layout
 require_once __DIR__ . '/../../config/constants.php';

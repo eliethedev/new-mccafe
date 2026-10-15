@@ -48,13 +48,13 @@ class Controller {
             $rulesList = explode('|', $fieldRules);
             
             foreach ($rulesList as $rule) {
-                if ($rule === 'required' && empty($data[$field])) {
+                if ($rule === 'required' && empty($data[$field] ?? null)) {
                     $errors[$field][] = "The $field field is required.";
                 }
                 
                 if (strpos($rule, 'min:') === 0) {
                     $minLength = (int)substr($rule, 4);
-                    if (strlen($data[$field]) < $minLength) {
+                    if (strlen($data[$field] ?? '') < $minLength) {
                         $errors[$field][] = "The $field must be at least $minLength characters.";
                     }
                 }

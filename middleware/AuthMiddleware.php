@@ -4,15 +4,19 @@ class AuthMiddleware {
     public function handle(Request $request) {
         if (!Session::has('user')) {
             if ($request->isAjax()) {
-                return new Response(json_encode([
+                $r = new Response(json_encode([
                     'success' => false,
-                    'message' => 'Authentication required',
+                    'message' => 'Session expired. Please log in again.',
                     'redirect' => '/login'
                 ]), 401);
+                $r->setHeader('Content-Type', 'application/json');
+                return $r;
             }
             
             Session::flash('error', 'Please login to continue');
-            return new Response('', 302, ['Location' => '/login']);
+            $r = new Response('', 302);
+            $r->setHeader('Location', '/login');
+            return $r;
         }
         
         return true;

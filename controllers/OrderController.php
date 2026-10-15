@@ -11,7 +11,7 @@ class OrderController extends Controller {
             exit;
         }
         
-        $page = $request->getQuery('page', 1);
+        $page = max(1, (int)$request->getQuery('page', 1));
         $limit = 10;
         
         try {
@@ -56,11 +56,18 @@ class OrderController extends Controller {
         
         $orderItems = Order::getOrderItems($id);
         $statusHistory = Order::getOrderStatusHistory($id);
-        
+        $refundInfo = $this->getRefundInfo($id);
+        if (!class_exists('Substitution')) {
+            require_once __DIR__ . '/../models/Substitution.php';
+        }
+        $subs = Substitution::forOrder($id);
+
         return $this->view('user/order-details', [
             'order' => $order,
             'orderItems' => $orderItems,
             'statusHistory' => $statusHistory,
+            'refundInfo' => $refundInfo,
+            'subs' => $subs,
             'title' => 'Order Details - ' . $order['order_number']
         ]);
     }
@@ -72,19 +79,29 @@ class OrderController extends Controller {
             header('Location: /login');
             exit;
         }
+
+        $order = Order::getOrderById($id, $userId);
+        $policyMessage = '';
+        if ($order && class_exists('PaymentMethod')) {
+            $check = PaymentMethod::customerCanCancel($order);
+            if (!$check['allowed']) {
+                $policyMessage = $check['message'];
+            }
+        }
         
-        $result = Order::cancelOrder($id, $userId);
+        $result = $policyMessage === '' ? Order::cancelOrder($id, $userId) : false;
+        $message = $result ? 'Order cancelled successfully' : ($policyMessage !== '' ? $policyMessage : 'Failed to cancel order. Only pending/confirmed cash orders can be cancelled.');
         
         if ($request->isAjax()) {
             $response = new Response(
-                json_encode(['success' => $result, 'message' => $result ? 'Order cancelled successfully' : 'Failed to cancel order']), 
-                200
+                json_encode(['success' => $result, 'message' => $message]), 
+                $result ? 200 : 400
             );
             $response->setHeader('Content-Type', 'application/json');
             return $response;
         }
         
-        $_SESSION['message'] = $result ? 'Order cancelled successfully' : 'Failed to cancel order';
+        $_SESSION['message'] = $message;
         header('Location: /orders');
         exit;
     }
@@ -142,15 +159,21 @@ class OrderController extends Controller {
         $dateFrom = $request->getQuery('date_from');
         $dateTo = $request->getQuery('date_to');
         $search = $request->getQuery('search');
-        $page = $request->getQuery('page', 1);
+        $page = max(1, (int)$request->getQuery('page', 1));
         $limit = 20;
         
         try {
             // First, try a simple query to see if we can get any orders
-            $testQuery = "SELECT o.*, u.first_name as customer_name, u.email as customer_email 
-                         FROM orders o 
-                         LEFT JOIN users u ON o.user_id = u.id 
-                         ORDER BY o.created_at DESC LIMIT 10";
+$testQuery = "SELECT o.*, u.first_name as customer_name, u.email as customer_email,
+                                  r.first_name as rider_first_name, r.last_name as rider_last_name,
+                                  d.status as delivery_status, d.id as delivery_id,
+                                  (SELECT COUNT(*) FROM substitutions s WHERE s.order_id = o.id AND s.status = 'suggested') as pending_subs,
+                                  (SELECT p.image FROM order_items oi LEFT JOIN products p ON p.id = oi.product_id WHERE oi.order_id = o.id AND p.image IS NOT NULL LIMIT 1) as first_product_image
+                           FROM orders o
+                           LEFT JOIN users u ON o.user_id = u.id
+                           LEFT JOIN deliveries d ON d.order_id = o.id
+                           LEFT JOIN users r ON r.id = d.rider_id
+                           ORDER BY o.created_at DESC LIMIT 10";
             
             $stmt = $this->query($testQuery, []);
             $orders = $stmt->fetchAll();
@@ -202,11 +225,32 @@ class OrderController extends Controller {
         
         $orderItems = $this->getOrderItems($id);
         $statusHistory = $this->getOrderStatusHistory($id);
-        
+        $refunds = $this->getRefunds($id);
+
+        if (!class_exists('Delivery')) {
+            require_once __DIR__ . '/../models/Delivery.php';
+        }
+        if (!class_exists('Substitution')) {
+            require_once __DIR__ . '/../models/Substitution.php';
+        }
+        try {
+            $delivery = Delivery::detail(Model::query(
+                "SELECT id FROM deliveries WHERE order_id = ? LIMIT 1", [$id]
+            )->fetchColumn() ?: 0);
+        } catch (Throwable $e) {
+            $delivery = null;
+        }
+        $riders = Delivery::allRiders();
+        $subs = Substitution::forOrder($id);
+
         return $this->view('admin/orders/show', [
             'order' => $order,
             'orderItems' => $orderItems,
             'statusHistory' => $statusHistory,
+            'refunds' => $refunds,
+            'delivery' => $delivery,
+            'riders' => $riders,
+            'subs' => $subs,
             'title' => 'Order Details - ' . $order['order_number']
         ]);
     }
@@ -265,11 +309,29 @@ class OrderController extends Controller {
             if ($isGcashCancel && $refundAmount && $refundMethod && $refundMethod !== 'no_refund') {
                 // Create refund record
                 try {
-                    $this->createRefundRecord($id, $refundAmount, $refundMethod, $refundNotes);
+                    $refund = $this->createRefundRecord($id, $refundAmount, $refundMethod, $refundNotes);
                     error_log("Refund record created for Order ID: $id");
+                    // Automated refund notifications (customer + admins).
+                    try {
+                        $this->sendRefundNotifications($id, $refund ?: [
+                            'refund_amount' => $refundAmount,
+                            'refund_method' => $refundMethod,
+                            'refund_status' => 'processed',
+                        ], 'processed');
+                    } catch (Throwable $e) {
+                        error_log('Refund notification failed for order ' . $id . ': ' . $e->getMessage());
+                    }
                 } catch (Exception $e) {
                     error_log("Error creating refund record: " . $e->getMessage());
                 }
+            }
+
+            // Delivery notifications (in-app + email to customer and admins).
+            // Fire-and-forget: failures are logged and never break the update.
+            try {
+                $this->sendDeliveryNotifications($id, $status);
+            } catch (Throwable $e) {
+                error_log('Delivery notification failed for order ' . $id . ': ' . $e->getMessage());
             }
             
             if ($request->isAjax()) {
@@ -301,7 +363,7 @@ class OrderController extends Controller {
     
     private function getOrderItems($orderId) {
         $stmt = $this->query("
-            SELECT oi.*, p.name as product_name, pv.name as variant_name
+            SELECT oi.*, p.name as product_name, p.image as product_image, pv.name as variant_name
             FROM order_items oi
             LEFT JOIN products p ON oi.product_id = p.id
             LEFT JOIN product_variants pv ON oi.variant_id = pv.id
@@ -357,6 +419,69 @@ class OrderController extends Controller {
         
         $stmt = $this->query($sql, $params);
         return $stmt->rowCount() > 0;
+    }
+
+    /**
+     * Fire delivery notifications for ready/completed orders:
+     * in-app rows for the customer (+ all staff on delivered) and emails.
+     * Safe to call inline — every step fails soft.
+     */
+    private function sendDeliveryNotifications($orderId, $status) {
+        if (!in_array($status, ['ready', 'completed'], true)) {
+            return;
+        }
+
+        $order = $this->getOrderById($orderId);
+        if (!$order) {
+            return;
+        }
+
+        if (!class_exists('Notification')) {
+            require_once __DIR__ . '/../models/Notification.php';
+        }
+
+        if ($status === 'ready') {
+            Notification::notifyOrderReady($order);
+            try {
+                $email = new Email();
+                $email->sendOrderReady($order);
+            } catch (Throwable $e) {
+                error_log('Ready email failed for order ' . $orderId . ': ' . $e->getMessage());
+            }
+            return;
+        }
+
+        // Delivered: customer receipt + admin notices (in-app + email).
+        Notification::notifyOrderDelivered($order);
+        try {
+            $email = new Email();
+            $email->sendOrderDelivered($order);
+        } catch (Throwable $e) {
+            error_log('Delivered email failed for order ' . $orderId . ': ' . $e->getMessage());
+        }
+        foreach ($this->getStaffEmails() as $staff) {
+            try {
+                $staffMail = new Email();
+                $staffMail->sendAdminDeliveredNotice(
+                    $staff['email'] ?? '',
+                    trim((($staff['first_name'] ?? '') . ' ' . ($staff['last_name'] ?? ''))) ?: 'Admin',
+                    $order
+                );
+            } catch (Throwable $e) {
+                error_log('Admin delivered email failed for order ' . $orderId . ': ' . $e->getMessage());
+            }
+        }
+    }
+
+    private function getStaffEmails() {
+        try {
+            $stmt = $this->query(
+                "SELECT email, first_name, last_name FROM users WHERE role IN ('admin', 'staff')"
+            );
+            return $stmt->fetchAll();
+        } catch (Exception $e) {
+            return [];
+        }
     }
     
     public function payments(Request $request) {
@@ -532,11 +657,29 @@ public function getPaymentProof(Request $request, $id) {
 
 public function verifyPayment(Request $request) {
     $orderId = $request->getBody('order_id');
-    $approved = $request->getBody('approved');
-    $reason = $request->getBody('reason') ?? '';
+    $approvedRaw = $request->getBody('approved');
+    $reason = trim((string)($request->getBody('reason') ?? ''));
     
-    if (!$orderId) {
-        return new Response(json_encode(['success' => false, 'message' => 'Order ID required']), 400);
+    if (!$orderId || !ctype_digit((string)$orderId)) {
+        return new Response(json_encode(['success' => false, 'message' => 'Valid Order ID required']), 400);
+    }
+    $approved = filter_var($approvedRaw, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+    if ($approved === null) {
+        return new Response(json_encode(['success' => false, 'message' => 'Valid approval flag required']), 400);
+    }
+    if (!$approved && mb_strlen($reason) < 5) {
+        return new Response(json_encode(['success' => false, 'message' => 'A rejection reason (min 5 chars) is required']), 400);
+    }
+    $reason = mb_substr($reason, 0, 1000);
+
+    $order = $this->getOrderById($orderId);
+    if (!$order) {
+        return new Response(json_encode(['success' => false, 'message' => 'Order not found']), 404);
+    }
+    // Only manual payments go through proof verification; cash never needs it.
+    $methodNorm = strtolower($order['payment_method'] ?? 'cash');
+    if (in_array($methodNorm, ['cash', 'cash_on_delivery', 'cod', 'card'], true)) {
+        return new Response(json_encode(['success' => false, 'message' => 'Cash orders do not require payment verification']), 400);
     }
     
     try {
@@ -885,9 +1028,7 @@ private function getAdminOrders($status = null, $dateFrom = null, $dateTo = null
         $sql .= " WHERE " . implode(" AND ", $conditions);
     }
     
-    $sql .= " ORDER BY o.created_at DESC LIMIT ? OFFSET ?";
-    $params[] = $limit;
-    $params[] = $offset;
+    $sql .= " ORDER BY o.created_at DESC LIMIT " . (int)$limit . " OFFSET " . (int)$offset;
     
     try {
         $stmt = $this->query($sql, $params);
@@ -977,7 +1118,7 @@ private function query($sql, $params = []) {
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     order_id INT NOT NULL,
                     refund_amount DECIMAL(10,2) NOT NULL,
-                    refund_method ENUM('gcash', 'cash', 'bank_transfer', 'store_credit') NOT NULL,
+                    refund_method ENUM('gcash', 'maya', 'paymaya', 'cash', 'bank_transfer', 'store_credit') NOT NULL,
                     refund_notes TEXT,
                     refund_status ENUM('pending', 'processed', 'failed') DEFAULT 'pending',
                     processed_by INT,
@@ -985,17 +1126,17 @@ private function query($sql, $params = []) {
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
-                    FOREIGN KEY (processed_by) REFERENCES users(id),
+                    FOREIGN KEY (processed_by) REFERENCES users(id) ON DELETE SET NULL,
                     INDEX idx_order (order_id),
                     INDEX idx_status (refund_status)
                 )
             ");
             error_log("Created refunds table");
         }
-        
+
         // Insert refund record
         $this->query("
-            INSERT INTO refunds (order_id, refund_amount, refund_method, refund_notes, refund_status, processed_by, processed_at) 
+            INSERT INTO refunds (order_id, refund_amount, refund_method, refund_notes, refund_status, processed_by, processed_at)
             VALUES (?, ?, ?, ?, 'processed', ?, NOW())
         ", [
             $orderId,
@@ -1004,29 +1145,500 @@ private function query($sql, $params = []) {
             $refundNotes,
             $_SESSION['user']['id']
         ]);
-        
+
         error_log("Refund record created: Order $orderId, Amount $refundAmount, Method $refundMethod");
+
+        // Return the created row so callers can fire refund notifications.
+        $stmt = $this->query(
+            "SELECT * FROM refunds WHERE order_id = ? ORDER BY id DESC LIMIT 1",
+            [$orderId]
+        );
+        return $stmt->fetch();
     }
 
     public function processRefund(Request $request) {
         $orderId = $request->getBody('order_id');
         $refundAmount = $request->getBody('refund_amount');
-        $refundMethod = $request->getBody('refund_method');
-        $refundNotes = $request->getBody('refund_notes');
+        $refundMethod = trim((string)($request->getBody('refund_method') ?? ''));
+        $refundNotes = mb_substr(trim((string)($request->getBody('refund_notes') ?? '')), 0, 1000);
         
-        if (!$orderId || !$refundAmount || !$refundMethod) {
-            return new Response(json_encode(['success' => false, 'message' => 'Missing required fields']), 400);
+        if (!$orderId || !ctype_digit((string)$orderId) || !is_numeric($refundAmount) || !$refundMethod) {
+            return new Response(json_encode(['success' => false, 'message' => 'Missing or invalid required fields']), 400);
+        }
+        $allowedMethods = ['gcash', 'maya', 'paymaya', 'cash', 'bank_transfer', 'store_credit'];
+        if (!in_array(strtolower($refundMethod), $allowedMethods, true)) {
+            return new Response(json_encode(['success' => false, 'message' => 'Invalid refund method']), 400);
+        }
+        $order = $this->getOrderById($orderId);
+        if (!$order) {
+            return new Response(json_encode(['success' => false, 'message' => 'Order not found']), 404);
+        }
+        $refundAmount = round((float)$refundAmount, 2);
+        if ($refundAmount <= 0 || $refundAmount > (float)$order['total_amount']) {
+            return new Response(json_encode(['success' => false, 'message' => 'Refund amount must be between 0 and the order total']), 400);
         }
         
         try {
             // Create refund record
-            $this->createRefundRecord($orderId, $refundAmount, $refundMethod, $refundNotes);
-            
+            $refund = $this->createRefundRecord($orderId, $refundAmount, strtolower($refundMethod), $refundNotes);
+
+            // Automated notifications (customer + admins, in-app + email).
+            try {
+                $this->sendRefundNotifications($orderId, $refund ?: [
+                    'refund_amount' => $refundAmount,
+                    'refund_method' => strtolower($refundMethod),
+                    'refund_status' => 'processed',
+                ], 'processed');
+            } catch (Throwable $e) {
+                error_log('Refund notification failed for order ' . $orderId . ': ' . $e->getMessage());
+            }
+
             return new Response(json_encode(['success' => true, 'message' => 'Refund processed successfully']), 200);
         } catch (Exception $e) {
             error_log("Error processing refund: " . $e->getMessage());
             return new Response(json_encode(['success' => false, 'message' => 'Failed to process refund']), 500);
         }
+    }
+
+    /**
+     * Update a refund's status (pending → processed/failed, processed → failed).
+     * Fires status-change notifications to customer and admins.
+     */
+    public function updateRefundStatus(Request $request) {
+        $refundId = $request->getBody('refund_id');
+        $status = strtolower(trim((string)($request->getBody('status') ?? '')));
+
+        if (!$refundId || !ctype_digit((string)$refundId)) {
+            return new Response(json_encode(['success' => false, 'message' => 'Valid refund ID required']), 400);
+        }
+        if (!in_array($status, ['pending', 'processed', 'failed'], true)) {
+            return new Response(json_encode(['success' => false, 'message' => 'Status must be pending, processed or failed']), 400);
+        }
+
+        try {
+            $stmt = $this->query("SELECT * FROM refunds WHERE id = ?", [$refundId]);
+            $refund = $stmt->fetch();
+            if (!$refund) {
+                return new Response(json_encode(['success' => false, 'message' => 'Refund not found']), 404);
+            }
+
+            $oldStatus = $refund['refund_status'];
+            $allowed = [
+                'pending' => ['processed', 'failed'],
+                'processed' => ['failed'],
+                'failed' => [],
+            ];
+            if ($oldStatus === $status) {
+                return new Response(json_encode(['success' => false, 'message' => "Refund is already $status"]), 400);
+            }
+            if (!in_array($status, $allowed[$oldStatus] ?? [], true)) {
+                return new Response(json_encode(['success' => false, 'message' => "Cannot change refund from $oldStatus to $status"]), 400);
+            }
+
+            $this->query(
+                "UPDATE refunds SET refund_status = ?, updated_at = NOW() WHERE id = ?",
+                [$status, $refundId]
+            );
+            $refund['refund_status'] = $status;
+
+            $order = $this->getOrderById($refund['order_id']);
+            if ($order) {
+                $this->recordStatusChange(
+                    $refund['order_id'],
+                    $order['status'],
+                    "Refund #{$refundId} status changed from $oldStatus to $status.",
+                    $_SESSION['user']['id'] ?? null
+                );
+            }
+
+            try {
+                $this->sendRefundNotifications($refund['order_id'], $refund, 'status_changed', $oldStatus);
+            } catch (Throwable $e) {
+                error_log('Refund status notification failed for refund ' . $refundId . ': ' . $e->getMessage());
+            }
+
+            return new Response(json_encode(['success' => true, 'message' => "Refund marked as $status"]), 200);
+        } catch (Exception $e) {
+            error_log("Refund status update error: " . $e->getMessage());
+            return new Response(json_encode(['success' => false, 'message' => 'Database error']), 500);
+        }
+    }
+
+    /**
+     * Fire refund notifications: in-app rows (customer + staff) and emails.
+     * $event is 'processed' or 'status_changed' (with $oldStatus).
+     * Never throws — callers treat this as fire-and-forget.
+     */
+    private function sendRefundNotifications($orderId, $refund, $event, $oldStatus = null) {
+        $order = $this->getOrderById($orderId);
+        if (!$order) {
+            return;
+        }
+
+        if (!class_exists('Notification')) {
+            require_once __DIR__ . '/../models/Notification.php';
+        }
+
+        if ($event === 'processed') {
+            Notification::notifyRefundProcessed($order, $refund);
+            try {
+                $email = new Email();
+                $email->sendRefundProcessed($order, $refund);
+            } catch (Throwable $e) {
+                error_log('Refund processed email failed for order ' . $orderId . ': ' . $e->getMessage());
+            }
+            $context = 'processed';
+        } else {
+            $newStatus = $refund['refund_status'] ?? 'updated';
+            Notification::notifyRefundStatusChanged($order, $refund, (string)$oldStatus, (string)$newStatus);
+            try {
+                $email = new Email();
+                $email->sendRefundStatusUpdate($order, $refund, (string)$oldStatus, (string)$newStatus);
+            } catch (Throwable $e) {
+                error_log('Refund status email failed for order ' . $orderId . ': ' . $e->getMessage());
+            }
+            $context = "$oldStatus → $newStatus";
+        }
+
+        foreach ($this->getStaffEmails() as $staff) {
+            try {
+                $staffMail = new Email();
+                $staffMail->sendAdminRefundNotice(
+                    $staff['email'] ?? '',
+                    trim((($staff['first_name'] ?? '') . ' ' . ($staff['last_name'] ?? ''))) ?: 'Admin',
+                    $order,
+                    $refund,
+                    $context
+                );
+            } catch (Throwable $e) {
+                error_log('Admin refund email failed for order ' . $orderId . ': ' . $e->getMessage());
+            }
+        }
+    }
+
+    /**
+     * Staff verification of a Senior/PWD discount claim.
+     * Verified: claim stands. Rejected: totals revert to regular price
+     * (subtotal + 12% VAT); the difference is collected on pickup/delivery.
+     */
+    public function verifyDiscount(Request $request, $id) {
+        $decision = strtolower(trim((string)($request->getBody('decision') ?? '')));
+        $notes = mb_substr(trim((string)($request->getBody('notes') ?? '')), 0, 1000);
+
+        if (!in_array($decision, ['verified', 'rejected'], true)) {
+            return new Response(json_encode(['success' => false, 'message' => 'Decision must be verified or rejected']), 400);
+        }
+
+        $order = $this->getOrderById($id);
+        if (!$order) {
+            return new Response(json_encode(['success' => false, 'message' => 'Order not found']), 404);
+        }
+
+        if (($order['discount_type'] ?? 'none') === 'none') {
+            return new Response(json_encode(['success' => false, 'message' => 'No discount claim on this order']), 400);
+        }
+
+        if (($order['discount_status'] ?? 'none') !== 'pending') {
+            return new Response(json_encode(['success' => false, 'message' => 'Discount claim is already ' . ($order['discount_status'] ?? 'none')]), 400);
+        }
+
+        try {
+            $staffId = $_SESSION['user']['id'] ?? null;
+
+            if ($decision === 'verified') {
+                $this->query("UPDATE orders SET discount_status = 'verified' WHERE id = ?", [$id]);
+                $this->recordStatusChange($id, $order['status'], 'Senior/PWD discount verified by staff. ' . $notes, $staffId);
+                return new Response(json_encode(['success' => true, 'message' => 'Discount verified']), 200);
+            }
+
+            // Rejected: revert to regular pricing.
+            $subtotal = round((float)$order['subtotal'], 2);
+            $tax = round($subtotal * 0.12, 2);
+            $total = round($subtotal + $tax, 2);
+            $this->query(
+                "UPDATE orders SET discount_status = 'rejected', discount_amount = 0, tax_amount = ?, total_amount = ? WHERE id = ?",
+                [$tax, $total, $id]
+            );
+            $this->recordStatusChange($id, $order['status'], 'Senior/PWD discount rejected by staff; total reverted to regular price. ' . $notes, $staffId);
+            return new Response(json_encode(['success' => true, 'message' => 'Discount rejected; totals reverted', 'total' => $total]), 200);
+        } catch (Exception $e) {
+            error_log("Discount verification error: " . $e->getMessage());
+            return new Response(json_encode(['success' => false, 'message' => 'Database error']), 500);
+        }
+    }
+
+    /**
+     * Assign (or reassign) a rider to an order. Creates/updates the delivery
+     * row and notifies the rider (in-app + email) and the customer.
+     */
+    public function assignRider(Request $request, $id) {
+        $riderId = $request->getBody('rider_id');
+
+        if (!$id || !ctype_digit((string)$id) || !$riderId || !ctype_digit((string)$riderId)) {
+            return new Response(json_encode(['success' => false, 'message' => 'Valid order and rider required']), 400);
+        }
+
+        $order = $this->getOrderById($id);
+        if (!$order) {
+            return new Response(json_encode(['success' => false, 'message' => 'Order not found']), 404);
+        }
+
+        if (in_array($order['status'] ?? '', ['completed', 'cancelled'], true)) {
+            return new Response(json_encode(['success' => false, 'message' => 'Cannot assign a rider to a ' . $order['status'] . ' order']), 400);
+        }
+
+        try {
+            $rider = Model::query("SELECT * FROM users WHERE id = ? AND role = 'rider'", [$riderId])->fetch();
+            if (!$rider) {
+                return new Response(json_encode(['success' => false, 'message' => 'Rider not found']), 404);
+            }
+
+            if (!class_exists('Delivery')) {
+                require_once __DIR__ . '/../models/Delivery.php';
+            }
+            $existing = Delivery::findByOrder($id);
+            if ($existing) {
+                Model::query(
+                    "UPDATE deliveries SET rider_id = ?, status = 'assigned', assigned_at = NOW(), accepted_at = NULL, updated_at = NOW() WHERE id = ?",
+                    [$riderId, $existing['id']]
+                );
+            } else {
+                Delivery::create(['order_id' => $id, 'rider_id' => $riderId, 'status' => 'assigned']);
+            }
+
+            $staffName = trim((($_SESSION['user']['first_name'] ?? '') . ' ' . ($_SESSION['user']['last_name'] ?? '')));
+            $this->recordStatusChange($id, $order['status'], 'Rider assigned: ' . trim($rider['first_name'] . ' ' . $rider['last_name']) . ' by ' . ($staffName !== '' ? $staffName : 'staff'), $_SESSION['user']['id'] ?? null);
+
+            $riderName = trim($rider['first_name'] . ' ' . $rider['last_name']);
+            Notification::notifyDeliveryAssigned($order, $riderId, $riderName);
+            try {
+                $email = new Email();
+                $email->sendRiderAssignment($rider['email'] ?? '', $riderName, $order);
+            } catch (Throwable $e) {
+                error_log('Rider assignment email failed: ' . $e->getMessage());
+            }
+            try {
+                $email = new Email();
+                $email->sendCustomerDeliveryUpdate(
+                    $order,
+                    'Rider assigned to your order',
+                    $riderName . ' will deliver order #' . $order['order_number'] . '. Track it under My Orders.'
+                );
+            } catch (Throwable $e) {
+                error_log('Customer rider-assigned email failed: ' . $e->getMessage());
+            }
+
+            return new Response(json_encode(['success' => true, 'message' => 'Rider assigned and notified']), 200);
+        } catch (Exception $e) {
+            error_log('Assign rider failed: ' . $e->getMessage());
+            return new Response(json_encode(['success' => false, 'message' => 'Database error']), 500);
+        }
+    }
+
+    /**
+     * Approve or reject a substitution suggestion.
+     * Allowed for the ordering customer (owner) or admin/staff.
+     */
+    public function decideSubstitution(Request $request, $id) {
+        $decision = strtolower(trim((string)($request->getBody('decision') ?? '')));
+        $sessionUser = $_SESSION['user'] ?? null;
+
+        if (!$id || !ctype_digit((string)$id)) {
+            return new Response(json_encode(['success' => false, 'message' => 'Valid substitution ID required']), 400);
+        }
+        if (!in_array($decision, ['approved', 'rejected'], true)) {
+            return new Response(json_encode(['success' => false, 'message' => 'Decision must be approved or rejected']), 400);
+        }
+
+        try {
+            if (!class_exists('Substitution')) {
+                require_once __DIR__ . '/../models/Substitution.php';
+            }
+            $sub = Substitution::find($id);
+            if (!$sub) {
+                return new Response(json_encode(['success' => false, 'message' => 'Suggestion not found']), 404);
+            }
+            if (($sub['status'] ?? '') !== 'suggested') {
+                return new Response(json_encode(['success' => false, 'message' => 'Suggestion is already ' . $sub['status']]), 400);
+            }
+
+            $order = $this->getOrderById($sub['order_id']);
+            if (!$order) {
+                return new Response(json_encode(['success' => false, 'message' => 'Order not found']), 404);
+            }
+
+            $role = $sessionUser['role'] ?? '';
+            $isStaff = in_array($role, ['admin', 'staff'], true);
+            if (!$isStaff && (int)($order['user_id'] ?? 0) !== (int)($sessionUser['id'] ?? 0)) {
+                return new Response(json_encode(['success' => false, 'message' => 'Not allowed']), 403);
+            }
+
+            Substitution::update($id, ['status' => $decision, 'decided_by' => $sessionUser['id'] ?? null]);
+            $sub['status'] = $decision;
+            $sub['decided_by'] = $sessionUser['id'] ?? null;
+
+            $this->recordStatusChange(
+                $sub['order_id'], $order['status'],
+                "Substitution $decision: {$sub['suggested_name']} replaces {$sub['original_name']}.",
+                $sessionUser['id'] ?? null
+            );
+
+            Notification::notifySubstitutionDecided($order, $sub, $decision);
+            try {
+                $email = new Email();
+                $email->sendSubstitutionNotice(
+                    $order['customer_email'] ?? '', $order['customer_name'] ?? 'Customer',
+                    $order, $sub, $decision
+                );
+            } catch (Throwable $e) {
+                error_log('Substitution decision email failed: ' . $e->getMessage());
+            }
+
+            return new Response(json_encode(['success' => true, 'message' => 'Suggestion ' . $decision]), 200);
+        } catch (Exception $e) {
+            error_log('Decide substitution failed: ' . $e->getMessage());
+            return new Response(json_encode(['success' => false, 'message' => 'Database error']), 500);
+        }
+    }
+
+    /**
+     * Apply an approved substitution: swap the order item and recompute totals.
+     * Allowed for admin/staff or the assigned rider.
+     */
+    public function applySubstitution(Request $request, $id) {
+        $sessionUser = $_SESSION['user'] ?? null;
+
+        if (!$id || !ctype_digit((string)$id)) {
+            return new Response(json_encode(['success' => false, 'message' => 'Valid substitution ID required']), 400);
+        }
+
+        try {
+            if (!class_exists('Substitution')) {
+                require_once __DIR__ . '/../models/Substitution.php';
+            }
+            if (!class_exists('Delivery')) {
+                require_once __DIR__ . '/../models/Delivery.php';
+            }
+            $sub = Substitution::find($id);
+            if (!$sub) {
+                return new Response(json_encode(['success' => false, 'message' => 'Suggestion not found']), 404);
+            }
+            if (($sub['status'] ?? '') !== 'approved') {
+                return new Response(json_encode(['success' => false, 'message' => 'Only approved suggestions can be applied']), 400);
+            }
+
+            $order = $this->getOrderById($sub['order_id']);
+            if (!$order) {
+                return new Response(json_encode(['success' => false, 'message' => 'Order not found']), 404);
+            }
+
+            $role = $sessionUser['role'] ?? '';
+            $isStaff = in_array($role, ['admin', 'staff'], true);
+            $delivery = Delivery::findByOrder($sub['order_id']);
+            $isRider = !$isStaff && $delivery && (int)($delivery['rider_id'] ?? 0) === (int)($sessionUser['id'] ?? 0);
+            if (!$isStaff && !$isRider) {
+                return new Response(json_encode(['success' => false, 'message' => 'Not allowed']), 403);
+            }
+
+            // Swap the item.
+            Model::query(
+                "UPDATE order_items SET product_id = ?, variant_id = ?, quantity = ?, unit_price = ?, total_price = ?, product_name = ?, variant_name = ? WHERE id = ? AND order_id = ?",
+                [
+                    $sub['suggested_product_id'], $sub['suggested_variant_id'], $sub['suggested_qty'],
+                    round((float)$sub['suggested_total'] / max(1, (int)$sub['suggested_qty']), 2),
+                    $sub['suggested_total'], $sub['suggested_name'], $sub['suggested_variant'],
+                    $sub['order_item_id'], $sub['order_id'],
+                ]
+            );
+
+            // Recompute order totals (keeps Senior/PWD + VAT rules consistent).
+            $sumRow = Model::query(
+                "SELECT COALESCE(SUM(total_price), 0) AS s FROM order_items WHERE order_id = ?",
+                [$sub['order_id']]
+            )->fetch();
+            $newSubtotal = round((float)($sumRow['s'] ?? 0), 2);
+            if (class_exists('Discount')) {
+                $totals = Discount::compute($newSubtotal, $order['discount_type'] ?? 'none');
+                Model::query(
+                    "UPDATE orders SET subtotal = ?, tax_amount = ?, discount_amount = ?, total_amount = ? WHERE id = ?",
+                    [$newSubtotal, $totals['tax'], $totals['discount'], $totals['total'], $sub['order_id']]
+                );
+            } else {
+                $tax = round($newSubtotal * 0.12, 2);
+                Model::query(
+                    "UPDATE orders SET subtotal = ?, tax_amount = ?, total_amount = ? WHERE id = ?",
+                    [$newSubtotal, $tax, round($newSubtotal + $tax, 2), $sub['order_id']]
+                );
+            }
+
+            Substitution::update($id, ['status' => 'applied']);
+            $sub['status'] = 'applied';
+            $this->recordStatusChange(
+                $sub['order_id'], $order['status'],
+                "Substitution applied: {$sub['suggested_name']} replaced {$sub['original_name']} (diff ₱" . number_format($sub['price_diff'] ?? 0, 2) . ").",
+                $sessionUser['id'] ?? null
+            );
+
+            $freshOrder = $this->getOrderById($sub['order_id']);
+            Notification::notifySubstitutionDecided($freshOrder ?: $order, $sub, 'applied');
+
+            return new Response(json_encode(['success' => true, 'message' => 'Substitution applied; totals updated']), 200);
+        } catch (Exception $e) {
+            error_log('Apply substitution failed: ' . $e->getMessage());
+            return new Response(json_encode(['success' => false, 'message' => 'Database error']), 500);
+        }
+    }
+
+    /**
+     * Download the order receipt/invoice as PDF.
+     * Customers may only download their own orders; staff may download any.
+     */
+    public function downloadReceipt(Request $request, $id) {
+        $sessionUser = $_SESSION['user'] ?? null;
+
+        if (!$sessionUser) {
+            if ($request->isAjax()) {
+                return new Response(json_encode(['success' => false, 'message' => 'Please login']), 401);
+            }
+            header('Location: /login');
+            exit;
+        }
+
+        $isStaff = in_array($sessionUser['role'] ?? '', ['admin', 'staff'], true);
+        $order = $this->getOrderById($id);
+
+        if (!$order) {
+            Session::flash('error', 'Order not found');
+            return $this->redirect($isStaff ? '/admin/orders' : '/orders');
+        }
+
+        if (!$isStaff && (int)($order['user_id'] ?? 0) !== (int)($sessionUser['id'] ?? 0)) {
+            Session::flash('error', 'You are not allowed to view this receipt.');
+            return $this->redirect('/orders');
+        }
+
+        if (!class_exists('ReceiptPdf')) {
+            require_once __DIR__ . '/../core/ReceiptPdf.php';
+        }
+
+        $items = $this->getOrderItems($id);
+        $refundInfo = $this->getRefundInfo($id);
+
+        try {
+            $pdf = ReceiptPdf::render($order, $items, $refundInfo);
+        } catch (Throwable $e) {
+            error_log('Receipt PDF failed for order ' . $id . ': ' . $e->getMessage());
+            Session::flash('error', 'Could not generate the receipt. Please try again.');
+            return $this->redirect($isStaff ? "/admin/orders/{$id}" : "/orders/{$id}");
+        }
+
+        $filename = 'receipt-' . preg_replace('/[^A-Za-z0-9-_]/', '', $order['order_number'] ?? $id) . '.pdf';
+        $response = new Response($pdf, 200);
+        $response->setHeader('Content-Type', 'application/pdf');
+        $response->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"');
+        $response->setHeader('Content-Length', (string)strlen($pdf));
+        $response->setHeader('Cache-Control', 'private, no-store');
+        return $response;
     }
 
     private function getRefundInfo($orderId) {
@@ -1036,13 +1648,36 @@ private function query($sql, $params = []) {
             if ($tableCheck->rowCount() === 0) {
                 return null;
             }
-            
+
             // Get refund info
             $stmt = $this->query("SELECT refund_amount, refund_method, refund_status, refund_notes, processed_at FROM refunds WHERE order_id = ? ORDER BY created_at DESC LIMIT 1", [$orderId]);
             return $stmt->fetch();
         } catch (Exception $e) {
             error_log("Error getting refund info: " . $e->getMessage());
             return null;
+        }
+    }
+
+    /** All refund records for an order (newest first) for the admin detail view. */
+    private function getRefunds($orderId) {
+        try {
+            $tableCheck = $this->query("SHOW TABLES LIKE 'refunds'", []);
+            if ($tableCheck->rowCount() === 0) {
+                return [];
+            }
+
+            $stmt = $this->query(
+                "SELECT r.*, CONCAT(u.first_name, ' ', u.last_name) AS processed_by_name
+                 FROM refunds r
+                 LEFT JOIN users u ON r.processed_by = u.id
+                 WHERE r.order_id = ?
+                 ORDER BY r.created_at DESC, r.id DESC",
+                [$orderId]
+            );
+            return $stmt->fetchAll();
+        } catch (Exception $e) {
+            error_log("Error getting refunds: " . $e->getMessage());
+            return [];
         }
     }
 }

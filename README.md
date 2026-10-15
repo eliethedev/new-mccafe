@@ -1,7 +1,8 @@
-# MacCafe Ordering System
+# CafeCat Ordering System
 RUN THIS : php -S localhost:8000 -t public public/index.php
 
 A comprehensive cafe ordering management system built with vanilla PHP following proper MVC architecture.
+*Brand: cafécat — crafted for your cravings.*
 
 ## Features
 
@@ -26,12 +27,12 @@ A comprehensive cafe ordering management system built with vanilla PHP following
 
 2. **Create the database**:
    ```sql
-   CREATE DATABASE maccafe_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    CREATE DATABASE cafecat_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
    ```
 
 3. **Import the database schema**:
    ```bash
-   mysql -u root -p maccafe_db < database/schema.sql
+    mysql -u root -p cafecat_db < database/schema.sql
    ```
 
 4. **Configure the database connection**:
@@ -39,7 +40,7 @@ A comprehensive cafe ordering management system built with vanilla PHP following
    ```php
    return [
        'host' => 'localhost',
-       'database' => 'maccafe_db',
+        'database' => 'cafecat_db',
        'username' => 'root',
        'password' => '', // Your database password
    ];
@@ -53,7 +54,7 @@ A comprehensive cafe ordering management system built with vanilla PHP following
 6. **Configure the base URL**:
    Edit `config/constants.php`:
    ```php
-   define('APP_URL', 'http://localhost/maccafe-mor-demo');
+    define('APP_URL', 'http://localhost/cafecat-mor-demo');
    ```
 
 7. **Set file permissions**:
@@ -105,12 +106,12 @@ A comprehensive cafe ordering management system built with vanilla PHP following
 
 ## Default Login
 
-- **Email**: admin@maccafe.com
+- **Email**: admin@cafecat.com
 - **Password**: admin123
 
 ## Usage
 
-1. **Access the application**: Open your browser and navigate to `http://localhost/maccafe-mor-demo`
+1. **Access the application**: Open your browser and navigate to `http://localhost/cafecat-mor-demo`
 
 2. **Register as a customer**: Use the registration form to create a customer account
 

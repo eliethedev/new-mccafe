@@ -2,7 +2,7 @@
 
 return [
     'host' => 'localhost',
-    'database' => 'maccafe_db',
+    'database' => 'cafecat_db',
     'username' => 'root',
     'password' => '',
     'charset' => 'utf8mb4',

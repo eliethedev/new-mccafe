@@ -60,8 +60,7 @@ class ApiController extends Controller {
         return $response;
     }
     
-    public function getCart(Request $request) {
-        // Get current user from session
+    public function getCart(Request $request) {        // Get current user from session
         $user = Session::get('user');
         $userId = $user['id'] ?? null;
         
@@ -100,6 +99,70 @@ class ApiController extends Controller {
         ];
         
         $response = new Response(json_encode($cartData), 200);
+        $response->setHeader('Content-Type', 'application/json');
+        return $response;
+    }
+
+    /** Real-time bell feed: unread count + latest notifications for the session user. */
+    public function notifications(Request $request) {
+        $user = Session::get('user');
+        $userId = $user['id'] ?? null;
+
+        if (!$userId) {
+            $response = new Response(json_encode(['success' => false, 'message' => 'Please login']), 401);
+            $response->setHeader('Content-Type', 'application/json');
+            return $response;
+        }
+
+        try {
+            $items = Notification::forUser($userId, 10);
+            $unread = Notification::unreadCount($userId);
+        } catch (Throwable $e) {
+            $items = [];
+            $unread = 0;
+        }
+
+        $response = new Response(json_encode([
+            'success' => true,
+            'unread_count' => $unread,
+            'notifications' => array_map(function ($n) {
+                return [
+                    'id' => (int)$n['id'],
+                    'type' => $n['type'],
+                    'title' => $n['title'],
+                    'message' => $n['message'],
+                    'link' => $n['link'],
+                    'is_read' => (int)$n['is_read'],
+                    'created_at' => $n['created_at'],
+                ];
+            }, $items),
+        ]), 200);
+        $response->setHeader('Content-Type', 'application/json');
+        return $response;
+    }
+
+    /** Mark notifications read (specific ids or all). */
+    public function markNotificationsRead(Request $request) {
+        $user = Session::get('user');
+        $userId = $user['id'] ?? null;
+
+        if (!$userId) {
+            $response = new Response(json_encode(['success' => false, 'message' => 'Please login']), 401);
+            $response->setHeader('Content-Type', 'application/json');
+            return $response;
+        }
+
+        $ids = $request->getBody('ids');
+        try {
+            Notification::markRead($userId, $ids);
+            $unread = Notification::unreadCount($userId);
+        } catch (Throwable $e) {
+            $response = new Response(json_encode(['success' => false, 'message' => 'Failed to update']), 500);
+            $response->setHeader('Content-Type', 'application/json');
+            return $response;
+        }
+
+        $response = new Response(json_encode(['success' => true, 'unread_count' => $unread]), 200);
         $response->setHeader('Content-Type', 'application/json');
         return $response;
     }

@@ -10,28 +10,28 @@ function renderOrderStatusTracker($currentStatus, $orderDetails = []) {
             'title' => 'Order Processing',
             'description' => 'Your order has been received and is being reviewed',
             'icon' => 'bi-cart-check',
-            'color' => '#ffc107',
+            'color' => '#111111',
             'estimated_time' => '0-5 min'
         ],
         'confirmed' => [
             'title' => 'Order Confirmed',
             'description' => 'Your order has been confirmed and payment verified',
             'icon' => 'bi-check-circle',
-            'color' => '#17a2b8',
+            'color' => '#343a40',
             'estimated_time' => '5-10 min'
         ],
         'preparing' => [
             'title' => 'Preparing',
             'description' => 'Your order is being prepared by our staff',
             'icon' => 'bi-cup-hot',
-            'color' => '#6f42c1',
+            'color' => '#3a3a3a',
             'estimated_time' => '10-20 min'
         ],
         'ready' => [
             'title' => 'Ready for Pickup',
             'description' => 'Your order is ready and waiting for pickup',
             'icon' => 'bi-bag-check',
-            'color' => '#28a745',
+            'color' => '#000000',
             'estimated_time' => 'Ready now'
         ],
         'completed' => [
@@ -45,7 +45,7 @@ function renderOrderStatusTracker($currentStatus, $orderDetails = []) {
             'title' => 'Cancelled',
             'description' => 'Your order has been cancelled',
             'icon' => 'bi-x-circle',
-            'color' => '#dc3545',
+            'color' => '#000000',
             'estimated_time' => 'Cancelled'
         ]
     ];
@@ -99,7 +99,7 @@ function renderOrderStatusTracker($currentStatus, $orderDetails = []) {
                         </div>
                         
                         <div class="status-content">
-                            <h6 class="status-title <?= $isCurrent ? 'text-primary' : ($isCompleted ? 'text-success' : 'text-muted') ?>">
+                            <h6 class="status-title <?= $isCurrent ? '' : ($isCompleted ? '' : 'text-muted') ?>">
                                 <?= $statusInfo['title'] ?>
                             </h6>
                             <p class="status-description small text-muted"><?= $statusInfo['description'] ?></p>
@@ -177,7 +177,7 @@ function renderOrderStatusTracker($currentStatus, $orderDetails = []) {
     
     .progress-line {
         height: 100%;
-        background: linear-gradient(90deg, var(--maccafe-primary) 0%, #28a745 100%);
+        background: #111111;
         border-radius: 2px;
         transition: width 0.5s ease;
     }
@@ -230,7 +230,7 @@ function renderOrderStatusTracker($currentStatus, $orderDetails = []) {
         transform: translate(-50%, -50%);
         width: 60px;
         height: 60px;
-        border: 3px solid var(--maccafe-primary);
+        border: 3px solid #111111;
         border-radius: 50%;
         animation: pulse 2s infinite;
         opacity: 0.3;
@@ -278,7 +278,7 @@ function renderOrderStatusTracker($currentStatus, $orderDetails = []) {
     
     .status-step.current .status-icon {
         transform: scale(1.2);
-        box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
     
     .status-step.upcoming .status-icon {
@@ -317,7 +317,7 @@ function renderCancelledStatus($cancelledInfo, $orderDetails) {
             <div class="status-icon mx-auto mb-3" style="background-color: <?= $cancelledInfo['color'] ?>; width: 80px; height: 80px;">
                 <i class="<?= $cancelledInfo['icon'] ?> text-white fs-1"></i>
             </div>
-            <h5 class="text-danger mb-2"><?= $cancelledInfo['title'] ?></h5>
+            <h5 class="mb-2"><?= $cancelledInfo['title'] ?></h5>
             <p class="text-muted mb-3"><?= $cancelledInfo['description'] ?></p>
             
             <?php if (!empty($orderDetails['cancelled_at'])): ?>
@@ -338,12 +338,12 @@ function renderCancelledStatus($cancelledInfo, $orderDetails) {
 
 function renderCompactStatusIndicator($status, $showProgress = true) {
     $statusFlow = [
-        'pending' => ['color' => '#ffc107', 'icon' => 'bi-cart-check', 'title' => 'Order Received'],
-        'confirmed' => ['color' => '#17a2b8', 'icon' => 'bi-check-circle', 'title' => 'Confirmed'],
-        'preparing' => ['color' => '#6f42c1', 'icon' => 'bi-cup-hot', 'title' => 'Preparing'],
-        'ready' => ['color' => '#28a745', 'icon' => 'bi-bag-check', 'title' => 'Ready'],
+        'pending' => ['color' => '#111111', 'icon' => 'bi-cart-check', 'title' => 'Order Received'],
+        'confirmed' => ['color' => '#343a40', 'icon' => 'bi-check-circle', 'title' => 'Confirmed'],
+        'preparing' => ['color' => '#3a3a3a', 'icon' => 'bi-cup-hot', 'title' => 'Preparing'],
+        'ready' => ['color' => '#000000', 'icon' => 'bi-bag-check', 'title' => 'Ready'],
         'completed' => ['color' => '#6c757d', 'icon' => 'bi-check2-all', 'title' => 'Completed'],
-        'cancelled' => ['color' => '#dc3545', 'icon' => 'bi-x-circle', 'title' => 'Cancelled']
+        'cancelled' => ['color' => '#000000', 'icon' => 'bi-x-circle', 'title' => 'Cancelled']
     ];
     
     $statusOrder = ['pending', 'confirmed', 'preparing', 'ready', 'completed'];
@@ -358,7 +358,7 @@ function renderCompactStatusIndicator($status, $showProgress = true) {
             </div>
             <div class="status-text">
                 <small class="text-muted">Status:</small>
-                <strong class="text-danger"><?= $currentInfo['title'] ?></strong>
+                <strong><?= $currentInfo['title'] ?></strong>
             </div>
         </div>
         <?php
@@ -379,12 +379,12 @@ function renderCompactStatusIndicator($status, $showProgress = true) {
             </div>
             <div class="status-text flex-grow-1">
                 <small class="text-muted">Status:</small>
-                <strong style="color: <?= $currentInfo['color'] ?>;"><?= $currentInfo['title'] ?></strong>
+                <strong><?= $currentInfo['title'] ?></strong>
             </div>
             <?php if ($status === 'ready'): ?>
-                <span class="badge bg-success pulse-badge">Ready</span>
+                <span class="badge bg-dark pulse-badge">Ready</span>
             <?php elseif ($status === 'preparing'): ?>
-                <span class="badge bg-primary">Preparing</span>
+                <span class="badge bg-dark">Preparing</span>
             <?php endif; ?>
         </div>
     </div>

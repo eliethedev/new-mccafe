@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $title ?? 'MacCafe' ?></title>
+    <title><?= $title ?? 'CafeCat' ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/assets/css/bw-theme.css" rel="stylesheet">
     <style>
         :root {
-            --maccafe-primary: #ffc107;
-            --maccafe-secondary: #6c757d;
-            --maccafe-accent: #ffc107;
-            --maccafe-dark: #343a40;
-            --maccafe-light: #f8f9fa;
+            --cafecat-primary: #111111;
+            --cafecat-secondary: #6c757d;
+            --cafecat-accent: #000000;
+            --cafecat-dark: #000000;
+            --cafecat-light: #f8f9fa;
         }
 
         body {
@@ -45,20 +46,20 @@
         }
 
         .btn-success {
-            background-color: var(--maccafe-primary);
-            border-color: var(--maccafe-primary);
-            color: #000;
+            background-color: var(--cafecat-primary);
+            border-color: var(--cafecat-primary);
+            color: #fff;
         }
 
         .btn-success:hover {
-            background-color: #e0a800;
-            border-color: #d39e00;
-            color: #000;
+            background-color: #333333;
+            border-color: #000000;
+            color: #fff;
         }
 
         .form-control:focus {
-            border-color: var(--maccafe-primary);
-            box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+            border-color: var(--cafecat-primary);
+            box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.25);
         }
 
         .card {
@@ -74,8 +75,8 @@
 
         /* Enhanced Back to Home Button */
         .btn-outline-secondary {
-            color: var(--maccafe-secondary);
-            border-color: var(--maccafe-secondary);
+            color: var(--cafecat-secondary);
+            border-color: var(--cafecat-secondary);
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
@@ -84,8 +85,8 @@
 
         .btn-outline-secondary:hover {
             color: white;
-            background-color: var(--maccafe-secondary);
-            border-color: var(--maccafe-secondary);
+            background-color: var(--cafecat-secondary);
+            border-color: var(--cafecat-secondary);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
         }
@@ -112,8 +113,4 @@
     </style>
 </head>
 <body>
-    <div class="auth-header">
-        <a href="/" class="logo">
-            MC<b style="color: var(--maccafe-primary);">Caffe</b>
-        </a>
-    </div>
+    

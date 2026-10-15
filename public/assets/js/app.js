@@ -1,6 +1,6 @@
-// MacCafe JavaScript Application
+﻿// CafeCat JavaScript Application
 
-class MacCafeApp {
+class CafeCatApp {
     constructor() {
         this.cart = [];
         this.init();
@@ -60,14 +60,14 @@ class MacCafeApp {
     }
     
     loadCart() {
-        const savedCart = localStorage.getItem('maccafe_cart');
+        const savedCart = localStorage.getItem('CafeCat_cart');
         if (savedCart) {
             this.cart = JSON.parse(savedCart);
         }
     }
     
     saveCart() {
-        localStorage.setItem('maccafe_cart', JSON.stringify(this.cart));
+        localStorage.setItem('CafeCat_cart', JSON.stringify(this.cart));
         this.updateCartCount();
         this.renderCart();
     }
@@ -152,7 +152,7 @@ class MacCafeApp {
                 <div class="cart-item mb-3 p-3 border rounded">
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
-                            <img src="${item.image || '/maccafe-mor-demo/public/assets/images/default-product.jpg'}" 
+                            <img src="${item.image || '/CafeCat-mor-demo/public/assets/images/default-product.jpg'}" 
                                  alt="${item.name}" class="me-3" style="width: 50px; height: 50px; object-fit: cover;">
                             <div>
                                 <h6 class="mb-0">${item.name}</h6>
@@ -182,7 +182,7 @@ class MacCafeApp {
                     <h5>Total:</h5>
                     <h5>₱${total.toFixed(2)}</h5>
                 </div>
-                <a href="/maccafe-mor-demo/checkout" class="btn btn-success w-100">Proceed to Checkout</a>
+                <a href="/CafeCat-mor-demo/checkout" class="btn btn-success w-100">Proceed to Checkout</a>
                 <button class="btn btn-outline-secondary w-100 mt-2" data-clear-cart>Clear Cart</button>
             `;
         }
@@ -204,7 +204,7 @@ class MacCafeApp {
         return {
             name: 'Product ' + productId,
             price: 100,
-            image: '/maccafe-mor-demo/public/assets/images/default-product.jpg'
+            image: '/CafeCat-mor-demo/public/assets/images/default-product.jpg'
         };
     }
     
@@ -227,7 +227,7 @@ class MacCafeApp {
     // API methods
     async syncCartWithServer() {
         try {
-            const response = await fetch('/maccafe-mor-demo/api/cart/sync', {
+            const response = await fetch('/CafeCat-mor-demo/api/cart/sync', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -248,7 +248,7 @@ class MacCafeApp {
 
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.macCafeApp = new MacCafeApp();
+    window.CafeCatApp = new CafeCatApp();
     
     // Initialize Swiper carousel for home page
     const homeSwiper = document.querySelector('.homeSwiper');

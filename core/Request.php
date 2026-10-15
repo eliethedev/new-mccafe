@@ -25,12 +25,21 @@ class Request {
         $basePath = '';
         
         // Check if running through Apache with .htaccess redirection
-        if (strpos($this->path, '/MacCafe-MOR-DEMO/') === 0) {
-            $basePath = '/MacCafe-MOR-DEMO';
+        // Supports both legacy CafeCat and rebranded CafeCat base folders
+        if (strpos($this->path, '/CafeCat-MOR-DEMO/') === 0) {
+            $basePath = '/CafeCat-MOR-DEMO';
+        } elseif (strpos($this->path, '/CafeCat-MOR-DEMO/') === 0) {
+            $basePath = '/CafeCat-MOR-DEMO';
+        } elseif (strpos($this->path, '/cafecat-mor-demo/') === 0) {
+            $basePath = '/cafecat-mor-demo';
+        } elseif (strpos($this->path, '/CafeCat-mor-demo/') === 0) {
+            $basePath = '/CafeCat-mor-demo';
         }
         // Check if running through PHP server in public directory
-        elseif (strpos($this->path, '/MacCafe-MOR-DEMO/public') === 0) {
-            $basePath = '/MacCafe-MOR-DEMO/public';
+        elseif (strpos($this->path, '/CafeCat-MOR-DEMO/public') === 0) {
+            $basePath = '/CafeCat-MOR-DEMO/public';
+        } elseif (strpos($this->path, '/CafeCat-MOR-DEMO/public') === 0) {
+            $basePath = '/CafeCat-MOR-DEMO/public';
         }
         
         if ($basePath && strpos($this->path, $basePath) === 0) {

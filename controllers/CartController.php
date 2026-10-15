@@ -62,6 +62,23 @@ class CartController extends Controller {
             header('Location: /menu?error=product_not_found');
             exit;
         }
+
+        // Out-of-stock guard: never add unavailable products or variants.
+        $stockCheck = $this->checkAvailability($productId, $variantId);
+        if (!$stockCheck['available']) {
+            if ($request->isAjax()) {
+                $response = new Response(json_encode([
+                    'success' => false,
+                    'message' => $stockCheck['message'],
+                    'alternatives' => $stockCheck['alternatives'],
+                ]), 400);
+                $response->setHeader('Content-Type', 'application/json');
+                return $response;
+            }
+            Session::flash('error', $stockCheck['message']);
+            header('Location: /menu?error=out_of_stock');
+            exit;
+        }
         
         // Calculate unit price
         $unitPrice = $product['price'];
@@ -104,6 +121,14 @@ class CartController extends Controller {
         
         if (!$product) {
             header('Location: /menu?error=product_not_found');
+            exit;
+        }
+
+        // Out-of-stock guard (same as add()).
+        $stockCheck = $this->checkAvailability($productId, $variantId);
+        if (!$stockCheck['available']) {
+            Session::flash('error', $stockCheck['message']);
+            header('Location: /menu?error=out_of_stock');
             exit;
         }
         
@@ -219,5 +244,59 @@ class CartController extends Controller {
         
         header('Location: /cart');
         exit;
+    }
+
+    /**
+     * Out-of-stock check for ordering. Returns availability plus up to 4
+     * same-category alternatives so the UI can suggest a replacement.
+     */
+    private function checkAvailability($productId, $variantId = null) {
+        try {
+            $product = $this->cartModel->query(
+                "SELECT p.*, c.name AS category_name FROM products p
+                 LEFT JOIN categories c ON c.id = p.category_id WHERE p.id = ?",
+                [$productId]
+            )->fetch();
+            if (!$product || empty($product['is_available'])) {
+                return [
+                    'available' => false,
+                    'message' => 'Sorry, "' . ($product['name'] ?? 'this item') . '" is currently out of stock.',
+                    'alternatives' => $this->alternatives($product['category_id'] ?? null, $productId),
+                ];
+            }
+            if ($variantId) {
+                $variant = $this->cartModel->query(
+                    "SELECT * FROM product_variants WHERE id = ? AND product_id = ?",
+                    [$variantId, $productId]
+                )->fetch();
+                if (!$variant || empty($variant['is_available'])) {
+                    return [
+                        'available' => false,
+                        'message' => 'Sorry, the selected variant of "' . $product['name'] . '" is currently out of stock.',
+                        'alternatives' => $this->alternatives($product['category_id'] ?? null, $productId),
+                    ];
+                }
+            }
+            return ['available' => true, 'message' => '', 'alternatives' => []];
+        } catch (Exception $e) {
+            // Fail open: availability table hiccups must not block ordering.
+            error_log('Stock check failed: ' . $e->getMessage());
+            return ['available' => true, 'message' => '', 'alternatives' => []];
+        }
+    }
+
+    private function alternatives($categoryId, $excludeProductId) {
+        try {
+            $sql = "SELECT p.id, p.name, p.price FROM products p WHERE p.is_available = 1 AND p.id <> ?";
+            $params = [$excludeProductId];
+            if ($categoryId) {
+                $sql .= " AND p.category_id = ?";
+                $params[] = $categoryId;
+            }
+            $sql .= " ORDER BY p.sort_order ASC, p.name ASC LIMIT 4";
+            return $this->cartModel->query($sql, $params)->fetchAll();
+        } catch (Exception $e) {
+            return [];
+        }
     }
 }

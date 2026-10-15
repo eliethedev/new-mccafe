@@ -13,6 +13,48 @@ ob_start();
                     <i class="bi bi-arrow-left me-2"></i>Back to Orders
                 </a>
             </div>
+
+            <?php if (($order['status'] ?? '') === 'completed'): ?>
+                <div class="alert alert-success d-flex align-items-center mb-4" role="alert">
+                    <i class="bi bi-bag-check-fill fs-4 me-3"></i>
+                    <div>
+                        <strong>Delivered — enjoy!</strong>
+                        <div class="small">This order was marked as delivered<?= !empty($order['completed_at']) ? ' on ' . date('F d, Y h:i A', strtotime($order['completed_at'])) : '' ?>. We hope you enjoyed it!</div>
+                    </div>
+                </div>
+            <?php elseif (($order['status'] ?? '') === 'ready'): ?>
+                <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
+                    <i class="bi bi-bell-fill fs-4 me-3"></i>
+                    <div>
+                        <strong>Your order is ready!</strong>
+                        <div class="small">Please present order number <?= htmlspecialchars($order['order_number']) ?> at the counter.</div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if (!empty($refundInfo ?? null)): ?>
+                <?php
+                    $rStatus = $refundInfo['refund_status'] ?? 'pending';
+                    $rClass = $rStatus === 'processed' ? 'alert-success' : ($rStatus === 'pending' ? 'alert-warning' : 'alert-danger');
+                    $rIcon = $rStatus === 'processed' ? 'bi-arrow-clockwise' : ($rStatus === 'pending' ? 'bi-hourglass-split' : 'bi-x-circle');
+                ?>
+                <div class="alert <?= $rClass ?> d-flex align-items-center mb-4" role="alert">
+                    <i class="bi <?= $rIcon ?> fs-4 me-3"></i>
+                    <div>
+                        <strong>Refund <?= ucfirst($rStatus) ?>: ₱<?= number_format($refundInfo['refund_amount'] ?? 0, 2) ?></strong>
+                        <div class="small">
+                            Via <?= ucfirst($refundInfo['refund_method'] ?? 'original channel') ?>.
+                            <?php if ($rStatus === 'processed'): ?>
+                                Please allow time for it to reflect in your account.
+                            <?php elseif ($rStatus === 'pending'): ?>
+                                Our staff are processing it — you'll be notified of updates.
+                            <?php else: ?>
+                                Please contact staff if you have questions.
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
             
             <div class="row">
                 <!-- Order Information -->
@@ -54,8 +96,7 @@ ob_start();
                             <?php endif; ?>
                             
                             <!-- Order Items -->
-                            <h6 class="fw-bold mb-3">Order Items:</h6>
-                            <div class="table-responsive">
+                            <h6 class="fw-bold mb-3">Order Items:</h6>                            <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
@@ -87,6 +128,7 @@ ob_start();
                                                                 <br><small class="text-muted"><?= htmlspecialchars($item['variant_name']) ?></small>
                                                             <?php endif; ?>
                                                         </div>
+                                                        </div>
                                                     </div>
                                                 </td>
                                                 <td class="text-center"><?= $item['quantity'] ?></td>
@@ -100,6 +142,14 @@ ob_start();
                                             <th colspan="3">Subtotal:</th>
                                             <td class="text-end">₱<?= number_format($order['subtotal'], 2) ?></td>
                                         </tr>
+                                        <?php if (!empty($order['discount_type']) && $order['discount_type'] !== 'none'): ?>
+                                            <tr>
+                                                <th colspan="3"><?= $order['discount_type'] === 'senior' ? 'Senior' : 'PWD' ?> Discount (20%, VAT-exempt):</th>
+                                                <td class="text-end">−₱<?= number_format($order['discount_amount'] ?? 0, 2) ?>
+                                                    <span class="badge bg-dark ms-1"><?= ucfirst($order['discount_status'] ?? 'pending') ?></span>
+                                                </td>
+                                            </tr>
+                                        <?php endif; ?>
                                         <?php if ($order['tax_amount'] > 0): ?>
                                             <tr>
                                                 <th colspan="3">Tax:</th>
@@ -116,6 +166,47 @@ ob_start();
                         </div>
                     </div>
                     
+                    <?php if (!empty($subs ?? [])): ?>
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="bi bi-arrow-left-right me-2"></i>Suggested replacements</h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted small">An item was unavailable, so we suggested a replacement. Please approve or reject each suggestion.</p>
+                                <?php foreach ($subs as $s): ?>
+                                    <div class="border rounded p-2 mb-2 small">
+                                        <div><strong><?= htmlspecialchars($s['original_name']) ?></strong> (₱<?= number_format($s['original_total'], 2) ?>)
+                                            → <strong><?= htmlspecialchars($s['suggested_name']) ?></strong><?= !empty($s['suggested_variant']) ? ' (' . htmlspecialchars($s['suggested_variant']) . ')' : '' ?>
+                                            × <?= (int)$s['suggested_qty'] ?> (₱<?= number_format($s['suggested_total'], 2) ?>)</div>
+                                        <div class="text-muted mb-1">Difference: <?= $s['price_diff'] >= 0 ? '+' : '−' ?>₱<?= number_format(abs($s['price_diff']), 2) ?> · Status: <strong><?= ucfirst($s['status']) ?></strong></div>
+                                        <?php if ($s['status'] === 'suggested'): ?>
+                                            <div class="d-flex gap-2">
+                                                <button class="btn btn-sm btn-success" onclick="decideSub(<?= $s['id'] ?>, 'approved')">Approve</button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="decideSub(<?= $s['id'] ?>, 'rejected')">Reject</button>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                        <script>
+                        function decideSub(subId, decision) {
+                            if (!confirm('Mark this suggestion as ' + decision + '?')) return;
+                            var fd = new FormData();
+                            fd.append('decision', decision);
+                            fetch('/substitutions/' + subId + '/decide', { method: 'POST', body: fd })
+                                .then(function (r) { return r.json(); })
+                                .then(function (d) {
+                                    alert(d.message || (d.success ? 'Updated.' : 'Failed.'));
+                                    if (d.success) location.reload();
+                                })
+                                .catch(function () { alert('Network error. Please try again.'); });
+                        }
+                        </script>
+                    <?php endif; ?>
+
+                    <?php $chatOrderId = $order['id']; include __DIR__ . '/../components/order-chat.php'; ?>
+
                     <!-- Status History -->
                     <?php if (!empty($statusHistory)): ?>
                         <div class="card">
@@ -203,7 +294,8 @@ ob_start();
                             </h6>
                         </div>
                         <div class="card-body">
-                            <?php if (in_array($order['status'], ['pending', 'confirmed']) && strtolower($order['payment_method']) !== 'gcash'): ?>
+                            <?php $isManualPay = in_array(strtolower($order['payment_method'] ?? 'cash'), ['gcash', 'paymaya', 'maya', 'bank_transfer'], true); ?>
+                            <?php if (in_array($order['status'], ['pending', 'confirmed']) && !$isManualPay): ?>
                                 <button class="btn btn-danger w-100 mb-2 cancel-order-btn" 
                                         data-order-id="<?= $order['id'] ?>"
                                         data-order-number="<?= htmlspecialchars($order['order_number']) ?>">
@@ -211,17 +303,21 @@ ob_start();
                                 </button>
                             <?php endif; ?>
                             
-                            <?php if (strtolower($order['payment_method']) === 'gcash'): ?>
+                            <?php if ($isManualPay): ?>
                                 <div class="alert alert-info small">
                                     <i class="bi bi-info-circle me-2"></i>
-                                    <strong>No Cancellation Policy:</strong> Orders paid via GCash cannot be canceled.
+                                    <strong>Cancellation &amp; verification policy:</strong> <?= htmlspecialchars(ucfirst($order['payment_method'])) ?> orders cannot be self-cancelled once payment is submitted (verified within 24 hours). Please contact staff for assistance; approved cancellations are refunded.
                                 </div>
                             <?php endif; ?>
                             
                             <a href="/menu" class="btn btn-primary w-100 mb-2">
                                 <i class="bi bi-plus-circle me-2"></i>Order Again
                             </a>
-                            
+
+                            <a href="/orders/<?= $order['id'] ?>/receipt" class="btn btn-dark w-100 mb-2">
+                                <i class="bi bi-file-earmark-pdf me-2"></i>Download Receipt (PDF)
+                            </a>
+
                             <button class="btn btn-outline-secondary w-100" onclick="window.print()">
                                 <i class="bi bi-printer me-2"></i>Print Receipt
                             </button>
@@ -313,6 +409,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <?php
 $content = ob_get_clean();
-$title = 'Order Details - MacCafe';
+$title = 'Order Details - CafeCat';
 include __DIR__ . '/../layouts/main.php';
 ?>

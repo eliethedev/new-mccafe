@@ -24,7 +24,7 @@
     </div>
     <?php else: ?>
     <?php foreach ($categories as $category): ?>
-    <div class="col-lg-4 col-md-6 mb-4">
+    <div class="col-lg-4 col-md-6 mb-4" id="category-<?= $category['id'] ?>">
         <div class="card h-100">
             <?php if (!empty($category['image'])): ?>
             <img src="/assets/images/categories/<?= $category['image'] ?>" class="card-img-top" alt="<?= $category['name'] ?>" style="height: 200px; object-fit: cover;">
@@ -95,8 +95,8 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label for="sort_order" class="form-label">Sort Order</label>
-                        <input type="number" class="form-control" id="sort_order" name="sort_order" value="0" min="0">
+                        <label for="sort_order" class="form-label">Sort Order (auto)</label>
+                        <input type="number" class="form-control" id="sort_order" name="sort_order" value="<?= !empty($categories) ? (int) max(array_column($categories, 'sort_order')) + 1 : 1 ?>" min="0" readonly>
                     </div>
                     
                     <div class="mb-3">
@@ -151,17 +151,35 @@ document.getElementById('categoryForm').addEventListener('submit', function(e) {
     
     fetch(url, {
         method: isEdit ? 'PUT' : 'POST',
-        body: formData
+        body: formData,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
-    .then(response => response.json())
+    .then(async (response) => {
+        const raw = await response.text();
+        try {
+            return JSON.parse(raw);
+        } catch (e) {
+            console.error('Non-JSON response', response.status, raw);
+            throw e;
+        }
+    })
     .then(data => {
         if (data.success) {
-            bootstrap.Modal.getInstance(document.getElementById('categoryModal')).hide();
+            console.log('Category saved successfully', data);
+            try {
+                const modalEl = document.getElementById('categoryModal');
+                const inst = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                if (inst) inst.hide();
+            } catch (e) {}
             location.reload();
+        } else {
+            console.error('Save failed', data);
+            alert(data.message || data.errors ? JSON.stringify(data.errors || data) : 'Failed to save. Check console.');
         }
     })
     .catch(error => {
-        // Silent error handling
+        console.error(error);
+        alert('Network error. Check console for details.');
     });
 });
 
@@ -203,18 +221,47 @@ function editCategory(categoryId) {
 function deleteCategory(categoryId, categoryName) {
     if (confirm(`Are you sure you want to delete "${categoryName}"? This action cannot be undone.`)) {
         fetch(`/admin/categories/${categoryId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                location.reload();
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+                messageDiv.style.zIndex = '9999';
+                messageDiv.style.minWidth = '300px';
+                messageDiv.innerHTML = `
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    Category "${categoryName}" deleted successfully!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.body.appendChild(messageDiv);
+                setTimeout(() => messageDiv.remove(), 3000);
+
+                const el = document.getElementById('category-' + categoryId);
+                if (el) {
+                    el.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    el.style.opacity = '0';
+                    el.style.transform = 'scale(0.95)';
+                    setTimeout(() => el.remove(), 300);
+                }
             } else {
-                // Removed error alert
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'alert alert-danger alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+                messageDiv.style.zIndex = '9999';
+                messageDiv.style.minWidth = '300px';
+                messageDiv.innerHTML = `
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    ${data.message || 'Failed to delete category.'}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.body.appendChild(messageDiv);
+                setTimeout(() => messageDiv.remove(), 4000);
             }
         })
         .catch(error => {
-            // Removed error alert
+            alert(error.message || 'Network error. Please try again.');
         });
     }
 }
@@ -251,7 +298,7 @@ document.getElementById('categoryModal').addEventListener('hidden.bs.modal', fun
 
 <?php
 $content = ob_get_clean();
-$title = 'Manage Categories - MacCafe';
+$title = 'Manage Categories - CafeCat';
 $currentPage = 'categories';
 include __DIR__ . '/../layout.php';
 ?>

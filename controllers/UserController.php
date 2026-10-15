@@ -27,6 +27,43 @@ class UserController extends Controller {
         ]);
     }
     
+    public function toggleAvailability(Request $request, $id) {
+        $userId = $_SESSION['user']['id'] ?? null;
+        $userRole = $_SESSION['user']['role'] ?? '';
+        
+        if (!$userId || $userRole !== 'admin') {
+            Session::flash('error', 'Admin access required');
+            header('Location: /admin/users');
+            exit;
+        }
+        
+        try {
+            $user = Model::query("SELECT id, role, availability_status FROM users WHERE id = ?", [$id])->fetch();
+            if (!$user || $user['role'] !== 'rider') {
+                Session::flash('error', 'Rider not found');
+                header('Location: /admin/users');
+                exit;
+            }
+            
+            $currentStatus = $user['availability_status'] ?? 'available';
+            $newStatus = $currentStatus === 'available' ? 'unavailable' : 'available';
+            
+            Model::query(
+                "UPDATE users SET availability_status = ?, updated_at = NOW() WHERE id = ?",
+                [$newStatus, $id]
+            );
+            
+            Session::flash('success', 'Rider availability updated to ' . ucfirst($newStatus));
+            header('Location: /admin/users');
+            exit;
+        } catch (Exception $e) {
+            error_log('Toggle availability failed: ' . $e->getMessage());
+            Session::flash('error', 'Failed to update availability');
+            header('Location: /admin/users');
+            exit;
+        }
+    }
+    
     public function updateProfile(Request $request) {
         $userId = $_SESSION['user']['id'] ?? null;
         
@@ -64,8 +101,36 @@ class UserController extends Controller {
                 'first_name' => $data['first_name'],
                 'last_name' => $data['last_name'],
                 'email' => $data['email'],
-                'phone' => $data['phone'] ?? null
+                'phone' => $data['phone'] ?? null,
+                'is_senior' => !empty($data['is_senior']) ? 1 : 0,
+                'is_pwd' => !empty($data['is_pwd']) ? 1 : 0,
+                'discount_id_no' => trim((string)($data['discount_id_no'] ?? '')) ?: null,
             ];
+
+            // Senior and PWD cannot be combined — one discount type per customer.
+            if ($updateData['is_senior'] && $updateData['is_pwd']) {
+                $_SESSION['error_message'] = 'Please choose only one: Senior Citizen or PWD (discounts cannot be combined).';
+                header('Location: /profile');
+                exit;
+            }
+
+            if (($updateData['is_senior'] || $updateData['is_pwd']) && empty($updateData['discount_id_no'])) {
+                $_SESSION['error_message'] = 'Please enter your Senior Citizen / PWD ID number.';
+                header('Location: /profile');
+                exit;
+            }
+
+            // Any change to the claim resets staff verification (re-verify the ID).
+            try {
+                $current = User::getProfile($userId);
+                $changed = !$current
+                    || (int)($current['is_senior'] ?? 0) !== $updateData['is_senior']
+                    || (int)($current['is_pwd'] ?? 0) !== $updateData['is_pwd']
+                    || trim((string)($current['discount_id_no'] ?? '')) !== trim((string)($updateData['discount_id_no'] ?? ''));
+                $updateData['discount_verified'] = (!$changed && !empty($current['discount_verified'])) ? 1 : 0;
+            } catch (Exception $e) {
+                $updateData['discount_verified'] = 0;
+            }
             
             // Add address if it exists in the data
             if (isset($data['address'])) {
@@ -147,7 +212,7 @@ class UserController extends Controller {
     }
     
     public function adminIndex(Request $request) {
-        $page = $request->getQuery('page', 1);
+        $page = max(1, (int)$request->getQuery('page', 1));
         $role = $request->getQuery('role', '');
         $status = $request->getQuery('status', '');
         $search = $request->getQuery('search', '');
@@ -187,8 +252,9 @@ class UserController extends Controller {
         $offset = ($page - 1) * $limit;
         
         // Simplified query without complex subqueries first
-        $sql = "SELECT u.* FROM users u $whereClause ORDER BY u.created_at DESC LIMIT ? OFFSET ?";
-        $usersStmt = $this->query($sql, array_merge($params, [$limit, $offset]));
+        // Cast LIMIT/OFFSET to integers to avoid PDO string parameter issue
+        $sql = "SELECT u.* FROM users u $whereClause ORDER BY u.created_at DESC LIMIT " . (int)$limit . " OFFSET " . (int)$offset;
+        $usersStmt = $this->query($sql, $params);
         $users = $usersStmt->fetchAll();
         
         // Add statistics separately for each user
@@ -197,7 +263,6 @@ class UserController extends Controller {
             $user['orders_count'] = $orderStats['orders_count'];
             $user['total_spent'] = $orderStats['total_spent'];
         }
-        $users = $usersStmt->fetchAll();
         
         $totalPages = ceil($totalCount / $limit);
         
@@ -315,6 +380,13 @@ class UserController extends Controller {
             Session::flash('error', 'Failed to create user. Please try again.');
             return $this->redirect('/admin/users');
         }
+    }
+    
+    public function create(Request $request) {
+        return $this->view('admin/users/create', [
+            'title' => 'Add User',
+            'currentPage' => 'users'
+        ]);
     }
     
     public function updateUserProfile(Request $request, $id) {
@@ -452,7 +524,7 @@ class UserController extends Controller {
     private function createUser($data) {
         $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         
-        $sql = "INSERT INTO users (first_name, last_name, email, password, phone, address, role, email_verified_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO users (first_name, last_name, email, password, phone, address, role, email_verified_at, availability_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $params = [
             $data['first_name'],
             $data['last_name'],
@@ -461,7 +533,10 @@ class UserController extends Controller {
             $data['phone'] ?? null,
             $data['address'] ?? null,
             $data['role'],
-            $data['email_verified_at'] ?? null
+            // Fast-track admin-created accounts (e.g., riders/staff) if requested.
+            !empty($data['email_verified']) ? date('Y-m-d H:i:s') : null,
+            // Riders start in `available` state; non-riders stay null (unused).
+            ($data['role'] === 'rider') ? 'available' : null,
         ];
         
         $stmt = $this->query($sql, $params);
@@ -478,6 +553,11 @@ class UserController extends Controller {
             $data['address'] ?? null,
             $data['role']
         ];
+        
+        // Keep rider accounts usable even if edited into rider role later.
+        if (($data['role'] ?? '') === 'rider') {
+            $sql .= ", availability_status = COALESCE(availability_status, 'available')";
+        }
         
         if (isset($data['password'])) {
             $sql .= ", password = ?";

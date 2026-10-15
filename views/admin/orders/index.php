@@ -2,21 +2,21 @@
 
 <style>
 :root {
-    --maccafe-primary: #e09407;
-    --maccafe-secondary: #6c757d;
-    --maccafe-accent: #ffc107;
-    --maccafe-dark: #343a40;
-    --maccafe-light: #f8f9fa;
-    --primary: #e09407;
+    --cafecat-primary: #111111;
+    --cafecat-secondary: #6c757d;
+    --cafecat-accent: #000000;
+    --cafecat-dark: #000000;
+    --cafecat-light: #f8f9fa;
+    --primary: #111111;
 }
 
 .orders-container {
-    background: var(--maccafe-light);
+    background: var(--cafecat-light);
     min-height: 100vh;
 }
 
 .orders-header {
-    background: var(--maccafe-primary);
+    background: var(--cafecat-primary);
     color: white;
     padding: 1rem 0;
     margin-bottom: 0.2rem;
@@ -35,22 +35,22 @@
 
 .order-card {
     background: white;
-    border-radius: 15px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    transition: all 0.3s ease;
-    border-left: 4px solid transparent;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
     position: relative;
+    overflow: hidden;
 }
 
 .order-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 .order-card.pending {
-    border-left-color: var(--maccafe-accent);
+    border-left-color: var(--cafecat-accent);
 }
 
 .order-card.confirmed {
@@ -58,7 +58,7 @@
 }
 
 .order-card.preparing {
-    border-left-color: var(--maccafe-primary);
+    border-left-color: var(--cafecat-primary);
 }
 
 .order-card.ready {
@@ -66,7 +66,7 @@
 }
 
 .order-card.completed {
-    border-left-color: var(--maccafe-secondary);
+    border-left-color: var(--cafecat-secondary);
 }
 
 .order-card.cancelled {
@@ -75,95 +75,111 @@
 
 .order-header {
     display: flex;
-    justify-content: between;
+    justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #f0f0f0;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f0f0f0;
 }
 
 .order-status-right {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    top: 0.75rem;
+    right: 0.75rem;
     z-index: 10;
 }
 
 .order-number {
-    font-size: 1.25rem;
+    font-size: 1rem;
     font-weight: bold;
-    color: var(--maccafe-primary);
+    color: var(--cafecat-primary);
+    padding-right: 80px;
 }
 
 .order-status-badge {
-    padding: 0.5rem 1rem;
-    border-radius: 25px;
-    font-size: 0.9rem;
-    font-weight: 500;
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
     text-transform: uppercase;
 }
 
 .order-content {
     display: grid;
-    grid-template-columns: 1fr 200px;
-    gap: 1.5rem;
+    grid-template-columns: 1fr 140px;
+    gap: 1rem;
 }
 
 .order-details {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
 .order-detail-item {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.375rem;
+    flex-wrap: wrap;
 }
 
 .order-detail-label {
     font-weight: 600;
-    color: var(--maccafe-dark);
-    min-width: 80px;
+    color: var(--cafecat-dark);
+    min-width: 60px;
+    font-size: 0.8rem;
 }
 
 .order-detail-value {
-    color: var(--maccafe-secondary);
+    color: var(--cafecat-secondary);
+    font-size: 0.8rem;
 }
 
 .order-actions {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
 .action-btn {
-    padding: 0.75rem 1rem;
-    border-radius: 10px;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
     border: none;
     font-weight: 500;
-    transition: all 0.3s ease;
+    font-size: 0.75rem;
+    transition: all 0.2s ease;
     cursor: pointer;
     text-decoration: none;
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 0.375rem;
+    white-space: nowrap;
 }
 
 .action-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
 }
 
 .action-btn.view {
     background: #e9ecef;
-    color: var(--maccafe-dark);
+    color: var(--cafecat-dark);
 }
 
 .action-btn.view:hover {
-    background: var(--maccafe-primary);
+    background: var(--cafecat-primary);
+    color: white;
+}
+
+.action-btn.manage {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.action-btn.manage:hover {
+    background: #17a2b8;
     color: white;
 }
 
@@ -183,7 +199,7 @@
 }
 
 .action-btn.prepare:hover {
-    background: var(--maccafe-primary);
+    background: var(--cafecat-primary);
     color: white;
 }
 
@@ -203,7 +219,7 @@
 }
 
 .action-btn.complete:hover {
-    background: var(--maccafe-secondary);
+    background: var(--cafecat-secondary);
     color: white;
 }
 
@@ -220,27 +236,29 @@
 .customer-info {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
 .customer-avatar {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    background: var(--maccafe-primary);
+    background: var(--cafecat-primary);
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    font-size: 0.9rem;
+    font-size: 0.75rem;
+    flex-shrink: 0;
 }
 
 .payment-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    font-weight: 500;
+    padding: 0.25rem 0.625rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
 }
 
 .payment-paid {
@@ -257,15 +275,137 @@
     .order-content {
         grid-template-columns: 1fr;
     }
-    
+
     .order-actions {
         flex-direction: row;
         flex-wrap: wrap;
     }
-    
+
     .action-btn {
         flex: 1;
-        min-width: 120px;
+        min-width: 100px;
+    }
+}
+
+/* Table View Styles */
+.orders-table-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.orders-table {
+    margin-bottom: 0;
+}
+
+.orders-table th {
+    background: var(--cafecat-primary);
+    color: white;
+    font-weight: 600;
+    padding: 0.625rem 0.5rem;
+    white-space: nowrap;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.orders-table td {
+    padding: 0.625rem 0.5rem;
+    vertical-align: middle;
+    font-size: 0.8rem;
+}
+
+.orders-table tbody tr:hover {
+    background: #fafafa;
+}
+
+.delivery-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.delivery-rider {
+    font-weight: 600;
+    color: var(--cafecat-dark);
+    font-size: 0.8rem;
+}
+
+.delivery-status {
+    font-size: 0.7rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 10px;
+    display: inline-block;
+    width: fit-content;
+}
+
+.delivery-status.pending { background: #fff3cd; color: #856404; }
+.delivery-status.assigned { background: #cfe2ff; color: #084298; }
+.delivery-status.picked_up { background: #d1ecf1; color: #0c5460; }
+.delivery-status.delivered { background: #d4edda; color: #155724; }
+.delivery-status.cancelled { background: #f8d7da; color: #721c24; }
+
+.view-btn.active {
+    background: var(--cafecat-primary) !important;
+    color: white !important;
+}
+
+#tableViewContainer {
+    display: none;
+}
+
+@media (max-width: 1199px) {
+    .orders-table th:nth-child(5),
+    .orders-table td:nth-child(5) {
+        display: none;
+    }
+}
+
+@media (max-width: 991px) {
+    .orders-table th:nth-child(8),
+    .orders-table td:nth-child(8) {
+        display: none;
+    }
+}
+
+@media (max-width: 767px) {
+    .orders-table th:nth-child(4),
+    .orders-table td:nth-child(4),
+    .orders-table th:nth-child(7),
+    .orders-table td:nth-child(7) {
+        display: none;
+    }
+}
+
+/* 5-column grid for card view */
+.orders-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.75rem;
+}
+
+@media (max-width: 1400px) {
+    .orders-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 1200px) {
+    .orders-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .orders-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .orders-grid {
+        grid-template-columns: 1fr;
     }
 }
 </style>
@@ -320,19 +460,60 @@ function getActionIcon($status) {
 ?>
 
 <div class="orders-container">
-    <!-- Header -->
-    <div class="orders-header">
-        <div class="container">
-            <h1>Manage Orders</h1>
-            <div class="subtitle">Handle and track customer orders efficiently</div>
-        </div>
-    </div>
-
     <div class="container">
 
 <!-- Filters -->
 <div class="card mb-4">
-
+    <div class="card-body">
+        <form method="GET" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small">Search</label>
+                <input type="text" name="search" class="form-control" placeholder="Order #, customer..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small">Status</label>
+                <select name="status" class="form-select">
+                    <option value="">All Status</option>
+                    <option value="pending" <?= ($_GET['status'] ?? '') === 'pending' ? 'selected' : '' ?>>Pending</option>
+                    <option value="confirmed" <?= ($_GET['status'] ?? '') === 'confirmed' ? 'selected' : '' ?>>Confirmed</option>
+                    <option value="preparing" <?= ($_GET['status'] ?? '') === 'preparing' ? 'selected' : '' ?>>Preparing</option>
+                    <option value="ready" <?= ($_GET['status'] ?? '') === 'ready' ? 'selected' : '' ?>>Ready</option>
+                    <option value="completed" <?= ($_GET['status'] ?? '') === 'completed' ? 'selected' : '' ?>>Completed</option>
+                    <option value="cancelled" <?= ($_GET['status'] ?? '') === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small">Payment</label>
+                <select name="payment_status" class="form-select">
+                    <option value="">All Payment</option>
+                    <option value="paid" <?= ($_GET['payment_status'] ?? '') === 'paid' ? 'selected' : '' ?>>Paid</option>
+                    <option value="pending" <?= ($_GET['payment_status'] ?? '') === 'pending' ? 'selected' : '' ?>>Pending</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">&nbsp;</label>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-search me-1"></i> Filter
+                    </button>
+                    <a href="/admin/orders" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-1"></i> Clear
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small">View</label>
+                <div class="btn-group w-100" role="group">
+                    <button type="button" class="btn btn-outline-secondary" id="cardViewBtn" onclick="switchView('card')">
+                        <i class="bi bi-grid-3x3-gap"></i> Cards
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" id="tableViewBtn" onclick="switchView('table')">
+                        <i class="bi bi-table"></i> Table
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 
 <!-- Orders Cards -->
@@ -343,17 +524,30 @@ function getActionIcon($status) {
     <p class="text-muted">There are no orders matching your criteria.</p>
 </div>
 <?php else: ?>
-<?php foreach ($orders as $order): ?>
-<div class="order-card <?= $order['status'] ?>">
+
+<!-- Card View -->
+<div id="cardViewContainer">
+    <div class="orders-grid">
+        <?php foreach ($orders as $order): ?>
+        <div class="order-card <?= $order['status'] ?>">
     <div class="order-header">
         <div>
-            <div class="order-number">#<?= $order['order_number'] ?></div>
+            <div class="order-number"><a class="order-number-link" href="/admin/orders/<?= $order['id'] ?>">#<?= $order['order_number'] ?></a></div>
             <small class="text-muted"><?= date('M j, Y g:i A', strtotime($order['created_at'])) ?></small>
         </div>
     </div>
-    
+
     <div class="order-content">
         <div class="order-details">
+            <!-- Product Preview -->
+            <?php if (!empty($order['first_product_image'])): ?>
+            <div style="margin-bottom: 0.5rem;">
+                <img src="/assets/images/products/<?= htmlspecialchars($order['first_product_image']) ?>"
+                     alt="Product"
+                     style="width: 100%; height: 80px; object-fit: cover; border-radius: 8px;">
+            </div>
+            <?php endif; ?>
+
             <!-- Customer Info -->
             <div class="customer-info">
                 <div class="customer-avatar">
@@ -364,18 +558,41 @@ function getActionIcon($status) {
                     <small class="text-muted"><?= $order['customer_email'] ?? 'N/A' ?></small>
                 </div>
             </div>
-            
+
             <!-- Order Details -->
             <div class="order-detail-item">
                 <span class="order-detail-label">Items:</span>
                 <span class="order-detail-value"><?= $order['items_count'] ?? 0 ?> items</span>
             </div>
-            
+
             <div class="order-detail-item">
                 <span class="order-detail-label">Total:</span>
                 <span class="order-detail-value fw-bold">₱<?= number_format($order['total_amount'], 2) ?></span>
+                <?php if (!empty($order['discount_type']) && $order['discount_type'] !== 'none'): ?>
+                    <span class="badge <?= ($order['discount_status'] ?? '') === 'pending' ? 'bg-warning' : 'bg-dark' ?>" title="ID: <?= htmlspecialchars($order['discount_id_no'] ?? '—') ?>">
+                        <i class="bi bi-badge-ad"></i> <?= $order['discount_type'] === 'senior' ? 'Senior' : 'PWD' ?> −20% · <?= ucfirst($order['discount_status'] ?? 'pending') ?>
+                    </span>
+                <?php endif; ?>
             </div>
-            
+
+            <div class="order-detail-item">
+                <span class="order-detail-label">Delivery:</span>
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                    <?php if (!empty($order['rider_first_name'])): ?>
+                        <span class="badge bg-dark" title="Delivery: <?= ucfirst(str_replace('_', ' ', $order['delivery_status'] ?? '')) ?>">
+                            <i class="bi bi-bicycle"></i> <?= htmlspecialchars(trim($order['rider_first_name'] . ' ' . ($order['rider_last_name'] ?? ''))) ?> · <?= ucfirst(str_replace('_', ' ', $order['delivery_status'] ?? '')) ?>
+                        </span>
+                    <?php else: ?>
+                        <span class="badge bg-secondary">No rider</span>
+                    <?php endif; ?>
+                    <?php if (!empty($order['pending_subs'])): ?>
+                        <span class="badge bg-warning">
+                            <i class="bi bi-arrow-left-right"></i> <?= (int)$order['pending_subs'] ?> substitution<?= (int)$order['pending_subs'] > 1 ? 's' : '' ?> to review
+                        </span>
+                    <?php endif; ?>
+                </div>
+            </div>
+
             <div class="order-detail-item">
                 <span class="order-detail-label">Payment:</span>
                 <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
@@ -385,14 +602,14 @@ function getActionIcon($status) {
                     <span class="badge bg-info">
                         <?= ucfirst($order['payment_method'] ?? 'cash') ?>
                     </span>
-                    <?php if (($order['payment_method'] ?? 'cash') === 'gcash' && $order['payment_status'] !== 'paid' && $order['status'] !== 'cancelled'): ?>
+                    <?php if (in_array(strtolower($order['payment_method'] ?? 'cash'), ['gcash', 'paymaya', 'maya', 'bank_transfer'], true) && $order['payment_status'] !== 'paid' && $order['status'] !== 'cancelled'): ?>
                     <span class="badge bg-warning">
                         <i class="bi bi-exclamation-triangle"></i> Awaiting Proof
                     </span>
                     <?php endif; ?>
-                    
+
                     <?php if ($order['status'] === 'cancelled' && $order['refund_info']): ?>
-                        <?php 
+                        <?php
                         $refund = $order['refund_info'];
                         $refundStatus = $refund['refund_status'];
                         $refundMethod = $refund['refund_method'];
@@ -411,7 +628,7 @@ function getActionIcon($status) {
                                 <i class="bi bi-x-circle"></i> Refund Failed
                             </span>
                         <?php endif; ?>
-                    <?php elseif ($order['status'] === 'cancelled' && ($order['payment_method'] ?? 'cash') === 'gcash'): ?>
+                    <?php elseif ($order['status'] === 'cancelled' && in_array(strtolower($order['payment_method'] ?? 'cash'), ['gcash', 'paymaya', 'maya', 'bank_transfer'], true)): ?>
                         <span class="badge bg-secondary" title="No refund processed">
                             <i class="bi bi-dash-circle"></i> No Refund
                         </span>
@@ -419,60 +636,30 @@ function getActionIcon($status) {
                 </div>
             </div>
         </div>
-        
+
         <div class="order-actions">
             <!-- View Details -->
             <a href="/admin/orders/<?= $order['id'] ?>" class="action-btn view">
                 <i class="bi bi-eye"></i>
-                View Details
+                View
             </a>
-            
-            <!-- Payment Verification for GCash -->
-            <?php if (($order['payment_method'] ?? 'cash') === 'gcash' && $order['payment_status'] !== 'paid' && $order['status'] !== 'cancelled'): ?>
-            <button class="action-btn confirm" 
-                    onclick="showPaymentProofModal(<?= $order['id'] ?>, '<?= $order['order_number'] ?? '' ?>')" 
-                    title="Verify GCash Payment">
-                <i class="bi bi-credit-card"></i>
-                Verify Payment
+
+            <!-- Manage Order -->
+            <button type="button" class="action-btn manage" onclick="showManageOrderModal(<?= $order['id'] ?>, '<?= htmlspecialchars($order['order_number'] ?? '') ?>')">
+                <i class="bi bi-gear"></i>
+                Manage Order
+            </button>
+
+            <!-- Cancel Order -->
+            <?php if ($order['status'] !== 'cancelled' && $order['status'] !== 'completed'): ?>
+            <button type="button" class="action-btn cancel" onclick="showCancelOrderModal(<?= $order['id'] ?>, '<?= htmlspecialchars($order['order_number'] ?? '') ?>')">
+                <i class="bi bi-x-circle"></i>
+                Cancel
             </button>
             <?php endif; ?>
-            
-            <!-- Status Actions -->
-            <?php 
-            $validTransitions = getValidStatusTransitions($order['status']);
-            foreach ($validTransitions as $nextStatus): 
-                
-            // Skip confirmation for GCash orders if payment not verified
-            if ($nextStatus === 'confirmed' && ($order['payment_method'] ?? 'cash') === 'gcash' && $order['payment_status'] !== 'paid') {
-                continue;
-            }
-            
-            ?>
-            <?php if ($nextStatus === 'cancelled' && ($order['payment_method'] ?? 'cash') === 'gcash'): ?>
-                <!-- Special GCash cancellation button -->
-                <button type="button" class="action-btn cancel" 
-                        title="Cancel GCash Order"
-                        onclick="showGcashCancelModal(<?= $order['id'] ?>, <?= $order['total_amount'] ?>)">
-                    <i class="bi <?= getActionIcon($nextStatus) ?>"></i>
-                    <?= ucfirst($nextStatus) ?>
-                </button>
-            <?php else: ?>
-                <!-- Regular status change button -->
-                <form method="POST" action="/admin/orders/<?= $order['id'] ?>/status" style="display: inline;" id="statusForm<?= $order['id'] ?><?= $nextStatus ?>">
-                    <input type="hidden" name="status" value="<?= $nextStatus ?>">
-                    <input type="hidden" name="notes" value="">
-                    <button type="button" class="action-btn <?= getActionClass($nextStatus) ?>" 
-                            title="Change to <?= ucfirst($nextStatus) ?>"
-                            onclick="confirmStatusChange('<?= $order['id'] ?>', '<?= $nextStatus ?>', '<?= ucfirst($nextStatus) ?>')">
-                        <i class="bi <?= getActionIcon($nextStatus) ?>"></i>
-                        <?= ucfirst($nextStatus) ?>
-                    </button>
-                </form>
-            <?php endif; ?>
-            <?php endforeach; ?>
         </div>
     </div>
-    
+
     <!-- Status Badge at Right Side -->
     <div class="order-status-right">
         <div class="order-status-badge bg-<?= getStatusButtonClass($order['status']) ?>">
@@ -480,7 +667,146 @@ function getActionIcon($status) {
         </div>
     </div>
 </div>
-<?php endforeach; ?>
+        <?php endforeach; ?>
+    </div>
+</div>
+
+<!-- Table View -->
+<div id="tableViewContainer">
+    <div class="orders-table-container">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered orders-table align-middle">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">Image</th>
+                        <th style="width: 80px;">Order #</th>
+                        <th style="min-width: 140px;">Customer</th>
+                        <th style="width: 90px;">Date</th>
+                        <th style="width: 90px;">Status</th>
+                        <th style="width: 120px;">Delivery</th>
+                        <th style="width: 50px;">Items</th>
+                        <th style="width: 90px;">Total</th>
+                        <th style="width: 100px;">Payment</th>
+                        <th style="width: 120px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($orders as $order): ?>
+                    <tr>
+                        <td>
+                            <?php if (!empty($order['first_product_image'])): ?>
+                                <img src="/assets/images/products/<?= htmlspecialchars($order['first_product_image']) ?>"
+                                     alt="Product"
+                                     style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px;">
+                            <?php else: ?>
+                                <div style="width: 40px; height: 40px; background: #e9ecef; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="bi bi-cup-hot text-muted small"></i>
+                                </div>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <a href="/admin/orders/<?= $order['id'] ?>" class="fw-bold text-decoration-none small">
+                                #<?= $order['order_number'] ?>
+                            </a>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="customer-avatar" style="width: 28px; height: 28px; font-size: 0.7rem;">
+                                    <?= strtoupper(substr($order['customer_name'] ?? 'A', 0, 1)) ?>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold small"><?= htmlspecialchars($order['customer_name'] ?? 'N/A') ?></div>
+                                    <small class="text-muted" style="font-size: 0.7rem;"><?= htmlspecialchars($order['customer_email'] ?? 'N/A') ?></small>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-muted small">
+                            <?= date('M j', strtotime($order['created_at'])) ?>
+                        </td>
+                        <td>
+                            <span class="badge bg-<?= getStatusButtonClass($order['status']) ?>" style="font-size: 0.7rem;">
+                                <?= ucfirst($order['status']) ?>
+                            </span>
+                        </td>
+                        <td>
+                            <div class="delivery-info">
+                                <?php if (!empty($order['rider_first_name'])): ?>
+                                    <span class="delivery-rider">
+                                        <i class="bi bi-bicycle"></i>
+                                        <?= htmlspecialchars(trim($order['rider_first_name'] . ' ' . ($order['rider_last_name'] ?? ''))) ?>
+                                    </span>
+                                    <span class="delivery-status <?= htmlspecialchars($order['delivery_status'] ?? 'pending') ?>">
+                                        <?= ucfirst(str_replace('_', ' ', $order['delivery_status'] ?? 'pending')) ?>
+                                    </span>
+                                <?php else: ?>
+                                    <span class="text-muted small">No rider</span>
+                                <?php endif; ?>
+                            </div>
+                        </td>
+                        <td class="fw-bold small"><?= $order['items_count'] ?? 0 ?></td>
+                        <td class="fw-bold text-primary small">
+                            ₱<?= number_format($order['total_amount'], 2) ?>
+                            <?php if (!empty($order['discount_type']) && $order['discount_type'] !== 'none'): ?>
+                                <br><span class="badge bg-warning" style="font-size: 0.65rem;"><?= $order['discount_type'] === 'senior' ? 'Senior' : 'PWD' ?></span>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <span class="badge <?= $order['payment_status'] === 'paid' ? 'bg-success' : 'bg-warning' ?>" style="font-size: 0.7rem;">
+                                <?= ucfirst($order['payment_status']) ?>
+                            </span>
+                            <br>
+                            <span class="badge bg-info" style="font-size: 0.7rem;">
+                                <?= ucfirst($order['payment_method'] ?? 'cash') ?>
+                            </span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="/admin/orders/<?= $order['id'] ?>" class="btn btn-outline-primary" title="View Details" style="padding: 0.25rem 0.5rem;">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <?php if (in_array(strtolower($order['payment_method'] ?? 'cash'), ['gcash', 'paymaya', 'maya', 'bank_transfer'], true) && $order['payment_status'] !== 'paid' && $order['status'] !== 'cancelled'): ?>
+                                <button class="btn btn-outline-info"
+                                        onclick="showPaymentProofModal(<?= $order['id'] ?>, '<?= $order['order_number'] ?? '' ?>')"
+                                        title="Verify Payment" style="padding: 0.25rem 0.5rem;">
+                                    <i class="bi bi-credit-card"></i>
+                                </button>
+                                <?php endif; ?>
+                                <?php
+                                $validTransitions = getValidStatusTransitions($order['status']);
+                                foreach ($validTransitions as $nextStatus):
+                                    if ($nextStatus === 'confirmed' && in_array(strtolower($order['payment_method'] ?? 'cash'), ['gcash', 'paymaya', 'maya', 'bank_transfer'], true) && $order['payment_status'] !== 'paid') {
+                                        continue;
+                                    }
+                                ?>
+                                <?php if ($nextStatus === 'cancelled' && in_array(strtolower($order['payment_method'] ?? 'cash'), ['gcash', 'paymaya', 'maya', 'bank_transfer'], true)): ?>
+                                    <button type="button" class="btn btn-outline-danger"
+                                            title="Cancel Order"
+                                            onclick="showGcashCancelModal(<?= $order['id'] ?>, <?= $order['total_amount'] ?>)"
+                                            style="padding: 0.25rem 0.5rem;">
+                                        <i class="bi bi-x-circle"></i>
+                                    </button>
+                                <?php else: ?>
+                                    <form method="POST" action="/admin/orders/<?= $order['id'] ?>" style="display: inline;">
+                                        <input type="hidden" name="status" value="<?= $nextStatus ?>">
+                                        <input type="hidden" name="notes" value="">
+                                        <button type="button" class="btn btn-outline-<?= $nextStatus === 'cancelled' ? 'danger' : ($nextStatus === 'completed' ? 'secondary' : 'primary') ?>"
+                                                title="Change to <?= ucfirst($nextStatus) ?>"
+                                                onclick="confirmStatusChange('<?= $order['id'] ?>', '<?= $nextStatus ?>', '<?= ucfirst($nextStatus) ?>')"
+                                                style="padding: 0.25rem 0.5rem;">
+                                            <i class="bi <?= getActionIcon($nextStatus) ?>"></i>
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
+                                <?php endforeach; ?>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 <?php endif; ?>
         
         <!-- Pagination -->
@@ -813,7 +1139,7 @@ document.addEventListener('DOMContentLoaded', function() {
         refundMethod.addEventListener('change', function() {
             const refundNotesGroup = document.getElementById('refundNotesGroup');
             const refundBtn = document.getElementById('refundBtn');
-            
+
             if (this.value && this.value !== 'no_refund') {
                 refundNotesGroup.style.display = 'block';
                 refundBtn.style.display = 'inline-block';
@@ -823,7 +1149,38 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Initialize view preference
+    initializeViewPreference();
 });
+
+// View Switching Functions
+function switchView(view) {
+    const cardContainer = document.getElementById('cardViewContainer');
+    const tableContainer = document.getElementById('tableViewContainer');
+    const cardBtn = document.getElementById('cardViewBtn');
+    const tableBtn = document.getElementById('tableViewBtn');
+
+    if (view === 'card') {
+        cardContainer.style.display = 'block';
+        tableContainer.style.display = 'none';
+        cardBtn.classList.add('active');
+        tableBtn.classList.remove('active');
+    } else {
+        cardContainer.style.display = 'none';
+        tableContainer.style.display = 'block';
+        cardBtn.classList.remove('active');
+        tableBtn.classList.add('active');
+    }
+
+    // Save preference to localStorage
+    localStorage.setItem('ordersViewPreference', view);
+}
+
+function initializeViewPreference() {
+    const savedView = localStorage.getItem('ordersViewPreference') || 'table';
+    switchView(savedView);
+}
 
 function processGcashCancellation() {
     const reason = document.getElementById('cancelReason').value.trim();
@@ -845,7 +1202,6 @@ function processGcashCancellation() {
         : 'Are you sure you want to cancel this GCash order?';
     
     if (confirm(confirmMessage)) {
-        // Create cancellation data
         const formData = new FormData();
         formData.append('order_id', currentGcashOrderId);
         formData.append('status', 'cancelled');
@@ -855,7 +1211,6 @@ function processGcashCancellation() {
         formData.append('refund_notes', document.getElementById('refundNotes').value);
         formData.append('is_gcash_cancel', 'true');
         
-        // Submit cancellation
         fetch('/admin/orders/' + currentGcashOrderId + '/status', {
             method: 'POST',
             body: formData
@@ -863,10 +1218,7 @@ function processGcashCancellation() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Close modal
                 bootstrap.Modal.getInstance(document.getElementById('gcashCancelModal')).hide();
-                
-                // Show success message
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
                 messageDiv.style.zIndex = '9999';
@@ -876,8 +1228,6 @@ function processGcashCancellation() {
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 `;
                 document.body.appendChild(messageDiv);
-                
-                // Remove alert and reload page
                 setTimeout(() => {
                     messageDiv.remove();
                     location.reload();
@@ -911,7 +1261,6 @@ function processRefund() {
     const confirmMessage = `Process ₱${refundAmount} refund via ${refundMethod}?`;
     
     if (confirm(confirmMessage)) {
-        // Create refund data
         const formData = new FormData();
         formData.append('order_id', currentGcashOrderId);
         formData.append('action', 'process_refund');
@@ -919,7 +1268,6 @@ function processRefund() {
         formData.append('refund_method', refundMethod);
         formData.append('refund_notes', refundNotes);
         
-        // Submit refund
         fetch('/admin/orders/process-refund', {
             method: 'POST',
             body: formData
@@ -927,13 +1275,8 @@ function processRefund() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Show success message
                 alert('Refund processed successfully!');
-                
-                // Close modal
                 bootstrap.Modal.getInstance(document.getElementById('gcashCancelModal')).hide();
-                
-                // Reload page
                 setTimeout(() => {
                     location.reload();
                 }, 1000);
@@ -948,36 +1291,44 @@ function processRefund() {
     }
 }
 
-// Status Change Confirmation Function
+function showManageOrderModal(orderId, orderNumber) {
+    if (confirm(`Manage order #${orderNumber}? You will be redirected to the order details page.`)) {
+        window.location.href = '/admin/orders/' + orderId;
+    }
+}
+
+function showCancelOrderModal(orderId, orderNumber) {
+    if (confirm(`Are you sure you want to cancel order #${orderNumber}? This action cannot be undone.`)) {
+        window.location.href = '/admin/orders/' + orderId + '/cancel';
+    }
+}
+
 function confirmStatusChange(orderId, newStatus, statusDisplay) {
     const confirmMessage = `Are you sure you want to change this order status to ${statusDisplay}?`;
     
     if (confirm(confirmMessage)) {
-        // Find and submit the form
         const formId = 'statusForm' + orderId + newStatus;
         const form = document.getElementById(formId);
         
         if (form) {
-            // Show loading state
             const button = form.querySelector('button');
             const originalText = button.innerHTML;
             button.innerHTML = '<i class="bi bi-hourglass-split"></i> Updating...';
             button.disabled = true;
             
-            // Submit the form
             form.submit();
         } else {
             alert('Error: Form not found. Please refresh the page and try again.');
         }
     }
     
-    return false; // Prevent default behavior
+    return false;
 }
 </script>
 
 <?php
 $content = ob_get_clean();
-$title = 'Manage Orders - McCafe';
+$title = 'Manage Orders - CafeCat';
 $currentPage = 'orders';
 include __DIR__ . '/../layout.php';
 ?>

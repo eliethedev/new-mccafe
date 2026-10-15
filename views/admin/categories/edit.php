@@ -161,7 +161,7 @@
 
 <?php
 $content = ob_get_clean();
-$title = 'Edit Category - MacCafe';
+$title = 'Edit Category - CafeCat';
 $currentPage = 'categories';
 include __DIR__ . '/../layout.php';
 ?>

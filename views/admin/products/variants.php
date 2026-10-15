@@ -211,7 +211,7 @@ function deleteVariant(variantId) {
 
 <?php
 $content = ob_get_clean();
-$title = 'Product Variants - MacCafe';
+$title = 'Product Variants - CafeCat';
 $currentPage = 'products';
 include __DIR__ . '/../layout.php';
 ?>

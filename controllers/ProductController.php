@@ -3,49 +3,177 @@
 class ProductController extends Controller {
     
     public function index() {
-        $page = $_GET['page'] ?? 1;
-        $category = $_GET['category'] ?? null;
-        $subcategory = $_GET['subcategory'] ?? null;
         $search = $_GET['search'] ?? null;
-        
-        if ($search) {
-            $products = Product::search($search, $page);
-            $totalCount = Product::getTotalCount();
-            $title = "Search Results for '$search' - MacCafe";
-        } elseif ($category) {
-            if ($subcategory) {
-                // Filter by subcategory (product name contains subcategory)
-                $products = Product::getBySubcategory($category, $subcategory, $page);
-                $totalCount = Product::getSubcategoryCount($category, $subcategory);
-                $title = ucfirst($subcategory) . " - MacCafe Menu";
-            } else {
-                $products = Product::getByCategory($category, $page);
-                $totalCount = Product::getTotalCount($category);
-                $title = ucfirst($category) . " - MacCafe Menu";
-            }
-        } else {
-            $products = Product::getAllAvailable($page);
-            $totalCount = Product::getTotalCount();
-            $title = "Menu - MacCafe";
-        }
-        
+        $categoryFilter = $_GET['category'] ?? null;
+
         $categories = Product::getCategories();
-        $totalPages = ceil($totalCount / ITEMS_PER_PAGE);
-        
+        $menuCategories = [];
+
+        foreach ($categories as $cat) {
+            $products = Product::getByCategory($cat['name'], 1, 100);
+            $items = [];
+
+            foreach ($products as $productIdx => $product) {
+                $variantStmt = self::query(
+                    "SELECT * FROM product_variants WHERE product_id = ? AND is_available = 1 ORDER BY sort_order ASC",
+                    [$product['id']]
+                );
+                $variants = $variantStmt->fetchAll();
+
+                $slug = preg_replace('/[^a-z0-9]+/', '-', strtolower($product['name']));
+                $slug = trim($slug, '-') ?: 'item' . $product['id'];
+                $quantityId = 'quantity-' . $slug;
+                $sizeId = $variants ? 'size-' . $slug : '';
+
+                $options = [];
+                $priceParts = [];
+                foreach ($variants as $v) {
+                    $price = (float)$product['price'] + (float)$v['price_adjustment'];
+                    $options[] = [
+                        'value' => (string)$price,
+                        'label' => $v['name'] . ' - ₱' . $price,
+                    ];
+                    $priceParts[] = '₱' . $price . ' ' . $v['name'];
+                }
+
+                $cartName = $product['name'];
+                if (count($variants) === 1 && $variants[0]['name'] === 'Default') {
+                    $price = (float)$product['price'] + (float)$variants[0]['price_adjustment'];
+                    $options = [];
+                    $priceParts = ['₱' . $price];
+                    $cartName = $product['name'];
+                }
+
+                if (empty($options)) {
+                    $startPrice = (string)$product['price'];
+                } else {
+                    $startPrice = (string)$options[0]['value'];
+                }
+
+                $items[] = [
+                    'id' => $product['id'],
+                    'displayName' => $product['name'],
+                    'image' => $product['image'] ? '/assets/images/products/' . $product['image'] : '/assets/images/products/placeholder.jpg',
+                    'priceText' => 'Price: ' . implode(' ┃ ', $priceParts ?: ['₱' . $product['price']]),
+                    'quantityId' => $quantityId,
+                    'sizeId' => $sizeId,
+                    'options' => $options,
+                    'coffeeOptions' => [],
+                    'cartCall' => [
+                        'name' => $cartName,
+                        'quantityId' => $quantityId,
+                        'sizeId' => $sizeId,
+                        'fixedPrice' => empty($options) ? (float)$product['price'] : null,
+                    ],
+                    'detail' => [
+                        'name' => $product['name'],
+'image' => $product['image'] ? '/assets/images/products/' . $product['image'] : '/assets/images/products/placeholder.jpg',
+                        'description' => $product['description'] ?: 'No description available.',
+                        'category' => $cat['name'],
+                        'time' => $product['preparation_time'] ? $product['preparation_time'] . 'min' : '5min',
+                        'price' => $startPrice,
+                    ],
+                ];
+            }
+
+            $menuCategories[] = [
+                'id' => 'cat-' . $cat['id'],
+                'name' => $cat['name'],
+                'items' => $items,
+            ];
+        }
+
+
+        // Build best seller and featured item collections (DB-driven)
+        $transformToMenuItem = function (array $products): array {
+            $items = [];
+            foreach ($products as $product) {
+                $variantStmt = self::query(
+                    'SELECT * FROM product_variants WHERE product_id = ? AND is_available = 1 ORDER BY sort_order ASC',
+                    [$product['id']]
+                );
+                $variants = $variantStmt->fetchAll();
+
+                $slug = trim(preg_replace('/[^a-z0-9]+/', '-', strtolower((string)$product['name'])), '-') ?: 'item' . $product['id'];
+                $quantityId = 'quantity-' . $slug;
+                $sizeId = $variants ? 'size-' . $slug : '';
+
+                $options = [];
+                $priceParts = [];
+                foreach ($variants as $v) {
+                    $price = (float)$product['price'] + (float)$v['price_adjustment'];
+                    $options[] = [
+                        'value' => (string)$price,
+                        'label' => $v['name'] . ' - ₱' . $price,
+                    ];
+                    $priceParts[] = '₱' . $price . ' ' . $v['name'];
+                }
+
+                $cartName = $product['name'];
+                if (count($variants) === 1 && isset($variants[0]['name']) && $variants[0]['name'] === 'Default') {
+                    $price = (float)$product['price'] + (float)$variants[0]['price_adjustment'];
+                    $options = [];
+                    $priceParts = ['₱' . $price];
+                }
+
+                if (empty($options)) {
+                    $startPrice = (string)$product['price'];
+                } else {
+                    $startPrice = (string)$options[0]['value'];
+                }
+
+                $image = $product['image'] ? '/assets/images/products/' . $product['image'] : '/assets/images/products/placeholder.jpg';
+
+                $items[] = [
+                    'id' => $product['id'],
+                    'displayName' => $product['name'],
+                    'image' => $image,
+                    'priceText' => 'Price: ' . implode(' ┃ ', $priceParts ?: ['₱' . $product['price']]),
+                    'quantityId' => $quantityId,
+                    'sizeId' => $sizeId,
+                    'options' => $options,
+                    'coffeeOptions' => [],
+                    'cartCall' => [
+                        'name' => $cartName,
+                        'quantityId' => $quantityId,
+                        'sizeId' => $sizeId,
+                        'fixedPrice' => empty($options) ? (float)$product['price'] : null,
+                    ],
+                    'detail' => [
+                        'name' => $product['name'],
+                        'image' => $image,
+                        'description' => $product['description'] ?: 'No description available.',
+                        'category' => isset($product['category_name']) ? $product['category_name'] : 'Best sellers',
+                        'time' => $product['preparation_time'] ? $product['preparation_time'] . 'min' : '5min',
+                        'price' => $startPrice,
+                    ],
+                ];
+            }
+            return $items;
+        };
+
+        $bestSellerItems = $transformToMenuItem(Product::getFlaggedBestSellers(8));
+        $featuredItems = $transformToMenuItem(Product::getFeaturedItems(8));
+
+        $products = Product::getAllAvailable(1, 100);
+        $totalCount = Product::getTotalCount();
+
         return $this->view('products/index', [
             'products' => $products,
             'categories' => $categories,
-            'currentPage' => $page,
-            'totalPages' => $totalPages,
-            'currentCategory' => $category,
-            'searchQuery' => $search
+            'menuCategories' => $menuCategories,
+            'bestSellerItems' => $bestSellerItems,
+            'featuredItems' => $featuredItems,
+            'currentPage' => 1,
+            'totalPages' => 1,
+            'currentCategory' => $categoryFilter,
+            'searchQuery' => $search,
         ]);
     }
     
     public function fullMenu() {
-        return $this->view('menu/index', [
-            'title' => 'Complete Menu - MacCafe'
-        ]);
+        // Legacy static menu retired: the live CafeCat menu is DB-driven at /menu
+        return $this->redirect('/menu');
     }
     
     public function category($request, $category) {
@@ -87,9 +215,14 @@ class ProductController extends Controller {
         $availability = $_GET['availability'] ?? null;
         $search = $_GET['search'] ?? null;
         $sort = $_GET['sort'] ?? null;
+        $flag = $_GET['flag'] ?? null; // bestseller | featured | unavailable
         
-        $products = Product::getAdminProducts($page, $category, $availability, $search, $sort);
-        $totalCount = Product::getAdminTotalCount($category, $availability, $search);
+        if ($flag === 'unavailable' && !$availability) {
+            $availability = 'unavailable';
+        }
+
+        $products = Product::getAdminProducts($page, $category, $availability, $search, $sort, $flag);
+        $totalCount = Product::getAdminTotalCount($category, $availability, $search, $flag);
         $totalPages = ceil($totalCount / 20);
         $categories = Product::getCategories();
         
@@ -101,7 +234,10 @@ class ProductController extends Controller {
             'currentCategory' => $category,
             'searchQuery' => $search,
             'currentAvailability' => $availability,
-            'currentSort' => $sort
+            'currentSort' => $sort,
+            'currentFlag' => $flag,
+            'menuStats' => Product::getMenuStats(),
+            'title' => 'Menu Management - CafeCat',
         ]);
     }
     
@@ -141,7 +277,12 @@ class ProductController extends Controller {
                 return $this->redirect('/admin/products/create');
             }
         }
-        
+
+        // Checkbox flags (unchecked boxes are absent from POST)
+        $data['is_available'] = isset($data['is_available']) ? 1 : 0;
+        $data['is_bestseller'] = isset($data['is_bestseller']) ? 1 : 0;
+        $data['is_featured'] = isset($data['is_featured']) ? 1 : 0;
+
         $productId = Product::create($data);
         
         if ($productId) {
@@ -196,6 +337,11 @@ class ProductController extends Controller {
                 return $this->redirect("/admin/products/$id/edit");
             }
         }
+
+        // Checkbox flags
+        $data['is_available'] = isset($data['is_available']) ? 1 : 0;
+        $data['is_bestseller'] = isset($data['is_bestseller']) ? 1 : 0;
+        $data['is_featured'] = isset($data['is_featured']) ? 1 : 0;
         
         $success = Product::update($id, $data);
         
@@ -286,7 +432,6 @@ class ProductController extends Controller {
     
     public function updateSortOrder(Request $request, $id) {
         $product = Product::find($id);
-        
         if (!$product) {
             return new Response(json_encode(['success' => false, 'message' => 'Product not found']), 404);
         }
@@ -301,6 +446,34 @@ class ProductController extends Controller {
         } else {
             return new Response(json_encode(['success' => false, 'message' => 'Failed to update sort order']), 500);
         }
+    }
+
+    private function toggleFlag(Request $request, $id, $field) {
+        $product = Product::find($id);
+        if (!$product) {
+            $r = new Response(json_encode(['success' => false, 'message' => 'Product not found']), 404);
+            $r->setHeader('Content-Type', 'application/json');
+            return $r;
+        }
+        $data = json_decode(file_get_contents('php://input'), true) ?? [];
+        $value = $data['value'] ?? null;
+        if ($value === null) {
+            $value = empty($product[$field]) ? 1 : 0;
+        } else {
+            $value = $value ? 1 : 0;
+        }
+        Product::update($id, [$field => $value]);
+        $r = new Response(json_encode(['success' => true, 'value' => $value]));
+        $r->setHeader('Content-Type', 'application/json');
+        return $r;
+    }
+
+    public function toggleBestseller(Request $request, $id) {
+        return $this->toggleFlag($request, $id, 'is_bestseller');
+    }
+
+    public function toggleFeatured(Request $request, $id) {
+        return $this->toggleFlag($request, $id, 'is_featured');
     }
     
     public function variants(Request $request, $id) {

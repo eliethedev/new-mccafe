@@ -1,7 +1,7 @@
 <?php
 
 // Application constants
-define('APP_NAME', 'MacCafe Ordering System');
+define('APP_NAME', 'CafeCat Ordering System');
 define('APP_VERSION', '1.0.0');
 define('APP_URL', 'http://localhost:8000');
 
@@ -14,7 +14,7 @@ define('UPLOADS_PATH', PUBLIC_PATH . '/assets/images/uploads');
 
 // Database
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'maccafe_db');
+define('DB_NAME', 'cafecat_db');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 
@@ -45,6 +45,7 @@ define('ORDER_CANCELLED', 'cancelled');
 // User roles
 define('ROLE_ADMIN', 'admin');
 define('ROLE_STAFF', 'staff');
+define('ROLE_RIDER', 'rider');
 define('ROLE_CUSTOMER', 'customer');
 
 // Product categories
@@ -54,8 +55,15 @@ define('CATEGORY_BEVERAGE', 'beverage');
 define('CATEGORY_DESSERT', 'dessert');
 define('CATEGORY_MERCHANDISE', 'merchandise');
 
-// Payment methods
+// Payment methods (canonical keys — see config/payments.php for details/policies)
 define('PAYMENT_CASH', 'cash');
-define('PAYMENT_CARD', 'card');
+define('PAYMENT_CARD', 'card'); // legacy alias, normalized to cash
 define('PAYMENT_GCASH', 'gcash');
-define('PAYMENT_PAYMAYA', 'paymaya');
+define('PAYMENT_MAYA', 'maya');
+define('PAYMENT_PAYMAYA', 'paymaya'); // legacy alias of maya (kept for BC)
+define('PAYMENT_BANK_TRANSFER', 'bank_transfer');
+
+// Payment policy / procedure constants
+define('PAYMENT_VERIFICATION_SLA_HOURS', 24);
+define('PAYMENT_PROOF_MAX_SIZE', 5 * 1024 * 1024); // 5MB
+define('PAYMENT_PROOF_ALLOWED_EXTENSIONS', ['jpg', 'jpeg', 'png', 'gif', 'webp']);

@@ -14,7 +14,8 @@ class Order extends Model {
         $offset = ($page - 1) * $limit;
 
         $sql = "SELECT 
-                    o.id, o.order_number, o.user_id, o.status, o.subtotal, o.tax_amount, 
+                    o.id, o.order_number, o.user_id, o.status, o.subtotal, o.tax_amount,
+                    o.discount_type, o.discount_amount, o.discount_id_no, o.discount_status,
                     o.total_amount, o.payment_method, o.payment_status, o.customer_name, 
                     o.customer_phone, o.customer_email, o.customer_address, o.customer_city, 
                     o.notes, o.prepared_by, o.preparation_started_at, o.ready_at, 
@@ -90,6 +91,10 @@ class Order extends Model {
             'status' => 'pending',
             'subtotal' => $data['subtotal'],
             'tax_amount' => $data['tax_amount'] ?? 0,
+            'discount_type' => $data['discount_type'] ?? 'none',
+            'discount_amount' => $data['discount_amount'] ?? 0,
+            'discount_id_no' => $data['discount_id_no'] ?? null,
+            'discount_status' => $data['discount_status'] ?? 'none',
             'total_amount' => $data['total_amount'],
             'payment_method' => $data['payment_method'] ?? 'cash',
             'payment_status' => 'pending',
@@ -159,6 +164,21 @@ class Order extends Model {
         
         if (!in_array($order['status'], ['pending', 'confirmed'])) {
             return false;
+        }
+
+        // Enforce payment cancellation policy server-side (not just UI hiding).
+        // Manual e-payments lock once proof is submitted; cash remains cancellable.
+        if (class_exists('PaymentMethod')) {
+            $check = PaymentMethod::customerCanCancel($order);
+            if (!$check['allowed']) {
+                return false;
+            }
+        } else {
+            // Fallback legacy rule when helper unavailable.
+            $method = strtolower($order['payment_method'] ?? 'cash');
+            if (in_array($method, ['gcash', 'paymaya', 'bank_transfer'], true)) {
+                return false;
+            }
         }
         
         return self::updateStatus($orderId, 'cancelled', $userId, 'Order cancelled by customer');

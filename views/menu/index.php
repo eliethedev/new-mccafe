@@ -1,732 +1,870 @@
-<?php ob_start(); ?>
+﻿<?php
+ob_start();
+
+$menuCategories = json_decode(<<<'CAFECAT_MENU_DATA'
+[{"id":"menu1","name":"Coffee","items":[{"displayName":"Americano","image":"assets/images/products/americano.webp","priceText":"Price: ₱55 12oz ┃ ₱65 16oz ┃ ₱85 22oz","quantityId":"quantity-americano","sizeId":"size-americano","options":[{"value":"55","label":"12 oz - ₱55"},{"value":"65","label":"16 oz - ₱65"},{"value":"85","label":"22 oz - ₱85"}],"cartCall":{"name":"Americano","quantityId":"quantity-americano","sizeId":"size-americano","fixedPrice":null},"coffeeOptions":[{"id":"hot-americano","name":"coffee-type-americano","value":"hot"},{"id":"iced-americano","name":"coffee-type-americano","value":"iced"}],"detail":{"name":"Americano","image":"assets/images/products/americano.webp","description":"Classic Americano coffee made with espresso and hot water. Available in multiple sizes.","category":"Coffee","time":"5min","price":"55"}},{"displayName":"Spanish Latte","image":"assets/images/products/spanish-latte.jpg","priceText":"Price: ₱65 12oz ┃ ₱70 16oz ┃ ₱90 22oz","quantityId":"quantity-spanish-latte","sizeId":"size-spanish-latte","options":[{"value":"65","label":"12 oz - ₱65"},{"value":"70","label":"16 oz - ₱70"},{"value":"90","label":"22 oz - ₱90"}],"cartCall":{"name":"Spanish Latte","quantityId":"quantity-spanish-latte","sizeId":"size-spanish-latte","fixedPrice":null},"coffeeOptions":[{"id":"hot-spanish-latte","name":"coffee-type-spanish-latte","value":"hot"},{"id":"iced-spanish-latte","name":"coffee-type-spanish-latte","value":"iced"}],"detail":{"name":"Spanish Latte","image":"assets/images/products/spanish-latte.jpg","description":"Rich and creamy Spanish latte with condensed milk. A perfect blend of espresso and sweetened milk.","category":"Coffee","time":"5min","price":"65"}},{"displayName":"Matcha Espresso","image":"assets/images/products/matcha-espresso.jpg","priceText":"Price: ₱60 12oz ┃ ₱70 16oz ┃ ₱90 22oz","quantityId":"quantity-matcha-espresso","sizeId":"size-matcha-espresso","options":[{"value":"60","label":"12 oz - ₱60"},{"value":"70","label":"16 oz - ₱70"},{"value":"90","label":"22 oz - ₱90"}],"cartCall":{"name":"Matcha Espresso","quantityId":"quantity-matcha-espresso","sizeId":"size-matcha-espresso","fixedPrice":null},"coffeeOptions":[{"id":"hot-matcha-espresso","name":"coffee-type-matcha-espresso","value":"hot"},{"id":"iced-matcha-espresso","name":"coffee-type-matcha-espresso","value":"iced"}],"detail":null},{"displayName":"Caramel Macchiato","image":"assets/images/products/caramel-macchiato.jpg","priceText":"Price: ₱65 12oz ┃ ₱75 16oz ┃ ₱95 22oz","quantityId":"quantity-caramel-macchiato","sizeId":"size-caramel-macchiato","options":[{"value":"65","label":"12 oz - ₱65"},{"value":"75","label":"16 oz - ₱75"},{"value":"95","label":"22 oz - ₱95"}],"cartCall":{"name":"Caramel Macchiato","quantityId":"quantity-caramel-macchiato","sizeId":"size-caramel-macchiato","fixedPrice":null},"coffeeOptions":[{"id":"hot-caramel-macchiato","name":"coffee-type-caramel-macchiato","value":"hot"},{"id":"iced-caramel-macchiato","name":"coffee-type-caramel-macchiato","value":"iced"}],"detail":null}]},{"id":"menu2","name":"Coffee Frappe","items":[{"displayName":"Java Chip","image":"assets/images/products/java-chip.jpg","priceText":"Price: ₱89 16oz ┃ ₱109 22oz","quantityId":"quantity-java-chip","sizeId":"size-java-chip","options":[{"value":"89","label":"16 oz - ₱89"},{"value":"109","label":"22 oz - ₱109"}],"cartCall":{"name":"Java Chip","quantityId":"quantity-java-chip","sizeId":"size-java-chip","fixedPrice":null},"coffeeOptions":[],"detail":null},{"displayName":"Butterscotch","image":"assets/images/products/butterscotch-frappe.jpg","priceText":"Price: ₱79 16oz ┃ ₱99 22oz","quantityId":"quantity-butterscotch","sizeId":"size-butterscotch","options":[{"value":"79","label":"16 oz - ₱79"},{"value":"99","label":"22 oz - ₱99"}],"cartCall":{"name":"Butterscotch","quantityId":"quantity-butterscotch","sizeId":"size-butterscotch","fixedPrice":null},"coffeeOptions":[],"detail":null},{"displayName":"Almond Frappe","image":"assets/images/products/almond-frappe.jpg","priceText":"Price: ₱79 16oz ┃ ₱99 22oz","quantityId":"quantity-almond-frappe","sizeId":"size-almond-frappe","options":[{"value":"79","label":"16 oz - ₱79"},{"value":"99","label":"22 oz - ₱99"}],"cartCall":{"name":"Almond Frappe","quantityId":"quantity-almond-frappe","sizeId":"size-almond-frappe","fixedPrice":null},"coffeeOptions":[],"detail":null}]},{"id":"menu3","name":"Milk Tea","items":[{"displayName":"Okinawa","image":"assets/images/products/okinawa.jpg","priceText":"Price: ₱39 16oz ┃ ₱49 22oz","quantityId":"quantity-okinawa","sizeId":"size-okinawa","options":[{"value":"39","label":"16 oz - ₱39"},{"value":"49","label":"22 oz - ₱49"}],"cartCall":{"name":"Okinawa","quantityId":"quantity-okinawa","sizeId":"size-okinawa","fixedPrice":null},"coffeeOptions":[],"detail":null},{"displayName":"Wintermelon","image":"assets/images/products/wintermelon.jpg","priceText":"Price: ₱39 16oz ┃ ₱49 22oz","quantityId":"quantity-wintermelon","sizeId":"size-wintermelon","options":[{"value":"39","label":"16 oz - ₱39"},{"value":"49","label":"22 oz - ₱49"}],"cartCall":{"name":"Wintermelon","quantityId":"quantity-wintermelon","sizeId":"size-wintermelon","fixedPrice":null},"coffeeOptions":[],"detail":null},{"displayName":"Salted Caramel","image":"assets/images/products/salted-caramel.jpg","priceText":"Price: ₱39 16oz ┃ ₱49 22oz","quantityId":"quantity-salted-caramel","sizeId":"size-salted-caramel","options":[{"value":"39","label":"16 oz - ₱39"},{"value":"49","label":"22 oz - ₱49"}],"cartCall":{"name":"Salted Caramel","quantityId":"quantity-salted-caramel","sizeId":"size-salted-caramel","fixedPrice":null},"coffeeOptions":[],"detail":null}]},{"id":"menu4","name":"Fruit Tea","items":[{"displayName":"Strawberry","image":"assets/images/products/strawberry-tea.jpg","priceText":"Price: ₱45 16oz ┃ ₱55 22oz","quantityId":"quantity-strawberry-tea","sizeId":"size-strawberry-tea","options":[{"value":"45","label":"16 oz - ₱45"},{"value":"55","label":"22 oz - ₱55"}],"cartCall":{"name":"Strawberry Tea","quantityId":"quantity-strawberry-tea","sizeId":"size-strawberry-tea","fixedPrice":null},"coffeeOptions":[],"detail":null},{"displayName":"Green Apple","image":"assets/images/products/green-apple-tea.jpg","priceText":"Price: ₱45 16oz ┃ ₱55 22oz","quantityId":"quantity-green-apple","sizeId":"size-green-apple","options":[{"value":"45","label":"16 oz - ₱45"},{"value":"55","label":"22 oz - ₱55"}],"cartCall":{"name":"Green Apple Tea","quantityId":"quantity-green-apple","sizeId":"size-green-apple","fixedPrice":null},"coffeeOptions":[],"detail":null},{"displayName":"Lychee","image":"assets/images/products/lychee-tea.jpg","priceText":"Price: ₱45 16oz ┃ ₱55 22oz","quantityId":"quantity-lychee","sizeId":"size-lychee","options":[{"value":"45","label":"16 oz - ₱45"},{"value":"55","label":"22 oz - ₱55"}],"cartCall":{"name":"Lychee Tea","quantityId":"quantity-lychee","sizeId":"size-lychee","fixedPrice":null},"coffeeOptions":[],"detail":null}]},{"id":"menu5","name":"Non Coffee","items":[{"displayName":"Strawberries and Cream","image":"assets/images/products/strawberries-cream.jpg","priceText":"Price: ₱65 16oz ┃ ₱80 22oz","quantityId":"quantity-strawberries-cream","sizeId":"size-strawberries-cream","options":[{"value":"65","label":"16 oz - ₱65"},{"value":"80","label":"22 oz - ₱80"}],"cartCall":{"name":"Strawberries and Cream","quantityId":"quantity-strawberries-cream","sizeId":"size-strawberries-cream","fixedPrice":null},"coffeeOptions":[],"detail":null},{"displayName":"Matcha Milk","image":"assets/images/products/matcha-milk.jpg","priceText":"Price: ₱70 16oz ┃ ₱85 22oz","quantityId":"quantity-matcha-milk","sizeId":"size-matcha-milk","options":[{"value":"70","label":"16 oz - ₱70"},{"value":"85","label":"22 oz - ₱85"}],"cartCall":{"name":"Matcha Milk","quantityId":"quantity-matcha-milk","sizeId":"size-matcha-milk","fixedPrice":null},"coffeeOptions":[],"detail":null},{"displayName":"Iced Chocolate","image":"assets/images/products/iced-chocolate.jpg","priceText":"Price: ₱65 16oz ┃ ₱80 22oz","quantityId":"quantity-iced-chocolate","sizeId":"size-iced-chocolate","options":[{"value":"65","label":"16 oz - ₱65"},{"value":"80","label":"22 oz - ₱80"}],"cartCall":{"name":"Iced Chocolate","quantityId":"quantity-iced-chocolate","sizeId":"size-iced-chocolate","fixedPrice":null},"coffeeOptions":[],"detail":null}]},{"id":"menu6","name":"Non Coffee Frappe","items":[{"displayName":"Dark Choco","image":"assets/images/products/dark-choco.jpg","priceText":"Price: ₱69 16oz ┃ ₱89 22oz","quantityId":"quantity-dark-choco","sizeId":"size-dark-choco","options":[{"value":"69","label":"16 oz - ₱69"},{"value":"89","label":"22 oz - ₱89"}],"cartCall":{"name":"Dark Choco","quantityId":"quantity-dark-choco","sizeId":"size-dark-choco","fixedPrice":null},"coffeeOptions":[],"detail":null},{"displayName":"Caramel","image":"assets/images/products/caramel-frappe.jpg","priceText":"Price: ₱69 16oz ┃ ₱89 22oz","quantityId":"quantity-caramel-frappe","sizeId":"size-caramel-frappe","options":[{"value":"69","label":"16 oz - ₱69"},{"value":"89","label":"22 oz - ₱89"}],"cartCall":{"name":"Caramel Frappe","quantityId":"quantity-caramel-frappe","sizeId":"size-caramel-frappe","fixedPrice":null},"coffeeOptions":[],"detail":null},{"displayName":"Strawberry","image":"assets/images/products/strawberry-frappe.jpg","priceText":"Price: ₱69 16oz ┃ ₱89 22oz","quantityId":"quantity-strawberry-frappe","sizeId":"size-strawberry-frappe","options":[{"value":"69","label":"16 oz - ₱69"},{"value":"89","label":"22 oz - ₱89"}],"cartCall":{"name":"Strawberry Frappe","quantityId":"quantity-strawberry-frappe","sizeId":"size-strawberry-frappe","fixedPrice":null},"coffeeOptions":[],"detail":null}]},{"id":"menu7","name":"Snacks","items":[{"displayName":"Regular Fries","image":"assets/images/products/regular-fries.jpg","priceText":"Price: ₱50","quantityId":"quantity-regular-fries","sizeId":"","options":[],"cartCall":{"name":"Regular Fries","quantityId":"quantity-regular-fries","sizeId":null,"fixedPrice":"50"},"coffeeOptions":[],"detail":null},{"displayName":"Cheesy Fries","image":"assets/images/products/cheesy-fries.jpg","priceText":"Price: ₱79","quantityId":"quantity-cheesy-fries","sizeId":"","options":[],"cartCall":{"name":"Cheesy Fries","quantityId":"quantity-cheesy-fries","sizeId":null,"fixedPrice":"79"},"coffeeOptions":[],"detail":null},{"displayName":"Nachos","image":"assets/images/products/nachos.jpg","priceText":"Price: ₱89","quantityId":"quantity-nachos","sizeId":"","options":[],"cartCall":{"name":"Nachos","quantityId":"quantity-nachos","sizeId":null,"fixedPrice":"89"},"coffeeOptions":[],"detail":null}]},{"id":"menu8","name":"Rice Bowl","items":[{"displayName":"Cheesy Hungarian","image":"assets/images/products/cheesy-hungarian.jpg","priceText":"Price: ₱89","quantityId":"quantity-cheesy-hungarian","sizeId":"","options":[],"cartCall":{"name":"Cheesy Hungarian","quantityId":"quantity-cheesy-hungarian","sizeId":null,"fixedPrice":"89"},"coffeeOptions":[],"detail":null},{"displayName":"Bacon & Cheese","image":"assets/images/products/bacon-cheese.jpg","priceText":"Price: ₱89","quantityId":"quantity-bacon-cheese","sizeId":"","options":[],"cartCall":{"name":"Bacon & Cheese","quantityId":"quantity-bacon-cheese","sizeId":null,"fixedPrice":"89"},"coffeeOptions":[],"detail":null}]},{"id":"menu9","name":"Pasta","items":[{"displayName":"Garlic Tuna Parmesan","image":"assets/images/products/garlic-tuna-parmesan.jpg","priceText":"Price: ₱109","quantityId":"quantity-garlic-tuna-parmesan","sizeId":"","options":[],"cartCall":{"name":"Garlic Tuna Parmesan","quantityId":"quantity-garlic-tuna-parmesan","sizeId":null,"fixedPrice":"109"},"coffeeOptions":[],"detail":null},{"displayName":"Meaty Spaghetti","image":"assets/images/products/meaty-spaghetti.jpg","priceText":"Price: ₱109","quantityId":"quantity-meaty-spaghetti","sizeId":"","options":[],"cartCall":{"name":"Meaty Spaghetti","quantityId":"quantity-meaty-spaghetti","sizeId":null,"fixedPrice":"109"},"coffeeOptions":[],"detail":null}]},{"id":"menu10","name":"2PC Chicken With Java Rice","items":[{"displayName":"Garlic Parmesan","image":"assets/images/products/garlic-parmesan-chicken.jpg","priceText":"Price: ₱200","quantityId":"quantity-garlic-parmesan","sizeId":"","options":[],"cartCall":{"name":"Garlic Parmesan Chicken","quantityId":"quantity-garlic-parmesan","sizeId":null,"fixedPrice":"200"},"coffeeOptions":[],"detail":{"name":"Garlic Parmesan Chicken","image":"assets/images/products/garlic-parmesan-chicken.jpg","description":"Crispy 2-piece chicken served with savory garlic parmesan sauce and java rice.","category":"2PC Chicken","time":"15min","price":"200"}},{"displayName":"Teriyaki","image":"assets/images/products/teriyaki-chicken.jpg","priceText":"Price: ₱210","quantityId":"quantity-teriyaki","sizeId":"","options":[],"cartCall":{"name":"Teriyaki Chicken","quantityId":"quantity-teriyaki","sizeId":null,"fixedPrice":"210"},"coffeeOptions":[],"detail":{"name":"Teriyaki Chicken","image":"assets/images/products/teriyaki-chicken.jpg","description":"Tender 2-piece chicken glazed with sweet and savory teriyaki sauce, served with java rice.","category":"2PC Chicken","time":"15min","price":"210"}},{"displayName":"Honey Butter","image":"assets/images/products/honey-butter-chicken.jpg","priceText":"Price: ₱220","quantityId":"quantity-honey-butter","sizeId":"","options":[],"cartCall":{"name":"Honey Butter Chicken","quantityId":"quantity-honey-butter","sizeId":null,"fixedPrice":"220"},"coffeeOptions":[],"detail":null}]}]
+CAFECAT_MENU_DATA, true, 512, JSON_THROW_ON_ERROR);
+
+$escape = static function ($value): string {
+    return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+};
+
+$jsValue = static function ($value): string {
+    return htmlspecialchars(
+        json_encode($value, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT),
+        ENT_QUOTES | ENT_SUBSTITUTE,
+        'UTF-8'
+    );
+};
+
+$categoryNavLabels = [
+    'menu10' => '2PC Chicken',
+];
+?>
 
 <style>
-/* Menu Styles */
-.menu-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.box {
-    margin-bottom: 40px;
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.box h2 {
-    color: #ff6b35;
-    font-size: 2rem;
-    margin-bottom: 30px;
-    text-align: center;
-    font-weight: bold;
-}
-
-.menu-details {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-}
-
-.item-box {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 20px;
-    text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 1px solid #e9ecef;
-}
-
-.item-box:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-}
-
-.item-box img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 15px;
-}
-
-.item-box h3 {
-    color: #333;
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-    font-weight: 600;
-}
-
-.item-box p {
-    color: #666;
-    margin-bottom: 15px;
-    font-size: 0.9rem;
-}
-
-.item-box label {
-    display: block;
-    margin-bottom: 5px;
-    color: #555;
-    font-weight: 500;
-}
-
-.item-box select,
-.item-box input[type="number"] {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 0.9rem;
-}
-
-.order-btn {
-    background: #ff6b35;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background 0.3s ease;
-    width: 100%;
-}
-
-.order-btn:hover {
-    background: #e55a2b;
-}
-
-.coffee-choice {
-    margin-top: 15px;
-    padding: 15px;
-    background: #fff3e0;
-    border-radius: 5px;
-    border: 1px solid #ffe0b2;
-}
-
-.coffee-choice h3 {
-    color: #ff6b35;
-    font-size: 1rem;
-    margin-bottom: 10px;
-}
-
-.coffee-options {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-.coffee-options label {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    cursor: pointer;
-    margin-bottom: 0;
-}
-
-.coffee-options input[type="radio"] {
-    margin-right: 5px;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .menu-details {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 15px;
+    .cc-menu {
+        --cc-ink: #111111;
+        --cc-paper: #ffffff;
+        --cc-canvas: #f4f4f1;
+        --cc-muted: #73736e;
+        --cc-line: #deded9;
+        --cc-soft: #eeeeeb;
+        --cc-serif: "DM Serif Display", Georgia, serif;
+        --cc-sans: Manrope, Arial, sans-serif;
+        color: var(--cc-ink);
+        font-family: var(--cc-sans);
+        background: var(--cc-canvas);
+        margin: 0;
+        padding: 0 0 56px;
+        -webkit-font-smoothing: antialiased;
     }
-    
-    .box {
-        padding: 15px;
-        margin-bottom: 30px;
+
+    .cc-menu *,
+    .cc-menu *::before,
+    .cc-menu *::after {
+        box-sizing: border-box;
     }
-    
-    .box h2 {
-        font-size: 1.5rem;
+
+    .cc-menu button,
+    .cc-menu input,
+    .cc-menu select {
+        font: inherit;
     }
-    
-    .coffee-options {
+
+    .cc-menu button:focus-visible,
+    .cc-menu a:focus-visible,
+    .cc-menu input:focus-visible,
+    .cc-menu select:focus-visible {
+        outline: 3px solid #777772;
+        outline-offset: 3px;
+    }
+
+    .cc-menu__intro {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 50px 28px 30px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(245px, 380px);
+        gap: 38px;
+        align-items: end;
+    }
+
+    .cc-menu__eyebrow {
+        margin: 0 0 14px;
+        color: var(--cc-muted);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+    }
+
+    .cc-menu__title {
+        max-width: 740px;
+        margin: 0;
+        font: 400 clamp(40px, 5.7vw, 72px)/.98 var(--cc-serif);
+        letter-spacing: -.035em;
+    }
+
+    .cc-menu__lead {
+        max-width: 620px;
+        margin: 17px 0 0;
+        color: #5f5f5a;
+        font-size: 14px;
+        line-height: 1.75;
+    }
+
+    .cc-menu__aside {
+        padding: 4px 0 4px 20px;
+        border-left: 1px solid var(--cc-line);
+        color: var(--cc-muted);
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    .cc-menu__aside strong {
+        display: block;
+        margin-bottom: 5px;
+        color: var(--cc-ink);
+        font-size: 13px;
+    }
+
+    .cc-menu__tools {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 0 28px 20px;
+    }
+
+    .cc-menu__search-wrap {
+        position: relative;
+        max-width: 560px;
+    }
+
+    .cc-menu__search-icon {
+        position: absolute;
+        top: 50%;
+        left: 15px;
+        width: 18px;
+        height: 18px;
+        color: #777772;
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+
+    .cc-menu__search {
+        display: block;
+        width: 100%;
+        height: 50px;
+        padding: 0 44px 0 44px;
+        border: 1px solid #cacac4;
+        border-radius: 2px;
+        background: var(--cc-paper);
+        color: var(--cc-ink);
+        font-size: 14px;
+    }
+
+    .cc-menu__search::placeholder {
+        color: #888883;
+    }
+
+    .cc-menu__clear-search {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        display: none;
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: #555550;
+        cursor: pointer;
+        font-size: 22px;
+        line-height: 1;
+    }
+
+    .cc-menu__search-wrap.has-query .cc-menu__clear-search {
+        display: block;
+    }
+
+    .cc-menu__search-hint {
+        margin: 8px 0 0;
+        color: var(--cc-muted);
+        font-size: 11px;
+    }
+
+    .cc-menu__category-bar {
+        position: sticky;
+        top: 0;
+        z-index: 15;
+        border-top: 1px solid var(--cc-line);
+        border-bottom: 1px solid var(--cc-line);
+        background: rgba(244, 244, 241, .96);
+        backdrop-filter: blur(14px);
+    }
+
+    .cc-menu__category-scroll {
+        display: flex;
+        max-width: 1320px;
+        gap: 8px;
+        margin: 0 auto;
+        padding: 10px 28px;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .cc-menu__category-scroll::-webkit-scrollbar {
+        display: none;
+    }
+
+    .cc-menu__category-link {
+        flex: 0 0 auto;
+        padding: 10px 13px;
+        border: 1px solid transparent;
+        color: #666660;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: color .16s ease, border-color .16s ease, background .16s ease;
+    }
+
+    .cc-menu__category-link:hover {
+        border-color: #c9c9c3;
+        color: var(--cc-ink);
+    }
+
+    .cc-menu__category-link.is-active {
+        border-color: var(--cc-ink);
+        background: var(--cc-ink);
+        color: #fff;
+    }
+
+    .cc-menu__category-link[hidden] {
+        display: none !important;
+    }
+
+    .cc-menu__content {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 18px 28px 28px;
+    }
+
+    .cc-menu__section {
+        padding: 32px 0 40px;
+        border-bottom: 1px solid var(--cc-line);
+        scroll-margin-top: 120px;
+    }
+
+    .cc-menu__section[hidden],
+    .cc-menu__card[hidden] {
+        display: none !important;
+    }
+
+    .cc-menu__section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 18px;
+    }
+
+    .cc-menu__section-title {
+        margin: 0;
+        font: 400 clamp(27px, 3vw, 38px)/1.08 var(--cc-serif);
+        letter-spacing: -.02em;
+    }
+
+    .cc-menu__section-count {
+        flex: 0 0 auto;
+        color: var(--cc-muted);
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .cc-menu__grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .cc-menu__card {
+        display: flex;
+        min-width: 0;
         flex-direction: column;
-        gap: 10px;
+        border: 1px solid var(--cc-line);
+        background: var(--cc-paper);
+        text-align: left;
+        transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease;
     }
-}
 
-/* Cart Badge */
-.cartAmount {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: #dc3545;
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: bold;
-}
+    .cc-menu__card:hover {
+        transform: translateY(-2px);
+        border-color: #c8c8c2;
+        box-shadow: 0 10px 30px rgba(17, 17, 17, .06);
+    }
 
-/* Navigation Menu Active State */
-.nav-link.home-active {
-    color: #ff6b35 !important;
-    font-weight: bold;
-}
+    .cc-menu__image {
+        display: block;
+        width: 100%;
+        height: 172px;
+        border-bottom: 1px solid #e3e3df;
+        background: #e9e9e5;
+        object-fit: cover;
+    }
 
-/* Section spacing */
-section.menu {
-    margin-bottom: 40px;
-}
+    .cc-menu__card-body {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        padding: 16px;
+    }
 
-/* Authentication Modal Styles */
-#authModal .modal-content {
-    border-radius: 15px;
-    border: none;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
+    .cc-menu__product-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+    }
 
-#authModal .modal-header {
-    background: linear-gradient(135deg, #ff6b35, #ff8f65);
-    color: white;
-    border-radius: 15px 15px 0 0;
-}
+    .cc-menu__product-name {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 800;
+        line-height: 1.35;
+    }
 
-#authModal .modal-body {
-    padding: 2rem;
-}
+    .cc-menu__from-price {
+        flex: 0 0 auto;
+        color: var(--cc-ink);
+        font-size: 13px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
 
-#authModal .btn-primary {
-    background: #ff6b35;
-    border-color: #ff6b35;
-    transition: all 0.3s ease;
-}
+    .cc-menu__price-options {
+        min-height: 17px;
+        margin: 7px 0 14px;
+        color: var(--cc-muted);
+        font-size: 11px;
+        line-height: 1.55;
+    }
 
-#authModal .btn-primary:hover {
-    background: #e55a2b;
-    border-color: #e55a2b;
-    transform: translateY(-2px);
-}
+    .cc-menu__field-label {
+        display: block;
+        margin: 0 0 6px;
+        color: #4e4e49;
+        font-size: 11px;
+        font-weight: 800;
+    }
 
-#authModal .btn-outline-primary {
-    border-color: #ff6b35;
-    color: #ff6b35;
-    transition: all 0.3s ease;
-}
+    .cc-menu__size-select {
+        display: block;
+        width: 100%;
+        height: 42px;
+        padding: 0 10px;
+        border: 1px solid #d0d0ca;
+        border-radius: 2px;
+        background: #fff;
+        color: var(--cc-ink);
+        font-size: 12px;
+    }
 
-#authModal .btn-outline-primary:hover {
-    background: #ff6b35;
-    border-color: #ff6b35;
-    color: white;
-    transform: translateY(-2px);
-}
+    .cc-menu .coffee-choice {
+        margin: 13px 0 0;
+        padding: 0;
+        border: 0;
+        background: transparent;
+    }
 
-/* Cart Animation Enhancement */
-.cart-icon-pulse {
-    animation: cartPulse 0.6s ease-in-out;
-}
+    .cc-menu .coffee-choice__legend {
+        margin-bottom: 6px;
+        color: #4e4e49;
+        font-size: 11px;
+        font-weight: 800;
+    }
 
-@keyframes cartPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.3); }
-    100% { transform: scale(1); }
-}
+    .cc-menu .coffee-options {
+        display: flex;
+        gap: 7px;
+    }
 
-/* Flying Cart Animation */
-.flying-cart {
-    position: fixed;
-    z-index: 10000;
-    pointer-events: none;
-    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
+    .cc-menu .coffee-options label {
+        position: relative;
+        display: flex;
+        flex: 1;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        margin: 0;
+        padding: 7px 9px;
+        border: 1px solid #d0d0ca;
+        background: #fff;
+        color: var(--cc-ink);
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 700;
+        transition: border-color .16s ease, background .16s ease, color .16s ease;
+    }
+
+    .cc-menu .coffee-options label:has(input:checked) {
+        border-color: var(--cc-ink);
+        background: var(--cc-ink);
+        color: #fff;
+    }
+
+    .cc-menu .coffee-options input[type="radio"] {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        margin: 0;
+    }
+
+    .cc-menu .coffee-options label:has(input:focus-visible) {
+        outline: 3px solid #777772;
+        outline-offset: 2px;
+    }
+
+    .cc-menu .coffee-choice.needs-choice .coffee-options label {
+        border-color: #8d8d85;
+    }
+
+    .cc-menu__quantity-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 13px 0 11px;
+    }
+
+    .cc-menu__quantity-label {
+        color: #4e4e49;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .cc-menu__quantity-control {
+        display: flex;
+        height: 36px;
+        border: 1px solid #d0d0ca;
+    }
+
+    .cc-menu__quantity-control button {
+        width: 34px;
+        padding: 0;
+        border: 0;
+        background: #fff;
+        color: var(--cc-ink);
+        cursor: pointer;
+        font-size: 17px;
+    }
+
+    .cc-menu__quantity-control input.quantity-input {
+        width: 42px;
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        border-right: 1px solid #e3e3df;
+        border-left: 1px solid #e3e3df;
+        border-radius: 0;
+        background: #fff;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 700;
+        appearance: textfield;
+        -moz-appearance: textfield;
+    }
+
+    .cc-menu__quantity-control input.quantity-input::-webkit-inner-spin-button,
+    .cc-menu__quantity-control input.quantity-input::-webkit-outer-spin-button {
+        margin: 0;
+        -webkit-appearance: none;
+    }
+
+    .cc-menu .order-btn {
+        display: flex;
+        width: 100%;
+        min-height: 44px;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: auto;
+        padding: 0 14px;
+        border: 1px solid var(--cc-ink);
+        border-radius: 0;
+        background: var(--cc-ink);
+        color: #fff;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: .02em;
+        transition: border-color .16s ease, background .16s ease, transform .16s ease;
+    }
+
+    .cc-menu .order-btn:hover {
+        border-color: #363633;
+        background: #363633;
+    }
+
+    .cc-menu .order-btn:active {
+        transform: scale(.99);
+    }
+
+    .cc-menu__button-price {
+        font-weight: 600;
+        opacity: .78;
+        white-space: nowrap;
+    }
+
+    .cc-menu__actions {
+        display: grid;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .cc-menu__detail-btn {
+        min-height: 38px;
+        border: 1px solid #c7c7c1;
+        border-radius: 0;
+        background: #fff;
+        color: var(--cc-ink);
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .cc-menu__detail-btn:hover {
+        background: var(--cc-soft);
+    }
+
+    .cc-menu__feedback {
+        min-height: 0;
+        margin: 7px 0 0;
+        color: #555550;
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    .cc-menu__empty {
+        display: none;
+        padding: 68px 20px;
+        text-align: center;
+    }
+
+    .cc-menu__empty.is-visible {
+        display: block;
+    }
+
+    .cc-menu__empty h2 {
+        margin: 0 0 8px;
+        font: 400 32px/1.15 var(--cc-serif);
+    }
+
+    .cc-menu__empty p {
+        margin: 0 0 18px;
+        color: var(--cc-muted);
+        font-size: 13px;
+    }
+
+    .cc-menu__reset {
+        min-height: 42px;
+        padding: 0 17px;
+        border: 0;
+        background: var(--cc-ink);
+        color: #fff;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .cc-visually-hidden {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
+    }
+
+    .cartAmount {
+        display: inline-flex;
+        min-width: 22px;
+        height: 22px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--cc-ink);
+        color: #fff;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    #productModal .modal-content {
+        border: 1px solid var(--cc-line);
+        border-radius: 2px;
+        box-shadow: 0 18px 48px rgba(17, 17, 17, .18);
+    }
+
+    #productModal .modal-header,
+    #productModal .modal-footer {
+        border-color: var(--cc-line);
+    }
+
+    #productModal .modal-title,
+    #productModal #modalProductName {
+        font-family: var(--cc-serif);
+        font-weight: 400;
+    }
+
+    #productModal #modalProductPrice {
+        color: var(--cc-ink) !important;
+    }
+
+    @media (max-width: 760px) {
+        .cc-menu__intro {
+            display: block;
+            padding: 39px 18px 24px;
+        }
+
+        .cc-menu__title {
+            max-width: 560px;
+            font-size: clamp(42px, 11vw, 60px);
+        }
+
+        .cc-menu__lead {
+            margin-top: 13px;
+        }
+
+        .cc-menu__aside {
+            display: none;
+        }
+
+        .cc-menu__tools {
+            padding: 0 18px 16px;
+        }
+
+        .cc-menu__category-scroll {
+            padding: 10px 18px;
+        }
+
+        .cc-menu__content {
+            padding: 8px 18px 24px;
+        }
+
+        .cc-menu__section {
+            padding: 26px 0 30px;
+            scroll-margin-top: 116px;
+        }
+
+        .cc-menu__section-head {
+            margin-bottom: 14px;
+        }
+
+        .cc-menu__grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .cc-menu__image {
+            height: 130px;
+        }
+
+        .cc-menu__card-body {
+            padding: 12px;
+        }
+
+        .cc-menu__product-name {
+            font-size: 13px;
+        }
+
+        .cc-menu__from-price {
+            font-size: 12px;
+        }
+
+        .cc-menu__price-options {
+            margin: 6px 0 12px;
+            font-size: 10px;
+        }
+
+        .cc-menu__field-label,
+        .cc-menu .coffee-choice__legend,
+        .cc-menu__quantity-label {
+            font-size: 10px;
+        }
+
+        .cc-menu__size-select {
+            height: 39px;
+            font-size: 11px;
+        }
+
+        .cc-menu .coffee-options label {
+            min-height: 36px;
+            padding: 7px 5px;
+            font-size: 10px;
+        }
+
+        .cc-menu__quantity-control button {
+            width: 30px;
+        }
+
+        .cc-menu__quantity-control input.quantity-input {
+            width: 36px;
+        }
+
+        .cc-menu .order-btn {
+            min-height: 42px;
+            padding: 0 10px;
+            font-size: 11px;
+        }
+    }
+
+    @media (max-width: 390px) {
+        .cc-menu__grid {
+            grid-template-columns: 1fr;
+        }
+
+        .cc-menu__image {
+            height: 178px;
+        }
+
+        .cc-menu__card-body {
+            padding: 15px;
+        }
+
+        .cc-menu__product-name {
+            font-size: 15px;
+        }
+
+        .cc-menu__price-options {
+            font-size: 11px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .cc-menu *,
+        .cc-menu *::before,
+        .cc-menu *::after {
+            scroll-behavior: auto !important;
+            transition-duration: .01ms !important;
+            animation-duration: .01ms !important;
+            animation-iteration-count: 1 !important;
+        }
+    }
 </style>
 
-<div class="container-fluid py-4">
-    <div class="menu-container">
-        
-        <!-- Quick Navigation -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title text-center mb-3">Quick Navigation</h5>
-                        <div class="d-flex flex-wrap justify-content-center gap-2">
-                            <a href="#menu1" class="btn btn-outline-primary btn-sm">Coffee</a>
-                            <a href="#menu2" class="btn btn-outline-primary btn-sm">Coffee Frappe</a>
-                            <a href="#menu3" class="btn btn-outline-primary btn-sm">Milk Tea</a>
-                            <a href="#menu4" class="btn btn-outline-primary btn-sm">Fruit Tea</a>
-                            <a href="#menu5" class="btn btn-outline-primary btn-sm">Non Coffee</a>
-                            <a href="#menu6" class="btn btn-outline-primary btn-sm">Non Coffee Frappe</a>
-                            <a href="#menu7" class="btn btn-outline-primary btn-sm">Snacks</a>
-                            <a href="#menu8" class="btn btn-outline-primary btn-sm">Rice Bowl</a>
-                            <a href="#menu9" class="btn btn-outline-primary btn-sm">Pasta</a>
-                            <a href="#menu10" class="btn btn-outline-primary btn-sm">2PC Chicken</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="cc-menu" id="customerMenu">
+    <header class="cc-menu__intro">
+        <div>
+            <p class="cc-menu__eyebrow">The CafeCat menu</p>
+            <h1 class="cc-menu__title">Find your new<br>favorite.</h1>
+            <p class="cc-menu__lead">Browse something to sip, share, or settle in with. Pick your size, make it yours, and add it to your order.</p>
         </div>
-        
-        <!-- Coffee Section -->
-        <section class="box" id="menu1">
-            <h2>Coffee</h2>
-            <div class="menu-details">
-                <div class="item-box">
-                    <img src="assets/images/products/americano.webp" alt="Americano">
-                    <h3>Americano</h3>
-                    <p>Price: ₱55 12oz ┃ ₱65 16oz ┃ ₱85 22oz</p>
-                    <label for="size-americano">Choose Size:</label>
-                    <select id="size-americano">
-                        <option value="55">12 oz - ₱55</option>
-                        <option value="65">16 oz - ₱65</option>
-                        <option value="85">22 oz - ₱85</option>
-                    </select>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-americano">
-                    <div class="d-grid gap-2">
-                        <button class="order-btn" onclick="addToCart('Americano', document.getElementById('quantity-americano').value, document.getElementById('size-americano').value, event)">Order</button>
-                        <button class="btn btn-outline-primary btn-sm" onclick="showProductModal('Americano', 'assets/images/products/americano.webp', 'Classic Americano coffee made with espresso and hot water. Available in multiple sizes.', 'Coffee', '5min', 55)">View</button>
+        <aside class="cc-menu__aside">
+            <strong>Choose at your own pace</strong>
+            Search for an item or jump to a category. Your size, temperature, and quantity are clear before you add anything.
+        </aside>
+    </header>
+
+    <div class="cc-menu__tools">
+        <label class="cc-visually-hidden" for="customerMenuSearch">Search the menu</label>
+        <div class="cc-menu__search-wrap" id="customerMenuSearchWrap">
+            <svg class="cc-menu__search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <circle cx="10.8" cy="10.8" r="6.8"></circle>
+                <path d="m16 16 5 5"></path>
+            </svg>
+            <input class="cc-menu__search" id="customerMenuSearch" type="search" placeholder="Search drinks, snacks, meals…" autocomplete="off" aria-describedby="customerMenuSearchHint">
+            <button class="cc-menu__clear-search" id="customerMenuClear" type="button" aria-label="Clear search">×</button>
+        </div>
+        <p class="cc-menu__search-hint" id="customerMenuSearchHint">Search by item or category. Prices are shown in Philippine pesos.</p>
+    </div>
+
+    <nav class="cc-menu__category-bar" aria-label="Menu categories">
+        <div class="cc-menu__category-scroll" id="customerMenuCategories">
+            <?php foreach ($menuCategories as $category): ?>
+                <a class="cc-menu__category-link" href="#<?= $escape($category['id']) ?>" data-target="<?= $escape($category['id']) ?>">
+                    <?= $escape($categoryNavLabels[$category['id']] ?? $category['name']) ?>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    </nav>
+
+    <div class="cc-menu__content" role="region" aria-label="CafeCat menu items">
+        <p class="cc-visually-hidden" id="customerMenuResultCount" aria-live="polite" aria-atomic="true"></p>
+        <div id="customerMenuSections">
+            <?php foreach ($menuCategories as $category): ?>
+                <section class="cc-menu__section box" id="<?= $escape($category['id']) ?>" aria-labelledby="<?= $escape($category['id']) ?>-title">
+                    <div class="cc-menu__section-head">
+                        <h2 class="cc-menu__section-title" id="<?= $escape($category['id']) ?>-title"><?= $escape($category['name']) ?></h2>
+                        <span class="cc-menu__section-count" data-section-count><?= count($category['items']) ?> <?= count($category['items']) === 1 ? 'item' : 'items' ?></span>
                     </div>
-                    <section class="coffee-choice">
-                        <h3>Would you like your coffee Hot or Iced?</h3>
-                        <div class="coffee-options">
-                            <label for="hot-americano">
-                                <input type="radio" id="hot-americano" name="coffee-type-americano" value="hot">
-                                Hot Coffee
-                            </label>
-                            <label for="iced-americano">
-                                <input type="radio" id="iced-americano" name="coffee-type-americano" value="iced">
-                                Iced Coffee
-                            </label>
-                        </div>
-                    </section>
-                </div>
+                    <div class="cc-menu__grid menu-details">
+                        <?php foreach ($category['items'] as $item): ?>
+                            <?php
+                            $cartName = $item['cartCall']['name'];
+                            $quantityId = $item['quantityId'];
+                            $sizeId = $item['sizeId'];
+                            $fixedPrice = $item['cartCall']['fixedPrice'];
+                            $coffeeGroup = $item['coffeeOptions'][0]['name'] ?? '';
+                            $startPrice = $item['options'][0]['value'] ?? $fixedPrice;
+                            $searchText = strtolower($item['displayName'] . ' ' . $category['name']);
+                            $visiblePrices = preg_replace('/^Price:\\s*/u', '', $item['priceText']);
+                            ?>
+                            <article class="cc-menu__card item-box" data-search="<?= $escape($searchText) ?>" data-category="<?= $escape(strtolower($category['name'])) ?>">
+                                <img class="cc-menu__image" src="<?= $escape($item['image']) ?>" alt="<?= $escape($item['displayName']) ?>" loading="lazy" decoding="async">
+                                <div class="cc-menu__card-body">
+                                    <div class="cc-menu__product-top">
+                                        <h3 class="cc-menu__product-name"><?= $escape($item['displayName']) ?></h3>
+                                        <span class="cc-menu__from-price" data-from-price><?= $item['options'] ? 'From ' : '' ?><?= $escape('₱' . $startPrice) ?></span>
+                                    </div>
+                                    <p class="cc-menu__price-options"><?= $escape($visiblePrices) ?></p>
 
-                <div class="item-box">
-                    <img src="assets/images/products/spanish-latte.jpg" alt="Spanish Latte">
-                    <h3>Spanish Latte</h3>
-                    <p>Price: ₱65 12oz ┃ ₱70 16oz ┃ ₱90 22oz</p>
-                    <label for="size-spanish-latte">Choose Size:</label>
-                    <select id="size-spanish-latte">
-                        <option value="65">12 oz - ₱65</option>
-                        <option value="70">16 oz - ₱70</option>
-                        <option value="90">22 oz - ₱90</option>
-                    </select>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-spanish-latte">
-                    <div class="d-grid gap-2">
-                        <button class="order-btn" onclick="addToCart('Spanish Latte', document.getElementById('quantity-spanish-latte').value, document.getElementById('size-spanish-latte').value, event)">Order</button>
-                        <button class="btn btn-outline-primary btn-sm" onclick="showProductModal('Spanish Latte', 'assets/images/products/spanish-latte.jpg', 'Rich and creamy Spanish latte with condensed milk. A perfect blend of espresso and sweetened milk.', 'Coffee', '5min', 65)">View</button>
+                                    <?php if ($item['options']): ?>
+                                        <div class="cc-menu__option-group">
+                                            <label class="cc-menu__field-label" for="<?= $escape($sizeId) ?>">Choose size</label>
+                                            <select class="cc-menu__size-select" id="<?= $escape($sizeId) ?>" aria-label="<?= $escape($item['displayName']) ?> size" data-size-select>
+                                                <?php foreach ($item['options'] as $option): ?>
+                                                    <option value="<?= $escape($option['value']) ?>"><?= $escape($option['label']) ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <?php if ($item['coffeeOptions']): ?>
+                                        <fieldset class="coffee-choice" data-coffee-choice>
+                                            <legend class="coffee-choice__legend">Hot or iced?</legend>
+                                            <div class="coffee-options">
+                                                <?php foreach ($item['coffeeOptions'] as $coffeeOption): ?>
+                                                    <label for="<?= $escape($coffeeOption['id']) ?>">
+                                                        <input type="radio" id="<?= $escape($coffeeOption['id']) ?>" name="<?= $escape($coffeeOption['name']) ?>" value="<?= $escape($coffeeOption['value']) ?>">
+                                                        <?= $escape($coffeeOption['value'] === 'hot' ? 'Hot Coffee' : 'Iced Coffee') ?>
+                                                    </label>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        </fieldset>
+                                    <?php endif; ?>
+
+                                    <div class="cc-menu__quantity-row">
+                                        <label class="cc-menu__quantity-label" for="<?= $escape($quantityId) ?>">Quantity</label>
+                                        <div class="cc-menu__quantity-control">
+                                            <button type="button" aria-label="Decrease <?= $escape($item['displayName']) ?> quantity" data-quantity-step="-1">−</button>
+                                            <input type="number" value="1" min="1" step="1" class="quantity-input" id="<?= $escape($quantityId) ?>" inputmode="numeric" aria-label="<?= $escape($item['displayName']) ?> quantity">
+                                            <button type="button" aria-label="Increase <?= $escape($item['displayName']) ?> quantity" data-quantity-step="1">+</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="cc-menu__actions">
+                                        <button class="order-btn" type="button" onclick="return ccCustomerAddToCart(<?= $jsValue($cartName) ?>, <?= $jsValue($quantityId) ?>, <?= $jsValue($sizeId !== '' ? $sizeId : $fixedPrice) ?>, <?= $jsValue($coffeeGroup) ?>, event)">
+                                            <span>Add to order</span>
+                                            <span class="cc-menu__button-price" data-button-price>₱<?= $escape($startPrice) ?></span>
+                                        </button>
+                                        <?php if ($item['detail']): ?>
+                                            <?php $detail = $item['detail']; ?>
+                                            <button class="cc-menu__detail-btn btn btn-outline-primary btn-sm" type="button" onclick="showProductModal(<?= $jsValue($detail['name']) ?>, <?= $jsValue($detail['image']) ?>, <?= $jsValue($detail['description']) ?>, <?= $jsValue($detail['category']) ?>, <?= $jsValue($detail['time']) ?>, <?= $jsValue($detail['price']) ?>)">
+                                                View details
+                                            </button>
+                                        <?php endif; ?>
+                                    </div>
+                                    <p class="cc-menu__feedback" data-item-feedback role="status" aria-live="polite"></p>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
                     </div>
-                    <section class="coffee-choice">
-                        <h3>Would you like your coffee Hot or Iced?</h3>
-                        <div class="coffee-options">
-                            <label for="hot-spanish-latte">
-                                <input type="radio" id="hot-spanish-latte" name="coffee-type-spanish-latte" value="hot">
-                                Hot Coffee
-                            </label>
-                            <label for="iced-spanish-latte">
-                                <input type="radio" id="iced-spanish-latte" name="coffee-type-spanish-latte" value="iced">
-                                Iced Coffee
-                            </label>
-                        </div>
-                    </section>
-                </div>
-
-                <div class="item-box">
-                    <img src="assets/images/products/matcha-espresso.jpg" alt="Matcha Espresso">
-                    <h3>Matcha Espresso</h3>
-                    <p>Price: ₱60 12oz ┃ ₱70 16oz ┃ ₱90 22oz</p>
-                    <label for="size-matcha-espresso">Choose Size:</label>
-                    <select id="size-matcha-espresso">
-                        <option value="60">12 oz - ₱60</option>
-                        <option value="70">16 oz - ₱70</option>
-                        <option value="90">22 oz - ₱90</option>
-                    </select>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-matcha-espresso">
-                    <button class="order-btn" onclick="addToCart('Matcha Espresso', document.getElementById('quantity-matcha-espresso').value, document.getElementById('size-matcha-espresso').value, event)">Order</button>
-                    <section class="coffee-choice">
-                        <h3>Would you like your coffee Hot or Iced?</h3>
-                        <div class="coffee-options">
-                            <label for="hot-matcha-espresso">
-                                <input type="radio" id="hot-matcha-espresso" name="coffee-type-matcha-espresso" value="hot">
-                                Hot Coffee
-                            </label>
-                            <label for="iced-matcha-espresso">
-                                <input type="radio" id="iced-matcha-espresso" name="coffee-type-matcha-espresso" value="iced">
-                                Iced Coffee
-                            </label>
-                        </div>
-                    </section>
-                </div>
-
-                <div class="item-box">
-                    <img src="assets/images/products/caramel-macchiato.jpg" alt="Caramel Macchiato">
-                    <h3>Caramel Macchiato</h3>
-                    <p>Price: ₱65 12oz ┃ ₱75 16oz ┃ ₱95 22oz</p>
-                    <label for="size-caramel-macchiato">Choose Size:</label>
-                    <select id="size-caramel-macchiato">
-                        <option value="65">12 oz - ₱65</option>
-                        <option value="75">16 oz - ₱75</option>
-                        <option value="95">22 oz - ₱95</option>
-                    </select>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-caramel-macchiato">
-                    <button class="order-btn" onclick="addToCart('Caramel Macchiato', document.getElementById('quantity-caramel-macchiato').value, document.getElementById('size-caramel-macchiato').value, event)">Order</button>
-                    <section class="coffee-choice">
-                        <h3>Would you like your coffee Hot or Iced?</h3>
-                        <div class="coffee-options">
-                            <label for="hot-caramel-macchiato">
-                                <input type="radio" id="hot-caramel-macchiato" name="coffee-type-caramel-macchiato" value="hot">
-                                Hot Coffee
-                            </label>
-                            <label for="iced-caramel-macchiato">
-                                <input type="radio" id="iced-caramel-macchiato" name="coffee-type-caramel-macchiato" value="iced">
-                                Iced Coffee
-                            </label>
-                        </div>
-                    </section>
-                </div>
-            </div>
-        </section>
-
-        <!-- Coffee Frappe Section -->
-        <section class="box" id="menu2">
-            <h2>Coffee Frappe</h2>
-            <div class="menu-details">
-                <div class="item-box">
-                    <img src="assets/images/products/java-chip.jpg" alt="Java Chip">
-                    <h3>Java Chip</h3>
-                    <p>Price: ₱89 16oz ┃ ₱109 22oz</p>
-                    <label for="size-java-chip">Choose Size:</label>
-                    <select id="size-java-chip">
-                        <option value="89">16 oz - ₱89</option>
-                        <option value="109">22 oz - ₱109</option>
-                    </select>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-java-chip">
-                    <button class="order-btn" onclick="addToCart('Java Chip', document.getElementById('quantity-java-chip').value, document.getElementById('size-java-chip').value, event)">Order</button>
-                </div>
-
-                <div class="item-box">
-                    <img src="assets/images/products/butterscotch-frappe.jpg" alt="Butterscotch">
-                    <h3>Butterscotch</h3>
-                    <p>Price: ₱79 16oz ┃ ₱99 22oz</p>
-                    <label for="size-butterscotch">Choose Size:</label>
-                    <select id="size-butterscotch">
-                        <option value="79">16 oz - ₱79</option>
-                        <option value="99">22 oz - ₱99</option>
-                    </select>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-butterscotch">
-                    <button class="order-btn" onclick="addToCart('Butterscotch', document.getElementById('quantity-butterscotch').value, document.getElementById('size-butterscotch').value, event)">Order</button>
-                </div>
-
-                <div class="item-box">
-                    <img src="assets/images/products/almond-frappe.jpg" alt="Almond Frappe">
-                    <h3>Almond Frappe</h3>
-                    <p>Price: ₱79 16oz ┃ ₱99 22oz</p>
-                    <label for="size-almond-frappe">Choose Size:</label>
-                    <select id="size-almond-frappe">
-                        <option value="79">16 oz - ₱79</option>
-                        <option value="99">22 oz - ₱99</option>
-                    </select>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-almond-frappe">
-                    <button class="order-btn" onclick="addToCart('Almond Frappe', document.getElementById('quantity-almond-frappe').value, document.getElementById('size-almond-frappe').value, event)">Order</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Milk Tea Section -->
-        <section class="box" id="menu3">
-            <h2>Milk Tea</h2>
-            <div class="menu-details">
-                <div class="item-box">
-                    <img src="assets/images/products/okinawa.jpg" alt="Okinawa">
-                    <h3>Okinawa</h3>
-                    <p>Price: ₱39 16oz ┃ ₱49 22oz</p>
-                    <label for="size-okinawa">Choose Size:</label>
-                    <select id="size-okinawa">
-                        <option value="39">16 oz - ₱39</option>
-                        <option value="49">22 oz - ₱49</option>
-                    </select>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-okinawa">
-                    <button class="order-btn" onclick="addToCart('Okinawa', document.getElementById('quantity-okinawa').value, document.getElementById('size-okinawa').value, event)">Order</button>
-                </div>
-
-                <div class="item-box">
-                    <img src="assets/images/products/wintermelon.jpg" alt="Wintermelon">
-                    <h3>Wintermelon</h3>
-                    <p>Price: ₱39 16oz ┃ ₱49 22oz</p>
-                    <label for="size-wintermelon">Choose Size:</label>
-                    <select id="size-wintermelon">
-                        <option value="39">16 oz - ₱39</option>
-                        <option value="49">22 oz - ₱49</option>
-                    </select>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-wintermelon">
-                    <button class="order-btn" onclick="addToCart('Wintermelon', document.getElementById('quantity-wintermelon').value, document.getElementById('size-wintermelon').value, event)">Order</button>
-                </div>
-
-                <div class="item-box">
-                    <img src="assets/images/products/salted-caramel.jpg" alt="Salted Caramel">
-                    <h3>Salted Caramel</h3>
-                    <p>Price: ₱39 16oz ┃ ₱49 22oz</p>
-                    <label for="size-salted-caramel">Choose Size:</label>
-                    <select id="size-salted-caramel">
-                        <option value="39">16 oz - ₱39</option>
-                        <option value="49">22 oz - ₱49</option>
-                    </select>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-salted-caramel">
-                    <button class="order-btn" onclick="addToCart('Salted Caramel', document.getElementById('quantity-salted-caramel').value, document.getElementById('size-salted-caramel').value, event)">Order</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Fruit Tea Section -->
-        <section class="box" id="menu4">
-            <h2>Fruit Tea</h2>
-            <div class="menu-details">
-                <div class="item-box">
-                    <img src="assets/images/products/strawberry-tea.jpg" alt="Strawberry">
-                    <h3>Strawberry</h3>
-                    <p>Price: ₱45 16oz ┃ ₱55 22oz</p>
-                    <label for="size-strawberry-tea">Choose Size:</label>
-                    <select id="size-strawberry-tea">
-                        <option value="45">16 oz - ₱45</option>
-                        <option value="55">22 oz - ₱55</option>
-                    </select>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-strawberry-tea">
-                    <button class="order-btn" onclick="addToCart('Strawberry Tea', document.getElementById('quantity-strawberry-tea').value, document.getElementById('size-strawberry-tea').value, event)">Order</button>
-                </div>
-
-                <div class="item-box">
-                    <img src="assets/images/products/green-apple-tea.jpg" alt="Green Apple">
-                    <h3>Green Apple</h3>
-                    <p>Price: ₱45 16oz ┃ ₱55 22oz</p>
-                    <label for="size-green-apple">Choose Size:</label>
-                    <select id="size-green-apple">
-                        <option value="45">16 oz - ₱45</option>
-                        <option value="55">22 oz - ₱55</option>
-                    </select>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-green-apple">
-                    <button class="order-btn" onclick="addToCart('Green Apple Tea', document.getElementById('quantity-green-apple').value, document.getElementById('size-green-apple').value, event)">Order</button>
-                </div>
-
-                <div class="item-box">
-                    <img src="assets/images/products/lychee-tea.jpg" alt="Lychee">
-                    <h3>Lychee</h3>
-                    <p>Price: ₱45 16oz ┃ ₱55 22oz</p>
-                    <label for="size-lychee">Choose Size:</label>
-                    <select id="size-lychee">
-                        <option value="45">16 oz - ₱45</option>
-                        <option value="55">22 oz - ₱55</option>
-                    </select>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-lychee">
-                    <button class="order-btn" onclick="addToCart('Lychee Tea', document.getElementById('quantity-lychee').value, document.getElementById('size-lychee').value, event)">Order</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Non Coffee Section -->
-        <section class="box" id="menu5">
-            <h2>Non Coffee</h2>
-            <div class="menu-details">
-                <div class="item-box">
-                    <img src="assets/images/products/strawberries-cream.jpg" alt="Strawberries and Cream">
-                    <h3>Strawberries and Cream</h3>
-                    <p>Price: ₱65 16oz ┃ ₱80 22oz</p>
-                    <label for="size-strawberries-cream">Choose Size:</label>
-                    <select id="size-strawberries-cream">
-                        <option value="65">16 oz - ₱65</option>
-                        <option value="80">22 oz - ₱80</option>
-                    </select>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-strawberries-cream">
-                    <button class="order-btn" onclick="addToCart('Strawberries and Cream', document.getElementById('quantity-strawberries-cream').value, document.getElementById('size-strawberries-cream').value, event)">Order</button>
-                </div>
-
-                <div class="item-box">
-                    <img src="assets/images/products/matcha-milk.jpg" alt="Matcha Milk">
-                    <h3>Matcha Milk</h3>
-                    <p>Price: ₱70 16oz ┃ ₱85 22oz</p>
-                    <label for="size-matcha-milk">Choose Size:</label>
-                    <select id="size-matcha-milk">
-                        <option value="70">16 oz - ₱70</option>
-                        <option value="85">22 oz - ₱85</option>
-                    </select>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-matcha-milk">
-                    <button class="order-btn" onclick="addToCart('Matcha Milk', document.getElementById('quantity-matcha-milk').value, document.getElementById('size-matcha-milk').value, event)">Order</button>
-                </div>
-
-                <div class="item-box">
-                    <img src="assets/images/products/iced-chocolate.jpg" alt="Iced Chocolate">
-                    <h3>Iced Chocolate</h3>
-                    <p>Price: ₱65 16oz ┃ ₱80 22oz</p>
-                    <label for="size-iced-chocolate">Choose Size:</label>
-                    <select id="size-iced-chocolate">
-                        <option value="65">16 oz - ₱65</option>
-                        <option value="80">22 oz - ₱80</option>
-                    </select>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-iced-chocolate">
-                    <button class="order-btn" onclick="addToCart('Iced Chocolate', document.getElementById('quantity-iced-chocolate').value, document.getElementById('size-iced-chocolate').value, event)">Order</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Non Coffee Frappe Section -->
-        <section class="box" id="menu6">
-            <h2>Non Coffee Frappe</h2>
-            <div class="menu-details">
-                <div class="item-box">
-                    <img src="assets/images/products/dark-choco.jpg" alt="Dark Choco">
-                    <h3>Dark Choco</h3>
-                    <p>Price: ₱69 16oz ┃ ₱89 22oz</p>
-                    <label for="size-dark-choco">Choose Size:</label>
-                    <select id="size-dark-choco">
-                        <option value="69">16 oz - ₱69</option>
-                        <option value="89">22 oz - ₱89</option>
-                    </select>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-dark-choco">
-                    <button class="order-btn" onclick="addToCart('Dark Choco', document.getElementById('quantity-dark-choco').value, document.getElementById('size-dark-choco').value, event)">Order</button>
-                </div>
-
-                <div class="item-box">
-                    <img src="assets/images/products/caramel-frappe.jpg" alt="Caramel">
-                    <h3>Caramel</h3>
-                    <p>Price: ₱69 16oz ┃ ₱89 22oz</p>
-                    <label for="size-caramel-frappe">Choose Size:</label>
-                    <select id="size-caramel-frappe">
-                        <option value="69">16 oz - ₱69</option>
-                        <option value="89">22 oz - ₱89</option>
-                    </select>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-caramel-frappe">
-                    <button class="order-btn" onclick="addToCart('Caramel Frappe', document.getElementById('quantity-caramel-frappe').value, document.getElementById('size-caramel-frappe').value, event)">Order</button>
-                </div>
-
-                <div class="item-box">
-                    <img src="assets/images/products/strawberry-frappe.jpg" alt="Strawberry">
-                    <h3>Strawberry</h3>
-                    <p>Price: ₱69 16oz ┃ ₱89 22oz</p>
-                    <label for="size-strawberry-frappe">Choose Size:</label>
-                    <select id="size-strawberry-frappe">
-                        <option value="69">16 oz - ₱69</option>
-                        <option value="89">22 oz - ₱89</option>
-                    </select>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-strawberry-frappe">
-                    <button class="order-btn" onclick="addToCart('Strawberry Frappe', document.getElementById('quantity-strawberry-frappe').value, document.getElementById('size-strawberry-frappe').value, event)">Order</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Snacks Section -->
-        <section class="box" id="menu7">
-            <h2>Snacks</h2>
-            <div class="menu-details">
-                <div class="item-box">
-                    <img src="assets/images/products/regular-fries.jpg" alt="Regular Fries">
-                    <h3>Regular Fries</h3>
-                    <p>Price: ₱50</p>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-regular-fries">
-                    <button class="order-btn" onclick="addToCart('Regular Fries', document.getElementById('quantity-regular-fries').value, 50, event)">Order</button>
-                </div>
-
-                <div class="item-box">
-                    <img src="assets/images/products/cheesy-fries.jpg" alt="Cheesy Fries">
-                    <h3>Cheesy Fries</h3>
-                    <p>Price: ₱79</p>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-cheesy-fries">
-                    <button class="order-btn" onclick="addToCart('Cheesy Fries', document.getElementById('quantity-cheesy-fries').value, 79, event)">Order</button>
-                </div>
-
-                <div class="item-box">
-                    <img src="assets/images/products/nachos.jpg" alt="Nachos">
-                    <h3>Nachos</h3>
-                    <p>Price: ₱89</p>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-nachos">
-                    <button class="order-btn" onclick="addToCart('Nachos', document.getElementById('quantity-nachos').value, 89, event)">Order</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Rice Bowl Section -->
-        <section class="box" id="menu8">
-            <h2>Rice Bowl</h2>
-            <div class="menu-details">
-                <div class="item-box">
-                    <img src="assets/images/products/cheesy-hungarian.jpg" alt="Cheesy Hungarian">
-                    <h3>Cheesy Hungarian</h3>
-                    <p>Price: ₱89</p>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-cheesy-hungarian">
-                    <button class="order-btn" onclick="addToCart('Cheesy Hungarian', document.getElementById('quantity-cheesy-hungarian').value, 89, event)">Order</button>
-                </div>
-
-                <div class="item-box">
-                    <img src="assets/images/products/bacon-cheese.jpg" alt="Bacon & Cheese">
-                    <h3>Bacon & Cheese</h3>
-                    <p>Price: ₱89</p>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-bacon-cheese">
-                    <button class="order-btn" onclick="addToCart('Bacon & Cheese', document.getElementById('quantity-bacon-cheese').value, 89, event)">Order</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Pasta Section -->
-        <section class="box" id="menu9">
-            <h2>Pasta</h2>
-            <div class="menu-details">
-                <div class="item-box">
-                    <img src="assets/images/products/garlic-tuna-parmesan.jpg" alt="Garlic Tuna Parmesan">
-                    <h3>Garlic Tuna Parmesan</h3>
-                    <p>Price: ₱109</p>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-garlic-tuna-parmesan">
-                    <button class="order-btn" onclick="addToCart('Garlic Tuna Parmesan', document.getElementById('quantity-garlic-tuna-parmesan').value, 109, event)">Order</button>
-                </div>
-
-                <div class="item-box">
-                    <img src="assets/images/products/meaty-spaghetti.jpg" alt="Meaty Spaghetti">
-                    <h3>Meaty Spaghetti</h3>
-                    <p>Price: ₱109</p>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-meaty-spaghetti">
-                    <button class="order-btn" onclick="addToCart('Meaty Spaghetti', document.getElementById('quantity-meaty-spaghetti').value, 109, event)">Order</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- 2PC Chicken Section -->
-        <section class="box" id="menu10">
-            <h2>2PC Chicken With Java Rice</h2>
-            <div class="menu-details">
-                <div class="item-box">
-                    <img src="assets/images/products/garlic-parmesan-chicken.jpg" alt="Garlic Parmesan">
-                    <h3>Garlic Parmesan</h3>
-                    <p>Price: ₱200</p>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-garlic-parmesan">
-                    <div class="d-grid gap-2">
-                        <button class="order-btn" onclick="addToCart('Garlic Parmesan Chicken', document.getElementById('quantity-garlic-parmesan').value, 200, event)">Order</button>
-                        <button class="btn btn-outline-primary btn-sm" onclick="showProductModal('Garlic Parmesan Chicken', 'assets/images/products/garlic-parmesan-chicken.jpg', 'Crispy 2-piece chicken served with savory garlic parmesan sauce and java rice.', '2PC Chicken', '15min', 200)">View</button>
-                    </div>
-                </div>
-
-                <div class="item-box">
-                    <img src="assets/images/products/teriyaki-chicken.jpg" alt="Teriyaki">
-                    <h3>Teriyaki</h3>
-                    <p>Price: ₱210</p>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-teriyaki">
-                    <div class="d-grid gap-2">
-                        <button class="order-btn" onclick="addToCart('Teriyaki Chicken', document.getElementById('quantity-teriyaki').value, 210, event)">Order</button>
-                        <button class="btn btn-outline-primary btn-sm" onclick="showProductModal('Teriyaki Chicken', 'assets/images/products/teriyaki-chicken.jpg', 'Tender 2-piece chicken glazed with sweet and savory teriyaki sauce, served with java rice.', '2PC Chicken', '15min', 210)">View</button>
-                    </div>
-                </div>
-
-                <div class="item-box">
-                    <img src="assets/images/products/honey-butter-chicken.jpg" alt="Honey Butter">
-                    <h3>Honey Butter</h3>
-                    <p>Price: ₱220</p>
-                    <input type="number" value="1" min="1" class="quantity-input" id="quantity-honey-butter">
-                    <button class="order-btn" onclick="addToCart('Honey Butter Chicken', document.getElementById('quantity-honey-butter').value, 220, event)">Order</button>
-                </div>
-            </div>
-        </section>
-
+                </section>
+            <?php endforeach; ?>
+        </div>
+        <div class="cc-menu__empty" id="customerMenuEmpty" role="status" aria-live="polite">
+            <h2>No matches yet</h2>
+            <p>Try another item name or browse all categories.</p>
+            <button class="cc-menu__reset" id="customerMenuReset" type="button">Show the full menu</button>
+        </div>
     </div>
 </div>
 
-<!-- Product Detail Modal -->
+<!-- Existing product-detail modal contract retained. -->
 <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -758,17 +896,174 @@ section.menu {
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-success" onclick="addModalProductToCart()">
-                    <i class="bi bi-cart-plus"></i> Add to Cart
+                    <i class="bi bi-cart-plus" aria-hidden="true"></i> Add to Cart
                 </button>
             </div>
         </div>
     </div>
 </div>
 
-<script src="/public/assets/js/menu-cart.js"></script>
+<script src="/assets/js/menu-cart.js"></script>
+<script>
+(function () {
+    'use strict';
+
+    const root = document.getElementById('customerMenu');
+    if (!root) return;
+
+    const search = document.getElementById('customerMenuSearch');
+    const searchWrap = document.getElementById('customerMenuSearchWrap');
+    const clearButton = document.getElementById('customerMenuClear');
+    const emptyState = document.getElementById('customerMenuEmpty');
+    const resultCount = document.getElementById('customerMenuResultCount');
+    const categoryNav = document.getElementById('customerMenuCategories');
+    let sectionObserver = null;
+
+    root.querySelectorAll('[data-size-select]').forEach(function (select) {
+        select.addEventListener('change', function () {
+            const card = select.closest('.cc-menu__card');
+            const fromPrice = card.querySelector('[data-from-price]');
+            const buttonPrice = card.querySelector('[data-button-price]');
+            const formatted = '₱' + Number(select.value).toLocaleString('en-PH');
+            fromPrice.textContent = formatted;
+            buttonPrice.textContent = formatted;
+        });
+    });
+
+    root.querySelectorAll('[data-quantity-step]').forEach(function (button) {
+        button.addEventListener('click', function () {
+            const input = button.parentElement.querySelector('.quantity-input');
+            const step = Number(button.dataset.quantityStep);
+            const current = Math.max(1, Math.floor(Number(input.value) || 1));
+            input.value = String(Math.max(1, current + step));
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+    });
+
+    root.querySelectorAll('[data-coffee-choice] input[type="radio"]').forEach(function (radio) {
+        radio.addEventListener('change', function () {
+            const choice = radio.closest('[data-coffee-choice]');
+            choice.classList.remove('needs-choice');
+            const feedback = radio.closest('.cc-menu__card').querySelector('[data-item-feedback]');
+            feedback.textContent = '';
+        });
+    });
+
+    window.ccCustomerAddToCart = function (productName, quantityId, priceIdOrFixed, coffeeGroup, event) {
+        const quantityInput = document.getElementById(quantityId);
+        const card = quantityInput ? quantityInput.closest('.cc-menu__card') : null;
+        if (!quantityInput || !card) return false;
+
+        if (!quantityInput.checkValidity()) {
+            quantityInput.reportValidity();
+            quantityInput.focus();
+            return false;
+        }
+
+        const feedback = card.querySelector('[data-item-feedback]');
+        if (coffeeGroup) {
+            const selected = Array.from(document.getElementsByName(coffeeGroup)).find(function (input) {
+                return input.checked;
+            });
+            if (!selected) {
+                const choice = card.querySelector('[data-coffee-choice]');
+                choice.classList.add('needs-choice');
+                feedback.textContent = 'Choose hot or iced before adding this coffee.';
+                const firstOption = choice.querySelector('input[type="radio"]');
+                if (firstOption) firstOption.focus();
+                return false;
+            }
+        }
+
+        const price = /^size-/.test(String(priceIdOrFixed))
+            ? (document.getElementById(priceIdOrFixed) || {}).value
+            : priceIdOrFixed;
+
+        if (typeof window.addToCart !== 'function') {
+            feedback.textContent = 'The cart could not be reached. Please refresh the page and try again.';
+            return false;
+        }
+
+        feedback.textContent = '';
+        return window.addToCart(productName, quantityInput.value, price, event);
+    };
+
+    function filterMenu() {
+        const query = search.value.trim().toLocaleLowerCase();
+        const sections = root.querySelectorAll('.cc-menu__section');
+        let visibleCount = 0;
+        searchWrap.classList.toggle('has-query', Boolean(query));
+
+        sections.forEach(function (section) {
+            const cards = section.querySelectorAll('.cc-menu__card');
+            let sectionCount = 0;
+            cards.forEach(function (card) {
+                const visible = !query || card.dataset.search.includes(query);
+                card.hidden = !visible;
+                if (visible) sectionCount += 1;
+            });
+            section.hidden = sectionCount === 0;
+            const count = section.querySelector('[data-section-count]');
+            count.textContent = sectionCount + ' ' + (sectionCount === 1 ? 'item' : 'items');
+            visibleCount += sectionCount;
+        });
+
+        emptyState.classList.toggle('is-visible', visibleCount === 0);
+        resultCount.textContent = visibleCount + ' ' + (visibleCount === 1 ? 'menu item' : 'menu items') + ' found.';
+        categoryNav.querySelectorAll('.cc-menu__category-link').forEach(function (link) {
+            const section = document.getElementById(link.dataset.target);
+            link.hidden = Boolean(query) && (!section || section.hidden);
+        });
+    }
+
+    function setActiveCategory(id) {
+        categoryNav.querySelectorAll('.cc-menu__category-link').forEach(function (link) {
+            const active = link.dataset.target === id;
+            link.classList.toggle('is-active', active);
+            if (active) link.setAttribute('aria-current', 'location');
+            else link.removeAttribute('aria-current');
+        });
+    }
+
+    function observeSections() {
+        if (!('IntersectionObserver' in window)) return;
+        if (sectionObserver) sectionObserver.disconnect();
+        sectionObserver = new IntersectionObserver(function (entries) {
+            const visible = entries.filter(function (entry) {
+                return entry.isIntersecting;
+            }).sort(function (a, b) {
+                return b.intersectionRatio - a.intersectionRatio;
+            })[0];
+            if (visible) setActiveCategory(visible.target.id);
+        }, { rootMargin: '-25% 0px -62% 0px', threshold: [0, .1, .25, .5] });
+
+        root.querySelectorAll('.cc-menu__section').forEach(function (section) {
+            sectionObserver.observe(section);
+        });
+    }
+
+    search.addEventListener('input', filterMenu);
+    clearButton.addEventListener('click', function () {
+        search.value = '';
+        filterMenu();
+        search.focus();
+    });
+    document.getElementById('customerMenuReset').addEventListener('click', function () {
+        search.value = '';
+        filterMenu();
+        search.focus();
+    });
+    categoryNav.addEventListener('click', function (event) {
+        const link = event.target.closest('a[data-target]');
+        if (link) setActiveCategory(link.dataset.target);
+    });
+
+    observeSections();
+})();
+</script>
 
 <?php
 $content = ob_get_clean();
-$title = 'Menu - MacCafe';
+$title = 'Menu - CafeCat';
 include __DIR__ . '/../layouts/main.php';
 ?>

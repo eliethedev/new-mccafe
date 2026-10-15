@@ -30,6 +30,9 @@ class CategoryController extends Controller {
             return $this->redirect('/admin/categories');
         }
         
+        // Auto sort based on currently available categories
+        $data['sort_order'] = $this->getNextSortOrder();
+
         // Handle image upload
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $uploadResult = $this->handleImageUpload($_FILES['image'], 'categories');
@@ -243,7 +246,7 @@ class CategoryController extends Controller {
         ];
         
         $stmt = $this->query($sql, $params);
-        return $this->lastInsertId();
+        return $stmt ? true : false;
     }
     
     private function updateCategory($id, $data) {
@@ -264,7 +267,7 @@ class CategoryController extends Controller {
         $params[] = $id;
         
         $stmt = $this->query($sql, $params);
-        return $stmt->rowCount() > 0;
+        return $stmt ? true : false;
     }
     
     private function updateCategoryStatus($id, $isActive) {
@@ -283,6 +286,12 @@ class CategoryController extends Controller {
         return $result['count'];
     }
     
+    private function getNextSortOrder() {
+        $stmt = $this->query("SELECT COALESCE(MAX(sort_order), 0) + 1 AS next_sort FROM categories");
+        $result = $stmt->fetch();
+        return (int) ($result['next_sort'] ?? 1);
+    }
+
     private function handleImageUpload($file, $folder) {
         // Validate file
         $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
